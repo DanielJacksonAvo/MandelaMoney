@@ -8,5 +8,6 @@
     <color name="success">#A1F293</color>
     <color name="white10">#1AFFFFFF</color>
     <color name="white20">#33FFFFFF</color>
+    <color name="light_grey">#D3D3D3</color>
 
 </resources>
