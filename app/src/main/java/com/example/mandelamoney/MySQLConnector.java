@@ -2,6 +2,8 @@ package com.example.mandelamoney;
 
 import android.os.StrictMode;
 import android.util.Log;
+import android.widget.Toast;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,9 +12,10 @@ public class MySQLConnector {
     private final static String DB_URL = BuildConfig.DB_URL;
     private final static String DB_USERNAME = BuildConfig.DB_USERNAME;
     private final static String DB_PASSWORD = BuildConfig.DB_PASSWORD;
+    private static Connection connection;
 
-    public static Connection connectToDB() {
-        Connection connection = null;
+    public static boolean connectToDB() {
+        connection = null;
 
         try {
             // Allow network operations on the main thread (only for testing)
@@ -39,6 +42,13 @@ public class MySQLConnector {
             Log.e("MySQL", "Exception: " + e.getMessage());
         }
 
-        return connection;
+        if (connection == null) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
+
+
 }
