@@ -19,7 +19,6 @@
     <style name="HyperLinkButton">
         <item name="android:fontFamily">@font/dm_sans_medium</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/hyperlinkbutton_textview_selector</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
