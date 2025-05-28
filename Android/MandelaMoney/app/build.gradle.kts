@@ -6,6 +6,11 @@ android {
     namespace = "com.example.mandelamoney"
     compileSdk = 35
 
+    buildFeatures {
+        buildConfig = true
+    }
+
+
     defaultConfig {
         applicationId = "com.example.mandelamoney"
         minSdk = 31
@@ -14,6 +19,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "DB_USERNAME", "\"user\"")
+        buildConfigField("String", "DB_PASSWORD", "\"***REMOVED_DB_PASSWORD***\"")
+        buildConfigField("String", "DB_URL", "\"jdbc:mysql://jacksonserver.ddns.net:3306/MandelaMoneyDB?useSSL=true&requireSSL=true&verifyServerCertificate=false\"")
+
     }
 
     buildTypes {
