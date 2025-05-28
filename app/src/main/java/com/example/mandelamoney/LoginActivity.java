@@ -1,5 +1,7 @@
 package com.example.mandelamoney;
 
+import static android.icu.lang.UCharacter.toUpperCase;
+
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,7 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import eightbitlab.com.blurview.BlurView;
+import java.sql.ResultSet;
 
 
 
@@ -33,15 +35,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private void connectToUI() {
         Button btnLogin = findViewById(R.id.btn_login);
+        configureLoginButton(btnLogin);
         tbxUserEmail = findViewById(R.id.tbx_email_login);
         tbxUserPassword = findViewById(R.id.tbx_password_login);
-
-
-
     }
 
     private void configureLoginButton(Button btnLogin) {
         btnLogin.setOnClickListener((view) -> {
+            String userEmail = toUpperCase(String.valueOf(tbxUserEmail.getText()));
+            String userPassword = String.valueOf(tbxUserPassword.getText());
+            ResultSet resultSet = MySQLConnector.validateEmailPassword(userEmail, userPassword,this);
 
         });
     }
