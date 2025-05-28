@@ -2,18 +2,14 @@ package com.example.mandelamoney;
 
 import android.os.StrictMode;
 import android.util.Log;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MySQLConnector {
-    private static final String DB_URL = "jdbc:mysql://jacksonserver.ddns.net:3306/MandelaMoneyDB"
-            + "?useSSL=true"
-            + "&requireSSL=true"
-            + "&verifyServerCertificate=false";
-    private static final String DB_USER = "user";
-    private static final String DB_PASSWORD = "J!Hs7#BJv&tCmyhA6h^xd3AXtpnEWUe5";
+    private final static String DB_URL = BuildConfig.DB_URL;
+    private final static String DB_USERNAME = BuildConfig.DB_USERNAME;
+    private final static String DB_PASSWORD = BuildConfig.DB_PASSWORD;
 
     public static Connection connectToDB() {
         Connection connection = null;
@@ -27,7 +23,7 @@ public class MySQLConnector {
             Class.forName("com.mysql.jdbc.Driver");
 
             // Connect to the database
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
             if (connection != null) {
                 Log.d("MySQL", "Connected successfully.");
