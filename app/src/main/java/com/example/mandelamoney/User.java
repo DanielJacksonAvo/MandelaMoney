@@ -2,7 +2,7 @@ package com.example.mandelamoney;
 
 import static java.lang.Math.abs;
 
-public class User {
+public abstract class User {
     private final String userEmail;
     private String userPassword;
     private double userBalance;
