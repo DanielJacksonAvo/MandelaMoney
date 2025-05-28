@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="mandelaBlue">#041331</color>
+    <color name="mandelaYellow">#F6CC4C</color>
+    <color name="error">#FF6B6B</color>
+    <color name="success">#A1F293</color>
+    <color name="white10">#1AFFFFFF</color>
+    <color name="white20">#33FFFFFF</color>
+    <color name="textbox_white">#66D9D9D9</color>
+    <color name="light_grey">#D3D3D3</color>
+
+</resources>
