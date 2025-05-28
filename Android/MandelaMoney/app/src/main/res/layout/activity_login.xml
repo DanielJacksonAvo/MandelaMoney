@@ -26,7 +26,7 @@
             android:layout_height="match_parent">
 
             <EditText
-                android:id="@+id/tbx_login_email"
+                android:id="@+id/tbx_email_login"
                 style="@style/TextBox"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
@@ -41,12 +41,12 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:drawableRight="@drawable/img_mandelamoneylogo"
+                android:drawableRight="@drawable/svg_email_icon"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.333" />
 
             <EditText
-                android:id="@+id/tbx_login_password"
+                android:id="@+id/tbx_password_login"
                 style="@style/TextBox"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
