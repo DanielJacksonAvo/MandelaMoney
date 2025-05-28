@@ -10,5 +10,7 @@
     <color name="white20">#33FFFFFF</color>
     <color name="textbox_white">#66D9D9D9</color>
     <color name="light_grey">#D3D3D3</color>
+    <color name="white60">#99FFFFFF
+    </color>
 
 </resources>
