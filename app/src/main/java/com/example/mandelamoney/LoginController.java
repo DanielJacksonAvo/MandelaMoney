@@ -1,6 +1,7 @@
 package com.example.mandelamoney;
 
 import android.content.Context;
+import android.content.Intent;
 
 import java.sql.SQLException;
 
@@ -14,14 +15,14 @@ public class LoginController {
 
     }
 
-    public void handelLogin(String userEmail, String userPassword) throws SQLException {
+    public void handleLogin(String userEmail, String userPassword) throws SQLException {
         if ((userEmail.length() < 5) || (userPassword.length() < 5))
         {
             view.showErrorMessage();
             return;
         }
 
-        user = callSQL(userEmail, userPassword);
+        user = callSQLLogin(userEmail, userPassword);
 
         if (user == null) {
             view.showErrorMessage();
@@ -29,11 +30,12 @@ public class LoginController {
         }
 
         view.hideErrorMessage();
-        //call dashboard and pass user
-
+        //Intent intent = new Intent(context, DashboardActivity.class);
+        //intent.putExtra("user", user);
+        //context.startActivity(intent);
     }
 
-    private User callSQL(String userEmail, String userPassword) throws SQLException {
+    private User callSQLLogin(String userEmail, String userPassword) throws SQLException {
         return MySQLConnector.validateEmailPassword(userEmail, userPassword, context);
     }
 }
