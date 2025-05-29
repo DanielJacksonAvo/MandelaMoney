@@ -6,12 +6,10 @@ public abstract class User {
     private final String userEmail;
     private String userPassword;
     private double userBalance;
-    private final int userType;
-    public User(String userEmail, String userPassword, double userBalance, int userType) {
+    public User(String userEmail, String userPassword, double userBalance) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userBalance = userBalance;
-        this.userType = userType;
     }
 
     public String getUserEmail() {
@@ -26,9 +24,6 @@ public abstract class User {
         return userBalance;
     }
 
-    public int getUserType() {
-        return userType;
-    }
 
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
