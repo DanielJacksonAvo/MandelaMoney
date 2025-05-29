@@ -11,6 +11,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -43,7 +44,9 @@ public class LoginActivity extends AppCompatActivity {
         EditText tbxUserEmail = findViewById(R.id.tbx_email_login);
         EditText tbxUserPassword = findViewById(R.id.tbx_password_login);
         TextView txtError = findViewById(R.id.txt_error_login);
+        ImageView imgPasswordIcon = findViewById(R.id.img_password_icon);
         configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword, txtError);
+        configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
 
 
     }
