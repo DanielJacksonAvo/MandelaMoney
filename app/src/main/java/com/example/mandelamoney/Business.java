@@ -1,6 +1,8 @@
 package com.example.mandelamoney;
 
-public class Business extends User {
+import java.io.Serializable;
+
+public class Business extends User implements Serializable {
     private String businessName, businessPhoneNumber, businessVAT;
 
     public Business(String userEmail, String userPassword, double userBalance,  String businessName, String businessPhoneNumber, String businessVAT) {
