@@ -8,4 +8,5 @@
     <string name="todo">TODO</string>
     <string name="email">EMAIL</string>
     <string name="mandela_money_logo">Mandela Money Logo</string>
+    <string name="view_hide">View/Hide</string>
 </resources>
