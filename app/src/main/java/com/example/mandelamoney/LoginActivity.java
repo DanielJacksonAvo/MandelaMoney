@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //method class class sql procedure "ValidateEmailPassword" and returns user (valid) or null (invalid)
     private User validateEmailPassword(String userEmail, String userPassword) throws SQLException {
-        return ResultSetParser.parseValidateEmailPassword(MySQLConnector.validateEmailPassword(userEmail, userPassword, this), userEmail, userPassword);
+        return MySQLConnector.validateEmailPassword(userEmail, userPassword, this);
     }
 
     private boolean checkForInvalidCredential(User user) {
