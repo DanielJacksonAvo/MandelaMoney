@@ -1,15 +1,17 @@
 package com.example.mandelamoney;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,8 +29,15 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        MySQLConnector.connectToDB();
-        setContentView(R.layout.activity_login);
+
+        while (!MySQLConnector.connectToDB()) {
+            Toast.makeText(context, "Failed to connect. Trying again...", Toast.LENGTH_LONG).show();
+        }
+
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+
+
 
     }
 

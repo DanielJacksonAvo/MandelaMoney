@@ -22,8 +22,7 @@ android {
 
         buildConfigField("String", "DB_USERNAME", "\"user\"")
         buildConfigField("String", "DB_PASSWORD", "\"J!Hs7#BJv&tCmyhA6h^xd3AXtpnEWUe5\"")
-        buildConfigField("String", "DB_URL", "\"jdbc:mysql://jacksonserver.ddns.net:3306/MandelaMoneyDB?useSSL=true&requireSSL=true&verifyServerCertificate=false\"")
-
+        buildConfigField("String", "DB_URL", "\"jdbc:mysql://jacksonserver.ddns.net:3306/MandelaMoneyDB?useSSL=true&requireSSL=true&verifyServerCertificate=false&noAccessToProcedureBodies=true\"")
     }
 
     buildTypes {
