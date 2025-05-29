@@ -4,7 +4,11 @@ import static android.icu.lang.UCharacter.toLowerCase;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -16,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -39,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         EditText tbxUserPassword = findViewById(R.id.tbx_password_login);
         TextView txtError = findViewById(R.id.txt_error_login);
         configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword, txtError);
+
 
     }
 
@@ -75,6 +81,51 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean checkForInvalidCredential(User user) {
         return user == null;
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
+        tbxUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        imgPasswordIcon.setImageResource(R.drawable.img_password_icon); // Initially show lock
+
+        AtomicReference<Boolean> isPasswordVisible = new AtomicReference<>(false);
+
+        tbxUserPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    imgPasswordIcon.setImageResource(isPasswordVisible.get() ?
+                            R.drawable.img_eye_closed : R.drawable.img_eye_open);
+                } else {
+                    imgPasswordIcon.setImageResource(R.drawable.img_password_icon);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        imgPasswordIcon.setOnClickListener(view -> {
+            if (tbxUserPassword.getText().length() == 0) {
+                return;
+            }
+
+            boolean temp = !isPasswordVisible.get();
+            isPasswordVisible.set(temp);
+
+            if (!isPasswordVisible.get()) {
+                tbxUserPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                imgPasswordIcon.setImageResource(R.drawable.img_eye_closed);
+            } else {
+                tbxUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                imgPasswordIcon.setImageResource(R.drawable.img_eye_open);
+            }
+
+            tbxUserPassword.setSelection(tbxUserPassword.getText().length());
+        });
     }
 
 }
