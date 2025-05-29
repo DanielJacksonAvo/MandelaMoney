@@ -25,8 +25,9 @@ import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class LoginActivity extends AppCompatActivity {
-
+public class LoginActivity extends AppCompatActivity implements ILoginView {
+    private LoginController loginController;
+    private TextView txtError;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        loginController = new LoginController(this, this);
         connectToUI();
     }
 
@@ -44,20 +46,18 @@ public class LoginActivity extends AppCompatActivity {
         Button btnLogin = findViewById(R.id.btn_login);
         EditText tbxUserEmail = findViewById(R.id.tbx_email_login);
         EditText tbxUserPassword = findViewById(R.id.tbx_password_login);
-        TextView txtError = findViewById(R.id.txt_error_login);
+        txtError = findViewById(R.id.txt_error_login);
         ImageView imgPasswordIcon = findViewById(R.id.img_password_icon);
-        configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword, txtError);
+        configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
         configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
-
-
     }
 
-    private void configureLoginButton(Button btnLogin, EditText tbxUserEmail, EditText tbxUserPassword, TextView txtError) {
+    private void configureLoginButton(Button btnLogin, EditText tbxUserEmail, EditText tbxUserPassword) {
         btnLogin.setOnClickListener((view) -> {
             String userEmail = toLowerCase(String.valueOf(tbxUserEmail.getText()));
             String userPassword = String.valueOf(tbxUserPassword.getText());
             try {
-                checkEmailPassword(userEmail, userPassword, txtError);
+                loginController.handelLogin(userEmail, userPassword);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -66,26 +66,16 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void checkEmailPassword(String userEmail, String userPassword, TextView txtError) throws SQLException {
-        User user = validateEmailPassword(userEmail, userPassword);
-        if (checkForInvalidCredential(user)) {
-            txtError.setVisibility(VISIBLE);
-            return;
-        } else {
-            txtError.setVisibility(GONE);
-            //continue here
-        }
-
+    @Override
+    public void showErrorMessage() {
+        txtError.setVisibility(VISIBLE);
     }
 
-    //method class class sql procedure "ValidateEmailPassword" and returns user object (valid) or null (invalid)
-    private User validateEmailPassword(String userEmail, String userPassword) throws SQLException {
-        return MySQLConnector.validateEmailPassword(userEmail, userPassword, this);
+    @Override
+    public void hideErrorMessage() {
+        txtError.setVisibility(GONE);
     }
 
-    private boolean checkForInvalidCredential(User user) {
-        return user == null;
-    }
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
         tbxUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
