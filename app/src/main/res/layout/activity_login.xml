@@ -40,6 +40,7 @@
                     android:id="@+id/img_email_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/todo"
                     android:src="@drawable/img_email_icon"
                     android:layout_marginStart="10dp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -51,25 +52,27 @@
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:hint="EMAIL"
+                    android:autofillHints="@string/email"
+                    android:hint="@string/email"
                     android:inputType="textCapCharacters|text"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:ignore="TextFields" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.619"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.666">
@@ -78,17 +81,19 @@
                     android:id="@+id/img_password_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/img_password_icon"
                     android:layout_marginStart="10dp"
+                    android:contentDescription="@string/todo"
+                    android:src="@drawable/img_password_icon"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/tbx_password_login"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
+                    android:autofillHints="@string/password"
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -105,12 +110,25 @@
                 android:layout_height="wrap_content"
                 android:text="@string/forgot_password"
                 android:textColor="@color/white60"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tbx_password_login"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
                 app:layout_constraintVertical_bias="0.155" />
+
+            <TextView
+                android:id="@+id/txt_error_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/email_password_invalid"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_forgotPassword_login"
+                app:layout_constraintVertical_bias="0.15" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -120,6 +138,7 @@
         android:id="@+id/img_mandelamoney_login"
         android:layout_width="375dp"
         android:layout_height="104dp"
+        android:contentDescription="@string/todo"
         app:layout_constraintBottom_toTopOf="@+id/blurView_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -143,6 +162,7 @@
         android:layout_width="165dp"
         android:layout_height="180dp"
         android:layout_marginBottom="-90dp"
+        android:contentDescription="@string/mandela_money_logo"
         app:layout_constraintBottom_toTopOf="@+id/blurView_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
