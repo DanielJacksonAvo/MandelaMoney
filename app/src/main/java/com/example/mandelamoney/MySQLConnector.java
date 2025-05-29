@@ -86,7 +86,7 @@ public class MySQLConnector {
         }
     }
 
-    public static ResultSet validateEmailPassword(String userEmail, String userPassword, Context context) {
+    public static User validateEmailPassword(String userEmail, String userPassword, Context context) throws SQLException {
         while (connection == null || !isConnected()) {
             Log.e("MySQL", "Not connected to database for procedure call. Attempting to reconnect...");
             Toast.makeText(context, "Failed to connect. Trying again...", Toast.LENGTH_LONG).show();
@@ -103,9 +103,10 @@ public class MySQLConnector {
 
         CallableStatement callableStatement = null;
         ResultSet resultSet = null;
+        User user = null;
 
         try {
-            String callProcedureSQL = "{CALL ValidateEmailPassword(?, ?)}";
+            String callProcedureSQL = "{CALL MandelaMoneyDB.ValidateEmailPassword(?, ?)}";
             callableStatement = connection.prepareCall(callProcedureSQL);
 
             callableStatement.setString(1, userEmail);
@@ -118,6 +119,7 @@ public class MySQLConnector {
             } else {
                 Log.d("MySQL", "Stored procedure 'ValidateEmailPassword' did not return a ResultSet.");
             }
+            user = ResultSetParser.parseValidateEmailPassword(resultSet, userEmail, userPassword);
 
         } catch (SQLException e) {
             Log.e("MySQL", "Error calling stored procedure 'ValidateEmailPassword': " + e.getMessage());
@@ -130,7 +132,8 @@ public class MySQLConnector {
                 }
             }
         }
-        return resultSet;
+        return user;
+
     }
 
 
