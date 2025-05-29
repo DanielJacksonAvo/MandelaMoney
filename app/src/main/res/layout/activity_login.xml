@@ -148,7 +148,7 @@
         app:layout_constraintVertical_bias="0.6"
         app:srcCompat="@drawable/img_mandelamoney_text" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_login"
         style="@style/PrimaryButton"
         android:layout_width="167dp"
