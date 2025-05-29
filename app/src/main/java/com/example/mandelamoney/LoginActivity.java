@@ -1,10 +1,14 @@
 package com.example.mandelamoney;
 
 import static android.icu.lang.UCharacter.toLowerCase;
+import static android.widget.Toast.LENGTH_LONG;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +41,9 @@ public class LoginActivity extends AppCompatActivity {
         configureLoginButton(btnLogin);
         tbxUserEmail = findViewById(R.id.tbx_email_login);
         tbxUserPassword = findViewById(R.id.tbx_password_login);
+        ImageView imgPasswordIcon = findViewById(R.id.img_password_icon);
+        configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
+
     }
 
     private void configureLoginButton(Button btnLogin) {
@@ -70,6 +77,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean checkForInvalidCredential(User user) {
         return user == null;
+    }
+
+    private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
+        imgPasswordIcon.setOnClickListener(view -> {
+
+        });
     }
 
 }
