@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             String userEmail = toLowerCase(String.valueOf(tbxUserEmail.getText()));
             String userPassword = String.valueOf(tbxUserPassword.getText());
             try {
-                loginController.handelLogin(userEmail, userPassword);
+                loginController.handleLogin(userEmail, userPassword);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
