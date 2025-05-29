@@ -4,11 +4,12 @@ import static android.icu.lang.UCharacter.toLowerCase;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import android.annotation.SuppressLint;
+
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -86,10 +87,10 @@ public class LoginActivity extends AppCompatActivity {
         return user == null;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
         tbxUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        imgPasswordIcon.setImageResource(R.drawable.img_password_icon); // Initially show lock
+        tbxUserPassword.setTransformationMethod(new PasswordTransformationMethod());
+        imgPasswordIcon.setImageResource(R.drawable.img_password_icon);
 
         AtomicReference<Boolean> isPasswordVisible = new AtomicReference<>(false);
 
@@ -119,11 +120,11 @@ public class LoginActivity extends AppCompatActivity {
             boolean temp = !isPasswordVisible.get();
             isPasswordVisible.set(temp);
 
-            if (!isPasswordVisible.get()) {
-                tbxUserPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            if (isPasswordVisible.get()) {
+                tbxUserPassword.setTransformationMethod(null);
                 imgPasswordIcon.setImageResource(R.drawable.img_eye_closed);
             } else {
-                tbxUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                tbxUserPassword.setTransformationMethod(new PasswordTransformationMethod());
                 imgPasswordIcon.setImageResource(R.drawable.img_eye_open);
             }
 
