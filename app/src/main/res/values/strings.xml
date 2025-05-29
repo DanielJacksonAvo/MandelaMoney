@@ -9,4 +9,9 @@
     <string name="email">EMAIL</string>
     <string name="mandela_money_logo">Mandela Money Logo</string>
     <string name="view_hide">View/Hide</string>
+    <string name="withdraw">Withdraw  ></string>
+    <string name="pay_now">Pay Now</string>
+    <string name="request_pay">Request Pay</string>
+    <string name="available_balance">Available Balance</string>
+    <string name="transaction_history">Transaction History  ></string>
 </resources>
