@@ -2,7 +2,11 @@ package com.example.mandelamoney;
 
 import static java.lang.Math.abs;
 
-public abstract class User {
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public abstract class User implements Serializable {
     private final String userEmail;
     private String userPassword;
     private double userBalance;
@@ -40,6 +44,10 @@ public abstract class User {
 
     public void increaseBalance(double amount) {
         userBalance = userBalance + abs(amount);
+    }
+
+    public void setUserBalance(double balance) {
+        userBalance = balance;
     }
 
 }
