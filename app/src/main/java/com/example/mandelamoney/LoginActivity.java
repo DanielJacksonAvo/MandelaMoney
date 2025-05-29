@@ -1,6 +1,6 @@
 package com.example.mandelamoney;
 
-import static android.icu.lang.UCharacter.toUpperCase;
+import static android.icu.lang.UCharacter.toLowerCase;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -12,7 +12,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
@@ -42,8 +41,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private void configureLoginButton(Button btnLogin) {
         btnLogin.setOnClickListener((view) -> {
-            String userEmail = toUpperCase(String.valueOf(tbxUserEmail.getText()));
+            String userEmail = toLowerCase(String.valueOf(tbxUserEmail.getText()));
             String userPassword = String.valueOf(tbxUserPassword.getText());
+            try {
+                checkEmailPassword(userEmail, userPassword);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
 
         });
     }
@@ -51,23 +56,20 @@ public class LoginActivity extends AppCompatActivity {
     private void checkEmailPassword(String userEmail, String userPassword) throws SQLException {
         User user = validateEmailPassword(userEmail, userPassword);
         if (checkForInvalidCredential(user)) {
-
+            return;
+        } else {
+            //continue here
         }
 
     }
 
     //method class class sql procedure "ValidateEmailPassword" and returns user (valid) or null (invalid)
     private User validateEmailPassword(String userEmail, String userPassword) throws SQLException {
-        User user = ResultSetParser.parseValidateEmailPassword(MySQLConnector.validateEmailPassword(userEmail, userPassword,this), userEmail, userPassword);
-        return user;
+        return ResultSetParser.parseValidateEmailPassword(MySQLConnector.validateEmailPassword(userEmail, userPassword, this), userEmail, userPassword);
     }
 
     private boolean checkForInvalidCredential(User user) {
-        if (user == null) {
-            return true;
-        } else {
-            return false;
-        }
+        return user == null;
     }
 
 }
