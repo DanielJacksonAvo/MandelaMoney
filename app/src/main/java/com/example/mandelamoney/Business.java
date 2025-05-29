@@ -3,8 +3,8 @@ package com.example.mandelamoney;
 public class Business extends User {
     private String businessName, businessPhoneNumber, businessVAT;
 
-    public Business(String userEmail, String userPassword, double userBalance, int userType, String businessName, String businessPhoneNumber, String businessVAT) {
-        super(userEmail, userPassword, userBalance, userType);
+    public Business(String userEmail, String userPassword, double userBalance,  String businessName, String businessPhoneNumber, String businessVAT) {
+        super(userEmail, userPassword, userBalance);
         this.businessName = businessName;
         this.businessPhoneNumber = businessPhoneNumber;
         this.businessVAT = businessVAT;

@@ -13,7 +13,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.sql.ResultSet;
-
+import java.sql.SQLException;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -44,21 +44,30 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener((view) -> {
             String userEmail = toUpperCase(String.valueOf(tbxUserEmail.getText()));
             String userPassword = String.valueOf(tbxUserPassword.getText());
-            ResultSet resultSet = MySQLConnector.validateEmailPassword(userEmail, userPassword,this);
 
         });
     }
 
-    private void validateEmailPassword() {
+    private void checkEmailPassword(String userEmail, String userPassword) throws SQLException {
+        User user = validateEmailPassword(userEmail, userPassword);
+        if (checkForInvalidCredential(user)) {
+
+        }
 
     }
 
-    private void createStudentObject() {
-
+    //method class class sql procedure "ValidateEmailPassword" and returns user (valid) or null (invalid)
+    private User validateEmailPassword(String userEmail, String userPassword) throws SQLException {
+        User user = ResultSetParser.parseValidateEmailPassword(MySQLConnector.validateEmailPassword(userEmail, userPassword,this), userEmail, userPassword);
+        return user;
     }
 
-    private void createBusinessObject() {
-
+    private boolean checkForInvalidCredential(User user) {
+        if (user == null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

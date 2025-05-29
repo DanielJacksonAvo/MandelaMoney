@@ -2,8 +2,8 @@ package com.example.mandelamoney;
 
 public class Student extends User {
     private String studentFirstName, studentLastName, studentNumber;
-    public Student(String userEmail, String userPassword, double userBalance, int userType, String studentFirstName, String studentLastName, String studentNumber) {
-        super(userEmail, userPassword, userBalance, userType);
+    public Student(String userEmail, String userPassword, double userBalance, String studentFirstName, String studentLastName, String studentNumber) {
+        super(userEmail, userPassword, userBalance);
         this.studentFirstName = studentFirstName;
         this.studentLastName = studentLastName;
         this.studentNumber = studentNumber;
