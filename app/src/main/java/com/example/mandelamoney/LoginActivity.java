@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
         imgPasswordIcon.setOnClickListener(view -> {
-
+            //code here
         });
     }
 
