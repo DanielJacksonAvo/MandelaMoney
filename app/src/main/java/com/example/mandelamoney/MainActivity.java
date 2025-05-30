@@ -1,6 +1,5 @@
 package com.example.mandelamoney;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        MySQLConnector.connectToDB();
+        MySQLConnector.AppStartUpConnection(this);
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
 
