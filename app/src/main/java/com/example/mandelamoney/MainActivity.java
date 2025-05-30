@@ -30,10 +30,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        while (!MySQLConnector.connectToDB()) {
-            Toast.makeText(context, "Failed to connect. Trying again...", Toast.LENGTH_LONG).show();
-        }
-
+        MySQLConnector.connectToDB();
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
 
