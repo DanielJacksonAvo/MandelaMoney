@@ -30,9 +30,9 @@ public class LoginController {
         }
 
         view.hideErrorMessage();
-        //Intent intent = new Intent(context, DashboardActivity.class);
-        //intent.putExtra("user", user);
-        //context.startActivity(intent);
+        Intent intent = new Intent(context, DashboardActivity.class);
+        intent.putExtra("user", user);
+        context.startActivity(intent);
     }
 
     private User callSQLLogin(String userEmail, String userPassword) throws SQLException {
