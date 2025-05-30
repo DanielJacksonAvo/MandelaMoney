@@ -4,8 +4,9 @@ import static android.icu.lang.UCharacter.toUpperCase;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
-
+import java.util.Locale;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -31,7 +32,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         try {
             user = (User) intent.getSerializableExtra("user");
         } catch (Exception e) {
-
+            Log.d("Dashboard","No user passed by intent.");
         }
         connectToUI();
         dashboardController = new DashboardController(this, this, user);
@@ -46,7 +47,8 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
 
     @Override
     public void displayBalance(double balance) {
-        txtBalance.setText("R " + String.format("%.2f", balance));
+        String display = "R " + String.format(Locale.getDefault(), "%.2f", balance);
+        txtBalance.setText(display);
     }
 
     @Override
