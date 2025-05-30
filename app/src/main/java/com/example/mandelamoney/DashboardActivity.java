@@ -1,6 +1,10 @@
 package com.example.mandelamoney;
 
+import static android.icu.lang.UCharacter.toUpperCase;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,8 +12,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class DashboardActivity extends AppCompatActivity {
+public class DashboardActivity extends AppCompatActivity implements IDashboardView {
 
+    private DashboardController dashboardController;
+    private TextView txtBalance, txtUserName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,5 +26,31 @@ public class DashboardActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Intent intent = getIntent();
+        User user = null;
+        try {
+            user = (User) intent.getSerializableExtra("user");
+        } catch (Exception e) {
+
+        }
+        connectToUI();
+        dashboardController = new DashboardController(this, this, user);
+        dashboardController.handleLoadUserToUI();
+    }
+
+    private void connectToUI() {
+        txtBalance = findViewById(R.id.txt_user_account_balance);
+        txtUserName = findViewById(R.id.txt_user_name_dashboard);
+
+    }
+
+    @Override
+    public void displayBalance(double balance) {
+        txtBalance.setText("R " + String.format("%.2f", balance));
+    }
+
+    @Override
+    public void displayUserName(String name) {
+        txtUserName.setText(toUpperCase(name));
     }
 }
