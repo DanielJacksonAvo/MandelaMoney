@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class LoginActivity extends AppCompatActivity implements ILoginView {
     private LoginController loginController;
     private TextView txtError;
+    EditText tbxUserPassword;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +46,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     private void connectToUI() {
         Button btnLogin = findViewById(R.id.btn_login);
         EditText tbxUserEmail = findViewById(R.id.tbx_email_login);
-        EditText tbxUserPassword = findViewById(R.id.tbx_password_login);
+        tbxUserPassword = findViewById(R.id.tbx_password_login);
         txtError = findViewById(R.id.txt_error_login);
         ImageView imgPasswordIcon = findViewById(R.id.img_password_icon);
         configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
@@ -74,6 +75,11 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     @Override
     public void hideErrorMessage() {
         txtError.setVisibility(GONE);
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 
 

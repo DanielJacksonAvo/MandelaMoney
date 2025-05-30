@@ -39,6 +39,7 @@ public class LoginController {
         Intent intent = new Intent(context, DashboardActivity.class);
         intent.putExtra("user", user);
         context.startActivity(intent);
+        view.finishActivity();
     }
 
     private Object[] callSQLLogin(String userEmail, String userPassword) {
