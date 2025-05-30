@@ -1,8 +1,6 @@
 package com.example.mandelamoney;
 
 import android.content.Context;
-import android.content.Intent;
-
 import java.util.ArrayList;
 
 public class DashboardController {

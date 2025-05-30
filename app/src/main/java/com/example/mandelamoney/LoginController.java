@@ -35,7 +35,7 @@ public class LoginController {
         context.startActivity(intent);
     }
 
-    private User callSQLLogin(String userEmail, String userPassword) throws SQLException {
+    private User callSQLLogin(String userEmail, String userPassword) {
         return MySQLConnector.validateEmailPassword(userEmail, userPassword, context);
     }
 }
