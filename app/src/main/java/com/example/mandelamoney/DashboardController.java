@@ -17,7 +17,14 @@ public class DashboardController {
     }
 
     public void handleLoadUserToUI() {
-        //puts user data to ui
+        view.displayBalance(user.getUserBalance());
+        if (user instanceof Student) {
+            String fullname = ((Student)user).getStudentFirstName() + " " + ((Student)user).getStudentLastName();
+            view.displayUserName(fullname);
+        }
+        if (user instanceof Business) {
+            view.displayUserName((((Business) user).getBusinessName()));
+        }
     }
 
     public void handleBalanceRefresh() {
