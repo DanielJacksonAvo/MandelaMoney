@@ -49,7 +49,7 @@ public class MySQLConnector {
             try {
                 Log.d("MySQLConnector", "Attempting to connect to DB. Attempt " + (attempts + 1) + " of " + MAX_RETRIES);
 
-                Class.forName("com.mysql.cj.jdbc.Driver");
+                Class.forName("com.mysql.jdbc.Driver");
 
                 DriverManager.setLoginTimeout(CONNECTION_TIMEOUT_SECONDS);
 
