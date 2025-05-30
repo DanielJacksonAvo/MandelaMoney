@@ -22,7 +22,13 @@ public class LoginController {
             return;
         }
 
-        user = callSQLLogin(userEmail, userPassword);
+        Object[] objs = callSQLLogin(userEmail, userPassword);
+
+        if(objs == null || !((boolean) objs[1])) {
+            return;
+        }
+
+        user = (User)objs[0];
 
         if (user == null) {
             view.showErrorMessage();
@@ -35,7 +41,7 @@ public class LoginController {
         context.startActivity(intent);
     }
 
-    private User callSQLLogin(String userEmail, String userPassword) {
+    private Object[] callSQLLogin(String userEmail, String userPassword) {
         return MySQLConnector.validateEmailPassword(userEmail, userPassword, context);
     }
 }
