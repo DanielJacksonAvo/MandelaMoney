@@ -16,6 +16,24 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="SecondaryButton">
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/white30</item>
+        <item name="android:textSize">16sp</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TertiaryButton">
+        <item name="android:textColor">@color/mandelaBlue</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textSize">10sp</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <style name="HyperLinkButton">
         <item name="android:fontFamily">@font/dm_sans_medium</item>
         <item name="android:textSize">14sp</item>
@@ -38,8 +56,5 @@
         <item name="android:paddingRight">12dp</item>
         <item name="android:textSize">16sp</item>
     </style>
-
-
-
 
 </resources>

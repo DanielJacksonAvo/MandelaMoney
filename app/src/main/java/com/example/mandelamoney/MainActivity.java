@@ -1,10 +1,7 @@
 package com.example.mandelamoney;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -19,7 +16,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Context context = getApplicationContext();
         EdgeToEdge.enable(this);
         WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
@@ -30,12 +26,11 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        while (!MySQLConnector.connectToDB()) {
-            Toast.makeText(context, "Failed to connect. Trying again...", Toast.LENGTH_LONG).show();
-        }
-
+        MySQLConnector.AppStartUpConnection(this);
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
+
+        finish();
 
 
 

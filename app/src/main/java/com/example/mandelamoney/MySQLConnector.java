@@ -15,126 +15,179 @@ public class MySQLConnector {
     private final static String DB_URL = BuildConfig.DB_URL;
     private final static String DB_USERNAME = BuildConfig.DB_USERNAME;
     private final static String DB_PASSWORD = BuildConfig.DB_PASSWORD;
-    private static Connection connection;
 
-    public static boolean connectToDB() {
-        connection = null;
+    private static volatile Connection connection;
 
-        try {
-            // Allow network operations on the main thread (only for testing)
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
+    private final static int CONNECTION_TIMEOUT_SECONDS = 7;
+    private final static int MAX_RETRIES = 3;
+    private final static long RETRY_DELAY_MS = 2000;
 
-            // Load the MySQL JDBC driver
-            Class.forName("com.mysql.jdbc.Driver");
-
-            // Connect to the database
-            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-
-            if (connection != null) {
-                Log.d("MySQL", "Connected successfully.");
-            } else {
-                Log.e("MySQL", "Connection failed.");
-            }
-
-        } catch (SQLException e) {
-            Log.e("MySQL", "SQLException: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            Log.e("MySQL", "JDBC Driver not found: " + e.getMessage());
-        } catch (Exception e) {
-            Log.e("MySQL", "Exception: " + e.getMessage());
-        }
-
-        return connection != null;
-
+    private MySQLConnector() {
     }
 
-    private static ResultSet executeQuery(String query, Context context) {
-        while (connection == null || !isConnected()) {
-            Log.e("MySQL", "Not connected to database. Attempting to reconnect...");
-            // Display a Toast message to the user indicating connection attempt.
-            Toast.makeText(context, "Failed to connect. Trying again...", Toast.LENGTH_LONG).show();
-            // Attempt to establish a new connection.
-            if (!connectToDB()) {
-                // If reconnection fails, wait a bit before retrying to avoid busy-looping.
+    private static synchronized boolean connectToDB(Context context) {
+        if (connection != null) {
+            try {
+                if (connection.isValid(CONNECTION_TIMEOUT_SECONDS)) {
+                    Log.d("MySQLConnector", "Existing connection is valid.");
+                    return true;
+                } else {
+                    Log.d("MySQLConnector", "Existing connection is invalid. Closing and reconnecting.");
+                    closeConnection();
+                }
+            } catch (SQLException e) {
+                Log.e("MySQLConnector", "Error checking existing connection validity: " + e.getMessage());
+                closeConnection();
+            }
+        }
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        int attempts = 0;
+        while (attempts < MAX_RETRIES) {
+            try {
+                Log.d("MySQLConnector", "Attempting to connect to DB. Attempt " + (attempts + 1) + " of " + MAX_RETRIES);
+                if (attempts != 0) {
+                    Toast.makeText(context,"Database connection lost. Reconnecting...", Toast.LENGTH_SHORT).show();
+                }
+
+                Class.forName("com.mysql.jdbc.Driver");
+
+                DriverManager.setLoginTimeout(CONNECTION_TIMEOUT_SECONDS);
+
+                connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+
+                if (connection != null && connection.isValid(CONNECTION_TIMEOUT_SECONDS)) {
+                    Log.d("MySQLConnector", "Connected successfully to database.");
+                    if(attempts != 0) {
+                        Toast.makeText(context,"Connected successfully to database.", Toast.LENGTH_LONG).show();
+                    }
+                    return true;
+                } else {
+                    Log.e("MySQLConnector", "Connection failed: Connection object is null or invalid.");
+                }
+
+            } catch (SQLException e) {
+                Log.e("MySQLConnector", "SQLException during connection attempt: " + e.getMessage());
+            } catch (ClassNotFoundException e) {
+                Log.e("MySQLConnector", "JDBC Driver not found: " + e.getMessage());
+                break;
+            } catch (Exception e) {
+                Log.e("MySQLConnector", "Unexpected Exception during connection attempt: " + e.getMessage());
+            }
+
+            attempts++;
+            if (attempts < MAX_RETRIES) {
                 try {
-                    Thread.sleep(2000); // Wait for 2 seconds
+                    Log.d("MySQLConnector", "Connection failed. Retrying in " + RETRY_DELAY_MS + "ms...");
+                    Thread.sleep(RETRY_DELAY_MS);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
-                    Log.e("MySQL", "Interrupted during reconnection wait: " + ie.getMessage());
-                    return null; // Exit if interrupted
+                    Log.e("MySQLConnector", "Connection retry interrupted: " + ie.getMessage());
+                    break;
                 }
             }
         }
+        Log.e("MySQLConnector", "Failed to connect to database after " + MAX_RETRIES + " attempts.");
+        Toast.makeText(context, "Failed to connect to database.",Toast.LENGTH_LONG).show();
+        return false;
+    }
+
+    public static void AppStartUpConnection(Context context) {
+        connectToDB(context);
+    }
+
+    private static synchronized Connection getConnection(Context context) {
+        try {
+            if (connection == null || !connection.isValid(CONNECTION_TIMEOUT_SECONDS)) {
+                Log.d("MySQLConnector", "Connection is null or invalid. Attempting to reconnect.");
+                if (context != null) {
+                    Toast.makeText(context.getApplicationContext(), "Database connection lost. Reconnecting...", Toast.LENGTH_LONG).show();
+                }
+                if (!connectToDB(context)) {
+                    Log.e("MySQLConnector", "Failed to establish a new connection.");
+                    if (context != null) {
+                        Toast.makeText(context.getApplicationContext(), "Failed to connect to database.", Toast.LENGTH_LONG).show();
+                    }
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error checking connection validity in getConnection: " + e.getMessage());
+            if (!connectToDB(context)) {
+                Log.e("MySQLConnector", "Failed to establish a new connection after validity check error.");
+                if (context != null) {
+                    Toast.makeText(context.getApplicationContext(), "Failed to connect to database.", Toast.LENGTH_LONG).show();
+                }
+                return null;
+            }
+        }
+        return connection;
+    }
+
+    public static ResultSet executeQuery(String query, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot execute query: No valid database connection.");
+            return null;
+        }
 
         try {
-            // Create a statement and execute the query.
-            return connection.createStatement().executeQuery(query);
+            return currentConnection.createStatement().executeQuery(query);
         } catch (SQLException e) {
-            // Log any SQL errors that occur during query execution.
-            Log.e("MySQL", "Error executing select query: " + e.getMessage());
+            Log.e("MySQLConnector", "Error executing select query: " + e.getMessage());
             return null;
         }
     }
 
-    private static boolean isConnected() {
-        try {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException e) {
-            Log.e("MySQL", "Error checking connection status: " + e.getMessage());
-            return false;
-        }
-    }
-
-    public static User validateEmailPassword(String userEmail, String userPassword, Context context) throws SQLException {
-        while (connection == null || !isConnected()) {
-            Log.e("MySQL", "Not connected to database for procedure call. Attempting to reconnect...");
-            Toast.makeText(context, "Failed to connect. Trying again...", Toast.LENGTH_LONG).show();
-            if (!connectToDB()) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    Log.e("MySQL", "Interrupted during reconnection wait for procedure call: " + ie.getMessage());
-                    return null;
-                }
-            }
-        }
-
-        CallableStatement callableStatement = null;
-        ResultSet resultSet = null;
+    public static Object[] validateEmailPassword(String userEmail, String userPassword, Context context) {
+        Connection currentConnection = getConnection(context);
         User user = null;
+        Object[] objs = new Object[2];
+        boolean connectionEstablished = false;
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot validate email/password: No valid database connection.");
+            objs[0] = user;
+            objs[1] = connectionEstablished;
+            return null;
+        }
+        connectionEstablished = true;
 
-        try {
-            String callProcedureSQL = "{CALL MandelaMoneyDB.ValidateEmailPassword(?, ?)}";
-            callableStatement = connection.prepareCall(callProcedureSQL);
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.ValidateEmailPassword(?, ?)}")) {
 
             callableStatement.setString(1, userEmail);
             callableStatement.setString(2, userPassword);
 
+            Log.d("MySQLConnector", "Calling ValidateEmailPassword for user: " + userEmail);
             boolean hasResultSet = callableStatement.execute();
 
             if (hasResultSet) {
-                resultSet = callableStatement.getResultSet();
+                try (ResultSet resultSet = callableStatement.getResultSet()) {
+                    user = ResultSetParser.parseValidateEmailPassword(resultSet, userEmail, userPassword);
+                    objs[0] = user;
+                    objs[1] = connectionEstablished;
+                }
             } else {
-                Log.d("MySQL", "Stored procedure 'ValidateEmailPassword' did not return a ResultSet.");
+                Log.d("MySQLConnector", "Stored procedure 'ValidateEmailPassword' did not return a ResultSet.");
             }
-            user = ResultSetParser.parseValidateEmailPassword(resultSet, userEmail, userPassword);
 
         } catch (SQLException e) {
-            Log.e("MySQL", "Error calling stored procedure 'ValidateEmailPassword': " + e.getMessage());
-        } finally {
-            if (callableStatement != null) {
-                try {
-                    callableStatement.close();
-                } catch (SQLException e) {
-                    Log.e("MySQL", "Error closing CallableStatement: " + e.getMessage());
-                }
-            }
+            Log.e("MySQLConnector", "Error calling stored procedure 'ValidateEmailPassword': " + e.getMessage());
         }
-        return user;
-
+        return objs;
     }
 
-
+    public static synchronized void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+                connection = null;
+                Log.d("MySQLConnector", "Database connection closed.");
+            } catch (SQLException e) {
+                Log.e("MySQLConnector", "Error closing database connection: " + e.getMessage());
+            }
+        }
+    }
 }
