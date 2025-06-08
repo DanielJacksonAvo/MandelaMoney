@@ -198,7 +198,7 @@ public class MySQLConnector {
             callableStatement.registerOutParameter(2, java.sql.Types.BOOLEAN);   // out_exists
             callableStatement.registerOutParameter(3, java.sql.Types.VARCHAR);   // out_password_hash
 
-            Log.d("MySQLConnector", "Calling getRecoveryCodeHash for user: " + userEmail);
+            Log.d("MySQLConnector", "Calling GetRecoveryCodeHash for user: " + userEmail);
             callableStatement.execute();
 
             boolean userExists = callableStatement.getBoolean(2);
@@ -209,7 +209,7 @@ public class MySQLConnector {
             result[2] = connectionEstablished;
 
         } catch (SQLException e) {
-            Log.e("MySQLConnector", "Error calling stored procedure 'getRecoveryCodeHash': " + e.getMessage());
+            Log.e("MySQLConnector", "Error calling stored procedure 'GetRecoveryCodeHash': " + e.getMessage());
             result[0] = false;
             result[1] = null;
             result[2] = connectionEstablished;

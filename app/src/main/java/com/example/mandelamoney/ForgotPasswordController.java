@@ -38,10 +38,12 @@ public class ForgotPasswordController {
                 String subject = "Mandela Money Recovery Code";
                 String body = "Your Mandela Money account recovery code is: " + hashcode;
                 sender.sendMail(subject, body, userEmail);
+                android.util.Log.i("EmailSender", "Email sent successfully to " + userEmail);
             } catch (Exception e) {
-                e.printStackTrace();
+                android.util.Log.e("EmailSender", "Failed to send email", e);
             }
         }).start();
+
 
         view.hideErrorMessage_InvalidEmail();
         Intent intent = new Intent(context, RecoverAccountActivity.class);
