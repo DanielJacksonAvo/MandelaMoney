@@ -41,6 +41,11 @@ public class LoginController {
         context.startActivity(intent);
         view.finishActivity();
     }
+    public void handleForgotPassword(){
+        Intent intent = new Intent(context, ForgotPasswordActivity.class);
+        context.startActivity(intent);
+        view.finishActivity();
+    }
 
     private Object[] callSQLLogin(String userEmail, String userPassword) {
         return MySQLConnector.validateEmailPassword(userEmail, userPassword, context);

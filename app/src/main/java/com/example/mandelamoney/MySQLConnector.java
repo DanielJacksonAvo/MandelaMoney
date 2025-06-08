@@ -178,6 +178,45 @@ public class MySQLConnector {
         }
         return objs;
     }
+    public static Object[] getRecoveryCodeHash(String userEmail, Context context) {
+        Connection currentConnection = getConnection(context);
+        Object[] result = new Object[3]; // [0]: userExists (Boolean), [1]: hashCode (String), [2]: connectionEstablished (Boolean)
+        boolean connectionEstablished = false;
+
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot return recovery code: No valid database connection.");
+            result[0] = false;
+            result[1] = null;
+            result[2] = false;
+            return result;
+        }
+        connectionEstablished = true;
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.GetRecoveryCodeHash(?, ?, ?)}")) {
+
+            callableStatement.setString(1, userEmail);
+            callableStatement.registerOutParameter(2, java.sql.Types.BOOLEAN);   // out_exists
+            callableStatement.registerOutParameter(3, java.sql.Types.VARCHAR);   // out_password_hash
+
+            Log.d("MySQLConnector", "Calling getRecoveryCodeHash for user: " + userEmail);
+            callableStatement.execute();
+
+            boolean userExists = callableStatement.getBoolean(2);
+            String hashCode = callableStatement.getString(3);
+
+            result[0] = userExists;
+            result[1] = hashCode;
+            result[2] = connectionEstablished;
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'getRecoveryCodeHash': " + e.getMessage());
+            result[0] = false;
+            result[1] = null;
+            result[2] = connectionEstablished;
+        }
+
+        return result;
+    }
 
     public static synchronized void closeConnection() {
         if (connection != null) {
