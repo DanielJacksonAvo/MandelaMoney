@@ -13,6 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp.Light">
+        <activity android:name=".ResetPasswordActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity android:name=".RecoverAccountActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
