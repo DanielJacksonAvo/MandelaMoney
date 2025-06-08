@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mandelaBlue"
+    android:elevation="100dp"
+    tools:context=".CreateAccount_SelectUserTypeActivity">
+
+    <TextView
+        android:id="@+id/btn_cancel_selectaccounttype_createaccount"
+        style="@style/HyperLinkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@android:string/cancel"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/blurView_createaccountstudent"
+        app:layout_constraintStart_toStartOf="@+id/blurView_createaccountstudent"
+        app:layout_constraintTop_toBottomOf="@+id/blurView_createaccountstudent"
+        app:layout_constraintVertical_bias="0.2" />
+
+    <ImageView
+        android:id="@+id/img_mandelamoney_selectaccounttype_createaccount"
+        android:layout_width="375dp"
+        android:layout_height="104dp"
+        android:contentDescription="@string/todo"
+        app:layout_constraintBottom_toTopOf="@+id/blurView_createaccountstudent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6"
+        app:srcCompat="@drawable/img_mandelamoney_text" />
+
+
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blurView_createaccountstudent"
+        style="@style/BlurPanel"
+        android:layout_width="0dp"
+        android:layout_height="327dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_createaccount_student"
+                style="@style/PrimaryButton"
+                android:layout_width="233dp"
+                android:layout_height="43dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="0dp"
+                android:paddingRight="43dp"
+                android:paddingBottom="0dp"
+                android:text="@string/student"
+                app:icon="@drawable/img_student_icon"
+                app:iconPadding="0dp"
+                app:iconSize="27dp"
+                app:iconTint="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView"
+                app:layout_constraintVertical_bias="0.25" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_createaccount_business"
+                style="@style/TertiaryButton"
+                android:layout_width="233dp"
+                android:layout_height="43dp"
+                android:layout_margin="0dp"
+                android:layout_marginHorizontal="0dp"
+                android:layout_marginVertical="0dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="0dp"
+                android:paddingRight="43dp"
+                android:paddingBottom="0dp"
+                android:text="@string/business"
+                android:textSize="16sp"
+                app:icon="@drawable/img_business_icon"
+                app:iconPadding="0dp"
+                app:iconSize="27dp"
+                app:iconTint="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView"
+                app:layout_constraintVertical_bias="0.75"
+                app:layout_marginBaseline="0dp" />
+
+            <TextView
+                android:id="@+id/txt_error_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/email_password_invalid"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="45dp"
+                android:text="@string/select_account_type"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextBox"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.100000024" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </eightbitlab.com.blurview.BlurView>
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="130dp"
+        android:layout_height="105dp"
+        android:layout_marginBottom="-50dp"
+        android:contentDescription="@string/mandela_money_logo"
+        app:layout_constraintBottom_toTopOf="@+id/blurView_createaccountstudent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_mandelamoney_selectaccounttype_createaccount"
+        app:srcCompat="@drawable/img_mandelamoneylogo" />
+</androidx.constraintlayout.widget.ConstraintLayout>
