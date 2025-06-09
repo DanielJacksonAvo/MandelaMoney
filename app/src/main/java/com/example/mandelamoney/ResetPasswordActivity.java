@@ -19,7 +19,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ResetPasswordActivity extends AppCompatActivity implements IResetPasswordView{
@@ -118,8 +117,8 @@ public class ResetPasswordActivity extends AppCompatActivity implements IResetPa
     }
 
     @Override
-    public void showErrorMessage_PasswordsDoNotMatch() {
-        //txtError.setText(@Strings....)
+    public void showErrorMessage_PasswordsDoNotMatch(String string) {
+        txtError.setText(string);
         txtError.setVisibility(VISIBLE);
     }
 
@@ -129,8 +128,8 @@ public class ResetPasswordActivity extends AppCompatActivity implements IResetPa
     }
 
     @Override
-    public void showErrorMessage_Minimum8Characters() {
-       // txtError.setText(@Strings/id="");
+    public void showErrorMessage_Minimum8Characters(String string) {
+       txtError.setText(string);
         txtError.setVisibility(VISIBLE);
     }
 
@@ -141,6 +140,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements IResetPa
 
     @Override
     public void finishActivity() {
-
+        finish();
     }
 }

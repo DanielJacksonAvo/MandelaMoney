@@ -22,13 +22,13 @@ public class ForgotPasswordController {
 
         Object[] objs = callSQLForgotPassword(userEmail);
         if (objs == null || !(boolean) objs[0]) {
-            view.showErrorMessage_InvalidEmail();
+            //view.showErrorMessage_InvalidEmail();
             return;
         }
 
         String hashcode = (String) objs[1];
         if (hashcode == null || hashcode.isEmpty()) {
-            view.showErrorMessage_InvalidEmail();
+            //view.showErrorMessage_InvalidEmail();
             return;
         }
 

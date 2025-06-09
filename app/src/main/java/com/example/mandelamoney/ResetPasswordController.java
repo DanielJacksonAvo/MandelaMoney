@@ -1,4 +1,5 @@
 package com.example.mandelamoney;
+
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
@@ -8,26 +9,34 @@ public class ResetPasswordController {
     private final IResetPasswordView view;
     private String recoveryCode;
     private String userEmail;
+
     public ResetPasswordController(Context context, IResetPasswordView view){
         this.context = context;
         this.view = view;
     }
 
     public void setUserEmail(String userEmail) {
-        this.userEmail =userEmail;
+        this.userEmail = userEmail;
     }
+
+    public void setUserRecoveryCode(String recoveryCode) {
+        this.recoveryCode = recoveryCode;
+    }
+
     public void handleResetPassword(String newPassword, String confirmNewPassword) {
-        // 1) Check if passwords match
+
+        view.hideErrorMessage_PasswordsDoNotMatch();
+        view.hideErrorMessage_Minimum8Characters();
         if (!newPassword.equals(confirmNewPassword)) {
-            // Show error: passwords do not match
+            view.showErrorMessage_PasswordsDoNotMatch(context.getString(R.string.passwords_do_not_match_error));
+            return;
         }
-        // 1.1) Check password length >= 8
+
         if (newPassword.length() < 8) {
-            //Show Error
+            view.showErrorMessage_Minimum8Characters(context.getString(R.string.minimum_8_characters));
             return;
         }
         boolean resetSuccess = MySQLConnector.resetPassword(userEmail, recoveryCode, newPassword, context);
-
 
         if (resetSuccess) {
             Toast.makeText(context, "Password reset successful! Please log in.", Toast.LENGTH_LONG).show();
@@ -35,17 +44,13 @@ public class ResetPasswordController {
             context.startActivity(intent);
             view.finishActivity();
         } else {
-            Toast.makeText(context, "Password reset failed. Please check your recovery code and try again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, context.getString(R.string.invalid_recovery_code), Toast.LENGTH_LONG).show();
         }
     }
 
-    public void handleCancel(){
+    public void handleCancel() {
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
         view.finishActivity();
-    }
-
-    public void setUserRecoveryCode(String recoveryCode) {
-        this.recoveryCode = recoveryCode;
     }
 }
