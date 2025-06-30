@@ -8,8 +8,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class CreateAccount_EnterBusinessDetailsActivity extends AppCompatActivity {
+public class CreateAccount_EnterBusinessDetailsActivity extends AppCompatActivity implements ICreateBusinessAccount{
 
+    CreateAccountController controller;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,4 +22,11 @@ public class CreateAccount_EnterBusinessDetailsActivity extends AppCompatActivit
             return insets;
         });
     }
+
+    @Override
+    public void setController(CreateAccountController createAccountController) {
+        this.controller = createAccountController;
+    }
+
+
 }

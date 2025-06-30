@@ -20,7 +20,7 @@ public class MySQLConnector {
 
     private final static int CONNECTION_TIMEOUT_SECONDS = 7;
     private final static int MAX_RETRIES = 3;
-    private final static long RETRY_DELAY_MS = 2000;
+    private final static long RETRY_DELAY_MS = 3000;
 
     private MySQLConnector() {
     }
@@ -178,6 +178,43 @@ public class MySQLConnector {
         }
         return objs;
     }
+
+    public static boolean checkUniqueEmail(String userEmail, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot check unique email: No valid database connection.");
+            return false;
+        }
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL checkUniqueEmail(?)}")) {
+            callableStatement.setString(1, userEmail);
+
+            Log.d("MySQLConnector", "Calling checkUniqueEmail for user: " + userEmail);
+            boolean hasResultSet = callableStatement.execute();
+
+            if (hasResultSet) {
+                try (ResultSet resultSet = callableStatement.getResultSet()) {
+                    if (resultSet.next()) {
+                        int result = resultSet.getInt(1);
+                        if (result == 1) {
+                            Log.d("MySQLConnector", "Email is unique.");
+                            return true;
+                        } else {
+                            Log.d("MySQLConnector", "Email is not unique.");
+                            return false;
+                        }
+                    }
+                }
+            } else {
+                Log.d("MySQLConnector", "Stored procedure 'checkUniqueEmail' did not return a ResultSet.");
+            }
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'checkUniqueEmail': " + e.getMessage());
+        }
+
+        return false;
+    }
+
 
     public static synchronized void closeConnection() {
         if (connection != null) {

@@ -37,7 +37,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_create_createstudentaccount"
         style="@style/PrimaryButton"
-        android:layout_width="192dp"
+        android:layout_width="wrap_content"
         android:layout_height="43dp"
         android:layout_marginTop="-21.5dp"
         android:text="Create Account"
@@ -62,6 +62,34 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/txt_error_details_createstudentaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/email_password_invalid"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout_password_createstudentaccount"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
+                app:layout_constraintVertical_bias="0.25" />
+
+            <TextView
+                android:id="@+id/txt_error_password_createstudentaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@string/email_password_invalid"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.502"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createstudentaccount"
+                app:layout_constraintVertical_bias="0.25" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout_password_reenter_createstudentaccount"
