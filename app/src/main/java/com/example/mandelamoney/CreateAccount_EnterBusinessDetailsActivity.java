@@ -23,10 +23,24 @@ public class CreateAccount_EnterBusinessDetailsActivity extends AppCompatActivit
         });
     }
 
+
     @Override
-    public void setController(CreateAccountController createAccountController) {
-        this.controller = createAccountController;
+    public void showPasswordError(String message) {
+
     }
 
+    @Override
+    public void hidePasswordError() {
 
+    }
+
+    @Override
+    public void showDetailError(String message) {
+
+    }
+
+    @Override
+    public void hideDetailError() {
+
+    }
 }
