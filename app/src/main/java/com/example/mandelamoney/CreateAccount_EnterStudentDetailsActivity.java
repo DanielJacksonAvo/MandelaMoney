@@ -36,10 +36,14 @@ public class CreateAccount_EnterStudentDetailsActivity extends AppCompatActivity
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        controller = (CreateAccountController) DataShare.receive();
-        controller.setContextViewStudent(this, this);
+        setController();
         connectToUI();
 
+    }
+
+    private void setController() {
+        controller = (CreateAccountController) DataShare.receive();
+        controller.setContextViewStudent(this, this);
     }
 
     private void connectToUI() {
@@ -63,7 +67,7 @@ public class CreateAccount_EnterStudentDetailsActivity extends AppCompatActivity
 
     private void configureCancelButton(TextView btnCancel) {
         btnCancel.setOnClickListener((view) -> {
-            controller.handleCreateStudentAccountCancel();
+            controller.handleCreateAccountCancel();
         });
     }
 

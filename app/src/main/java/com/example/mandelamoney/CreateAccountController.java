@@ -15,6 +15,7 @@ public class CreateAccountController {
     private Context context;
     private ISelectUserType_CreateAccount viewSelectUserType;
     private ICreateStudentAccount viewCreateStudentAccount;
+    private ICreateBusinessAccount viewCreateBusinessAccount;
 
     public CreateAccountController(Context context, ISelectUserType_CreateAccount viewSelectUserType) {
         this.context = context;
@@ -63,7 +64,7 @@ public class CreateAccountController {
             return;
         }
 
-        if(!checkNotEmpty(userLastName)) {
+        if (!checkNotEmpty(userLastName)) {
             viewCreateStudentAccount.showDetailError(context.getString(R.string.enter_a_last_name));
             return;
         }
@@ -107,7 +108,7 @@ public class CreateAccountController {
         viewSelectUserType.finishActivity();
     }
 
-    public void handleCreateStudentAccountCancel() {
+    public void handleCreateAccountCancel() {
         DataShare.send(this);
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
@@ -115,9 +116,15 @@ public class CreateAccountController {
 
     }
 
-    public void setContextViewStudent(Context context, ICreateStudentAccount viewCreateStudentAccount){
+
+    public void setContextViewStudent(Context context, ICreateStudentAccount viewCreateStudentAccount) {
         this.context = context;
         this.viewCreateStudentAccount = viewCreateStudentAccount;
+    }
+
+    public void setContextViewBusiness(Context context, ICreateBusinessAccount viewCreateBusinessAccount) {
+        this.context = context;
+        this.viewCreateBusinessAccount = viewCreateBusinessAccount;
     }
 
     private boolean checkPasswordMatch(String userPassword, String userPasswordReenter) {
@@ -134,7 +141,7 @@ public class CreateAccountController {
             return false;
         }
 
-        if (s.equals("")){
+        if (s.equals("")) {
             return false;
         }
 
