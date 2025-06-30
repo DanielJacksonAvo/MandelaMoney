@@ -28,20 +28,30 @@ public class CreateAccount_SelectUserTypeActivity extends AppCompatActivity impl
             return insets;
         });
         createAccountController = new CreateAccountController(this, this);
-        connectToUI();
+        connectToSelectUserTypeUI();
 
     }
 
-    private void connectToUI() {
+    private void connectToSelectUserTypeUI() {
         Button btnStudentType = findViewById(R.id.btn_createaccount_student);
         Button btnBusinessType = findViewById(R.id.btn_createaccount_business);
         TextView btnCancel = findViewById(R.id.btn_cancel_selectaccounttype_createaccount);
         configureCancelButton(btnCancel);
+        configureUserSelectButtons(btnStudentType, btnBusinessType);
+    }
+
+    private void connectToCreateStudentUI() {
+        TextView btnCancel = findViewById(R.id.btn_cancel_createstudentaccount);
+    }
+
+
+    private void connectToCreateBusinessUI() {
+
     }
 
     private void configureCancelButton(TextView btnCancel) {
         btnCancel.setOnClickListener((view) -> {
-            createAccountController.handleCancel();
+            createAccountController.handleSelectUserTypeCancel();
         });
     }
 

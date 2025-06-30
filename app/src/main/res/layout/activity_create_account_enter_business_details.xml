@@ -37,7 +37,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_create_createbusinessaccount"
         style="@style/PrimaryButton"
-        android:layout_width="192dp"
+        android:layout_width="wrap_content"
         android:layout_height="43dp"
         android:layout_marginTop="-21.5dp"
         android:text="Create Account"
@@ -118,18 +118,18 @@
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
-                    android:id="@+id/img_studentnumber_icon_createbusinessaccount"
+                    android:id="@+id/img_phone_icon_createbusinessaccount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/img_student_icon"
+                    android:src="@drawable/img_phone_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_studentnumber_createbusinessaccount"
+                    android:id="@+id/tbx_phone_createbusinessaccount"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -158,18 +158,18 @@
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
-                    android:id="@+id/img_lastname_icon_createbusinessaccount"
+                    android:id="@+id/img_vat_icon_createbusinessaccount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/img_lastname_icon"
+                    android:src="@drawable/img_vat_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_lastname_createbusinessaccount"
+                    android:id="@+id/tbx_vat_createbusinessaccount"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -198,18 +198,18 @@
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
-                    android:id="@+id/img_firstname_icon_createbusinessaccount"
+                    android:id="@+id/img_name_icon_createbusinessaccount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/img_firstname_icon"
+                    android:src="@drawable/img_business_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_firstname_createbusinessaccount"
+                    android:id="@+id/tbx_name_createbusinessaccount"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"

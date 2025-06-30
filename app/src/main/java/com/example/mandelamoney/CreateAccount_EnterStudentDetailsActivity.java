@@ -1,6 +1,15 @@
 package com.example.mandelamoney;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,7 +17,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class CreateAccount_EnterStudentDetailsActivity extends AppCompatActivity {
+import java.util.concurrent.atomic.AtomicReference;
+
+public class CreateAccount_EnterStudentDetailsActivity extends AppCompatActivity implements ICreateStudentAccount{
+
+    private CreateAccountController controller;
+    TextView txtPasswordError;
+    TextView txtDetailError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,8 +32,115 @@ public class CreateAccount_EnterStudentDetailsActivity extends AppCompatActivity
         setContentView(R.layout.activity_create_account_enter_student_details);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        controller = (CreateAccountController) DataShare.receive();
+        controller.setContextViewStudent(this, this);
+        connectToUI();
+
     }
+
+    private void connectToUI() {
+        TextView btnCancel = findViewById(R.id.btn_cancel_createstudentaccount);
+        EditText tbxEmail = findViewById(R.id.tbx_email_createstudentaccount);
+        EditText tbxFirstName = findViewById(R.id.tbx_firstname_createstudentaccount);
+        EditText tbxLastName = findViewById(R.id.tbx_lastname_createstudentaccount);
+        EditText tbxStudentNumber = findViewById(R.id.tbx_studentnumber_createstudentaccount);
+        Button btnCreateAccount = findViewById(R.id.btn_create_createstudentaccount);
+        EditText tbxPassword = findViewById(R.id.tbx_password_createstudentaccount);
+        EditText tbxPasswordReenter = findViewById(R.id.tbx_password_reenter_createstudentaccount);
+        ImageView imgPasswordIcon = findViewById(R.id.img_password_icon_createstudentaccount);
+        ImageView imgPasswordRenterIcon = findViewById(R.id.img_password_reenter_createstudentaccount);
+        txtPasswordError = findViewById(R.id.txt_error_password_createstudentaccount);
+        txtDetailError = findViewById(R.id.txt_error_details_createstudentaccount);
+        configureCancelButton(btnCancel);
+        configureCreateAccountButton(btnCreateAccount, tbxEmail, tbxFirstName, tbxLastName, tbxStudentNumber, tbxPassword, tbxPasswordReenter);
+        configurePasswordVisibility(imgPasswordIcon, tbxPassword);
+        configurePasswordVisibility(imgPasswordRenterIcon, tbxPasswordReenter);
+    }
+
+    private void configureCancelButton(TextView btnCancel) {
+        btnCancel.setOnClickListener((view) -> {
+            controller.handleCreateStudentAccountCancel();
+        });
+    }
+
+    private void configureCreateAccountButton(Button btnCreateAccount, EditText tbxEmail, EditText tbxFirstName, EditText tbxLastName, EditText tbxStudentNumber, EditText tbxPassword, EditText tbxPasswordReenter) {
+        btnCreateAccount.setOnClickListener((view) -> {
+            controller.handleCreateStudentUser(String.valueOf(tbxEmail.getText()), String.valueOf(tbxFirstName.getText()), String.valueOf(tbxLastName.getText()), String.valueOf(tbxStudentNumber.getText()), String.valueOf(tbxPassword.getText()), String.valueOf(tbxPasswordReenter.getText()));
+        });
+    }
+
+    @Override
+    public void showPasswordError(String message) {
+        txtPasswordError.setVisibility(View.VISIBLE);
+        txtPasswordError.setText(message);
+    }
+
+    @Override
+    public void hidePasswordError() {
+        txtPasswordError.setVisibility(View.GONE);
+
+    }
+
+    @Override
+    public void showDetailError(String message) {
+        txtDetailError.setVisibility(View.VISIBLE);
+        txtDetailError.setText(message);
+    }
+
+    @Override
+    public void hideDetailError() {
+        txtDetailError.setText(View.GONE);
+
+    }
+
+    private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
+        tbxUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        tbxUserPassword.setTransformationMethod(new PasswordTransformationMethod());
+        imgPasswordIcon.setImageResource(R.drawable.img_password_icon);
+
+        AtomicReference<Boolean> isPasswordVisible = new AtomicReference<>(false);
+
+        tbxUserPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    imgPasswordIcon.setImageResource(isPasswordVisible.get() ?
+                            R.drawable.img_eye_closed : R.drawable.img_eye_open);
+                } else {
+                    imgPasswordIcon.setImageResource(R.drawable.img_password_icon);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        imgPasswordIcon.setOnClickListener(view -> {
+            if (tbxUserPassword.getText().length() == 0) {
+                return;
+            }
+
+            boolean temp = !isPasswordVisible.get();
+            isPasswordVisible.set(temp);
+
+            if (isPasswordVisible.get()) {
+                tbxUserPassword.setTransformationMethod(null);
+                imgPasswordIcon.setImageResource(R.drawable.img_eye_closed);
+            } else {
+                tbxUserPassword.setTransformationMethod(new PasswordTransformationMethod());
+                imgPasswordIcon.setImageResource(R.drawable.img_eye_open);
+            }
+
+            tbxUserPassword.setSelection(tbxUserPassword.getText().length());
+        });
+    }
+
+
 }
