@@ -63,6 +63,34 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/txt_error_password_createbusinessaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@string/email_password_invalid"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.502"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createstudentaccount"
+                app:layout_constraintVertical_bias="0.25" />
+
+            <TextView
+                android:id="@+id/txt_error_details_createbusinessaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/email_password_invalid"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout_password_createstudentaccount"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
+                app:layout_constraintVertical_bias="0.25" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout_password_reenter_createbusinessaccount"
                 android:layout_width="match_parent"
@@ -82,6 +110,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:autofillHints="@string/password"
+                    android:fontFamily="@font/dm_sans_medium"
                     android:hint="CONFIRM"
                     android:inputType="textPassword"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -243,6 +272,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:autofillHints="@string/password"
+                    android:fontFamily="@font/dm_sans_medium"
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     app:layout_constraintBottom_toBottomOf="parent"
