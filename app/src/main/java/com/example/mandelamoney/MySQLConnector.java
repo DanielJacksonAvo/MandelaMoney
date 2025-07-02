@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 public class MySQLConnector {
     private final static String DB_URL = BuildConfig.DB_URL;
@@ -20,7 +21,7 @@ public class MySQLConnector {
 
     private final static int CONNECTION_TIMEOUT_SECONDS = 7;
     private final static int MAX_RETRIES = 3;
-    private final static long RETRY_DELAY_MS = 2000;
+    private final static long RETRY_DELAY_MS = 3000;
 
     private MySQLConnector() {
     }
@@ -179,6 +180,43 @@ public class MySQLConnector {
         return objs;
     }
 
+    public static boolean checkUniqueEmail(String userEmail, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot check unique email: No valid database connection.");
+            return false;
+        }
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL checkUniqueEmail(?)}")) {
+            callableStatement.setString(1, userEmail);
+
+            Log.d("MySQLConnector", "Calling checkUniqueEmail for user: " + userEmail);
+            boolean hasResultSet = callableStatement.execute();
+
+            if (hasResultSet) {
+                try (ResultSet resultSet = callableStatement.getResultSet()) {
+                    if (resultSet.next()) {
+                        int result = resultSet.getInt(1);
+                        if (result == 1) {
+                            Log.d("MySQLConnector", "Email is unique.");
+                            return true;
+                        } else {
+                            Log.d("MySQLConnector", "Email is not unique.");
+                            return false;
+                        }
+                    }
+                }
+            } else {
+                Log.d("MySQLConnector", "Stored procedure 'checkUniqueEmail' did not return a ResultSet.");
+            }
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'checkUniqueEmail': " + e.getMessage());
+        }
+
+        return false;
+    }
+
+
     public static synchronized void closeConnection() {
         if (connection != null) {
             try {
@@ -188,6 +226,90 @@ public class MySQLConnector {
             } catch (SQLException e) {
                 Log.e("MySQLConnector", "Error closing database connection: " + e.getMessage());
             }
+        }
+    }
+
+    public static boolean createBusinessAccount(String userEmail, String userPassword, String businessName,
+                                                String businessPhoneNumber, String businessVAT, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot create business account: No valid database connection.");
+            return false;
+        }
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.CreateBusiness(?, ?, ?, ?, ?, ?)}")) {
+            // Set input parameters
+            callableStatement.setString(1, userEmail);
+            callableStatement.setString(2, userPassword);
+            callableStatement.setString(3, businessName);
+            callableStatement.setString(4, businessPhoneNumber);
+            callableStatement.setString(5, businessVAT);
+
+            // Register OUT parameter for the result
+            callableStatement.registerOutParameter(6, Types.INTEGER);
+
+            Log.d("MySQLConnector", "Calling CreateBusiness for email: " + userEmail);
+            callableStatement.execute();
+
+            // Retrieve the result from the OUT parameter
+            int result = callableStatement.getInt(6);
+
+            if (result == 1) {
+                Log.d("MySQLConnector", "Business account created successfully for email: " + userEmail);
+                //Toast.makeText(context, "Business account created successfully!", Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                Log.e("MySQLConnector", "Failed to create business account for email: " + userEmail + ". Email might already exist.");
+                Toast.makeText(context, "Failed to create business account. Email might already exist.", Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'CreateBusiness': " + e.getMessage());
+            //Toast.makeText(context, "Error creating business account: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return false;
+        }
+    }
+
+    public static boolean createStudentAccount(String userEmail, String userPassword, String studentFirstName,
+                                               String studentLastName, String studentNumber, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot create student account: No valid database connection.");
+            return false;
+        }
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.CreateStudent(?, ?, ?, ?, ?, ?)}")) {
+            // Set input parameters
+            callableStatement.setString(1, userEmail);
+            callableStatement.setString(2, userPassword);
+            callableStatement.setString(3, studentFirstName);
+            callableStatement.setString(4, studentLastName);
+            callableStatement.setString(5, studentNumber);
+
+            // Register OUT parameter for the result
+            callableStatement.registerOutParameter(6, Types.INTEGER);
+
+            Log.d("MySQLConnector", "Calling CreateStudent for email: " + userEmail);
+            callableStatement.execute();
+
+            // Retrieve the result from the OUT parameter
+            int result = callableStatement.getInt(6);
+
+            if (result == 1) {
+                Log.d("MySQLConnector", "Student account created successfully for email: " + userEmail);
+                //Toast.makeText(context, "Student account created successfully!", Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                Log.e("MySQLConnector", "Failed to create student account for email: " + userEmail + ". Email might already exist.");
+                //Toast.makeText(context, "Failed to create student account. Email might already exist.", Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'CreateStudent': " + e.getMessage());
+            //Toast.makeText(context, "Error creating student account: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return false;
         }
     }
 }
