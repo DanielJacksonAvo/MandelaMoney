@@ -44,7 +44,8 @@ public class CreateAccountController {
 
     public void handleCreateStudentUser(String userEmail, String userFirstName, String userLastName, String userStudentNumber, String userPassword, String userPasswordReenter) {
         viewCreateStudentAccount.hidePasswordError();
-        if (!checkNotEmpty(userEmail)) {
+        viewCreateStudentAccount.hideDetailError();
+        if (checkEmpty(userEmail)) {
             viewCreateStudentAccount.showDetailError(context.getString(R.string.enter_an_email));
             return;
         }
@@ -59,17 +60,17 @@ public class CreateAccountController {
             return;
         }
 
-        if (!checkNotEmpty(userFirstName)) {
+        if (checkEmpty(userFirstName)) {
             viewCreateStudentAccount.showDetailError(context.getString(R.string.enter_a_first_name));
             return;
         }
 
-        if (!checkNotEmpty(userLastName)) {
+        if (checkEmpty(userLastName)) {
             viewCreateStudentAccount.showDetailError(context.getString(R.string.enter_a_last_name));
             return;
         }
 
-        if (!checkNotEmpty(userStudentNumber)) {
+        if (checkEmpty(userStudentNumber)) {
             viewCreateStudentAccount.showDetailError(context.getString(R.string.enter_a_student_number));
             return;
         }
@@ -79,7 +80,7 @@ public class CreateAccountController {
             return;
         }
 
-        if (!checkNotEmpty(userPassword)) {
+        if (checkEmpty(userPassword)) {
             viewCreateStudentAccount.showPasswordError(context.getString(R.string.enter_a_password));
             return;
         }
@@ -95,10 +96,78 @@ public class CreateAccountController {
         }
 
         viewCreateStudentAccount.hidePasswordError();
+        viewCreateStudentAccount.hideDetailError();
+
+        if(MySQLConnector.createStudentAccount(userEmail, userPassword, userFirstName, userLastName, userStudentNumber, context) == false) {
+            Toast.makeText(context, "Account Failed to Created!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Toast.makeText(context, "Account Successfully Created!\nPlease login.", Toast.LENGTH_LONG).show();
     }
 
     public void handleCreateBusinessUser(String userEmail, String userBusinessName, String userBusinessVAT, String userBusinessPhone, String userPassword, String userPasswordReenter) {
+        viewCreateBusinessAccount.hidePasswordError();
+        viewCreateBusinessAccount.hideDetailError();
+
+        if (checkEmpty(userEmail)) {
+            viewCreateBusinessAccount.showDetailError(context.getString(R.string.enter_an_email));
+            return;
+        }
+
+        if (!isValidEmail(userEmail)) {
+            viewCreateBusinessAccount.showDetailError(context.getString(R.string.invalid_email));
+            return;
+        }
+
+        if (checkUniqueEmail(userEmail)) {
+            viewCreateBusinessAccount.showDetailError(context.getString(R.string.email_already_in_use));
+            return;
+        }
+
+        if (checkEmpty(userBusinessName)) {
+            viewCreateBusinessAccount.showDetailError(context.getString(R.string.enter_a_business_name));
+            return;
+        }
+
+        if (checkEmpty(userBusinessVAT)) {
+            viewCreateBusinessAccount.showDetailError(context.getString(R.string.enter_a_vat_number));
+            return;
+        }
+
+        if (!isValidVatNumber(userBusinessVAT)) {
+            viewCreateBusinessAccount.showDetailError(context.getString(R.string.invalid_vat_number));
+            return;
+        }
+
+        if (isValidPhoneNumber(userBusinessPhone)) {
+            viewCreateBusinessAccount.showDetailError(context.getString(R.string.invalid_phone_number));
+        }
+
+        if (checkEmpty(userPassword)) {
+            viewCreateBusinessAccount.showPasswordError(context.getString(R.string.enter_a_password));
+            return;
+        }
+
+        if (!checkPasswordLength(userPassword)) {
+            viewCreateBusinessAccount.showPasswordError(context.getString(R.string.password_too_short));
+            return;
+        }
+
+        if (!checkPasswordMatch(userPassword, userPasswordReenter)) {
+            viewCreateBusinessAccount.showPasswordError(context.getString(R.string.password_mismatch));
+            return;
+        }
+
+        viewCreateBusinessAccount.hidePasswordError();
+        viewCreateBusinessAccount.hideDetailError();
+
+        if(MySQLConnector.createBusinessAccount(userEmail, userPassword, userBusinessName, userBusinessPhone, userBusinessVAT, context) == false) {
+            Toast.makeText(context, "Account Failed to Created!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Toast.makeText(context, "Account Successfully Created!\nPlease login.", Toast.LENGTH_LONG).show();
 
     }
 
@@ -132,17 +201,17 @@ public class CreateAccountController {
     }
 
 
-    private boolean checkNotEmpty(String s) {
+    private boolean checkEmpty(String s) {
         if (s == null) {
-            return false;
+            return true;
         }
 
         if (s.isEmpty()) {
-            return false;
+            return true;
         }
 
         if (s.equals("")) {
-            return false;
+            return true;
         }
 
         return true;
@@ -169,6 +238,14 @@ public class CreateAccountController {
         }
         String regex = "^s\\d{9}$";
         return studentNumber.matches(regex);
+    }
+
+    private boolean isValidVatNumber(String vatNumber) {
+        return vatNumber != null && vatNumber.matches("^\\d{10}$");
+    }
+
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        return phoneNumber != null && phoneNumber.matches("^0\\d{9}$");
     }
 
 }
