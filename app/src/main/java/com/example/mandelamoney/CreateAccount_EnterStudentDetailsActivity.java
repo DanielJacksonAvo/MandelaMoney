@@ -97,8 +97,7 @@ public class CreateAccount_EnterStudentDetailsActivity extends AppCompatActivity
 
     @Override
     public void hideDetailError() {
-        txtDetailError.setText(View.GONE);
-
+        txtDetailError.setVisibility(View.GONE);
     }
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
