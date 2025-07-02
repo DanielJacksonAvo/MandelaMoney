@@ -14,4 +14,24 @@
     <string name="request_pay">Request Pay</string>
     <string name="available_balance">Available Balance</string>
     <string name="transaction_history">Transaction History  ></string>
+    <string name="business">business</string>
+    <string name="student">student</string>
+    <string name="select_account_type">Select Account Type</string>
+    <string name="first_name">FIRST NAME</string>
+    <string name="last_name">LAST NAME</string>
+    <string name="password_mismatch">Password Mismatch</string>
+    <string name="enter_a_password">Enter a Password</string>
+    <string name="password_too_short">Password too Short (min 8 char)</string>
+    <string name="email_already_in_use">Email Already in Use</string>
+    <string name="invalid_student_number">Invalid Student Number</string>
+    <string name="enter_an_email">Enter an Email</string>
+    <string name="enter_a_student_number">Enter a Student Number</string>
+    <string name="enter_a_first_name">Enter a First Name</string>
+    <string name="enter_a_last_name">Enter a Last Name</string>
+    <string name="invalid_email">Invalid Email</string>
+    <string name="enter_a_business_name">Enter a Business Name</string>
+    <string name="enter_a_vat_number">Enter a VAT Number</string>
+    <string name="invalid_vat_number">Invalid VAT Number</string>
+    <string name="invalid_phone_number">Invalid Phone Number</string>
+    <string name="enter_a_phone_number">Enter a Phone Number</string>
 </resources>

@@ -1,15 +1,11 @@
 package com.example.mandelamoney;
 
-import static android.icu.lang.UCharacter.toLowerCase;
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,76 +17,85 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicReference;
 
+public class CreateAccount_EnterBusinessDetailsActivity extends AppCompatActivity implements ICreateBusinessAccount{
 
-public class LoginActivity extends AppCompatActivity implements ILoginView {
-    private LoginController loginController;
-    private TextView txtError;
-    private EditText tbxUserPassword;
+    private CreateAccountController controller;
+    private TextView txtPasswordError;
+    private TextView txtDetailError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_create_account_enter_business_details);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        loginController = new LoginController(this, this);
+        setController();
         connectToUI();
     }
 
+    private void setController() {
+        controller = (CreateAccountController) DataShare.receive();
+        controller.setContextViewBusiness(this, this);
+    }
+
     private void connectToUI() {
-        Button btnLogin = findViewById(R.id.btn_login);
-        EditText tbxUserEmail = findViewById(R.id.tbx_studentnumber_createstudentaccount);
-        tbxUserPassword = findViewById(R.id.tbx_password_reenter_createstudentaccount);
-        txtError = findViewById(R.id.txt_error_login);
-        TextView btnSignup = findViewById(R.id.btn_signup_login);
-        ImageView imgPasswordIcon = findViewById(R.id.img_password_reenter_createstudentaccount);
-        configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
-        configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
-        configureSignupButton(btnSignup);
+        TextView btnCancel = findViewById(R.id.btn_cancel_createbusinessaccount);
+        Button btnCreateAccount = findViewById(R.id.btn_create_createbusinessaccount);
+        EditText tbxPassword = findViewById(R.id.tbx_password_createbusinessaccount);
+        EditText tbxPasswordReenter = findViewById(R.id.tbx_password_reenter_createbusinessaccount);
+        ImageView imgPasswordIcon = findViewById(R.id.img_password_icon_createbusinessaccount);
+        ImageView imgPasswordRenterIcon = findViewById(R.id.img_password_reenter_createbusinessaccount);
+        EditText tbxEmail = findViewById(R.id.tbx_email_createbusinessaccount);
+        EditText tbxName = findViewById(R.id.tbx_name_createbusinessaccount);
+        EditText tbxVAT = findViewById(R.id.tbx_vat_createbusinessaccount);
+        EditText tbxPhone = findViewById(R.id.tbx_phone_createbusinessaccount);
+        txtPasswordError = findViewById(R.id.txt_error_password_createbusinessaccount);
+        txtDetailError = findViewById(R.id.txt_error_details_createbusinessaccount);
+        configureCancelButton(btnCancel);
+        configurePasswordVisibility(imgPasswordIcon, tbxPassword);
+        configurePasswordVisibility(imgPasswordRenterIcon, tbxPasswordReenter);
+        configureCreateAccountButton(btnCreateAccount, tbxEmail, tbxName, tbxVAT, tbxPhone, tbxPassword, tbxPasswordReenter);
     }
 
-    private void configureLoginButton(Button btnLogin, EditText tbxUserEmail, EditText tbxUserPassword) {
-        btnLogin.setOnClickListener((view) -> {
-            String userEmail = toLowerCase(String.valueOf(tbxUserEmail.getText()));
-            String userPassword = String.valueOf(tbxUserPassword.getText());
-            try {
-                loginController.handleLogin(userEmail, userPassword);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-
-
+    private void configureCancelButton(TextView btnCancel) {
+        btnCancel.setOnClickListener((view) -> {
+            controller.handleCreateAccountCancel();
         });
     }
 
-    private void configureSignupButton(TextView btnSignup) {
-        btnSignup.setOnClickListener((view) -> {
-            loginController.handleSignUp();
+    private void configureCreateAccountButton(Button btnCreateAccount, EditText tbxEmail, EditText tbxName, EditText tbxVAT, EditText tbxPhone, EditText tbxPassword, EditText tbxPasswordReenter) {
+        btnCreateAccount.setOnClickListener((view) -> {
+            controller.handleCreateBusinessUser(String.valueOf(tbxEmail.getText()), String.valueOf(tbxName.getText()), String.valueOf(tbxVAT.getText()), String.valueOf(tbxPhone.getText()), String.valueOf(tbxPassword.getText()), String.valueOf(tbxPasswordReenter.getText()));
         });
     }
 
     @Override
-    public void showErrorMessage() {
-        txtError.setVisibility(VISIBLE);
+    public void showPasswordError(String message) {
+        txtPasswordError.setText(message);
+        txtPasswordError.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideErrorMessage() {
-        txtError.setVisibility(GONE);
+    public void hidePasswordError() {
+        txtPasswordError.setVisibility(View.GONE);
     }
 
     @Override
-    public void finishActivity() {
-        finish();
+    public void showDetailError(String message) {
+        txtDetailError.setText(message);
+        txtDetailError.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void hideDetailError() {
+        txtDetailError.setVisibility(View.GONE);
+    }
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
         tbxUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -136,5 +141,4 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             tbxUserPassword.setSelection(tbxUserPassword.getText().length());
         });
     }
-
 }
