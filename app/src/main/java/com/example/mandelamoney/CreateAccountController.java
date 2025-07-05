@@ -2,10 +2,8 @@ package com.example.mandelamoney;
 
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
 import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,28 +11,27 @@ import java.util.regex.Pattern;
 public class CreateAccountController {
     private int userType;
     private Context context;
-    private ISelectUserType_CreateAccount viewSelectUserType;
-    private ICreateStudentAccount viewCreateStudentAccount;
-    private ICreateBusinessAccount viewCreateBusinessAccount;
+    private ISelectUserType_CreateAccountView viewSelectUserType;
+    private ICreateStudentAccountView viewCreateStudentAccount;
+    private ICreateBusinessAccountView viewCreateBusinessAccount;
 
-    public CreateAccountController(Context context, ISelectUserType_CreateAccount viewSelectUserType) {
+    public CreateAccountController(Context context, ISelectUserType_CreateAccountView viewSelectUserType) {
         this.context = context;
         this.viewSelectUserType = viewSelectUserType;
     }
 
-    public void handleUserTypeSelection(int userType) {
-        this.userType = userType;
+    public void handleUserTypeSelection(int userNewType) {
         Intent intent;
         this.viewSelectUserType = null;
-        switch (userType) {
+        switch (userNewType) {
             case 0:
                 DataShare.send(this);
-                intent = new Intent(context, CreateAccount_EnterBusinessDetailsActivity.class);
+                intent = new Intent(context, CreateAccount_EnterBusinessDetailsActivityView.class);
                 context.startActivity(intent);
                 break;
             case 1:
                 DataShare.send(this);
-                intent = new Intent(context, CreateAccount_EnterStudentDetailsActivity.class);
+                intent = new Intent(context, CreateAccount_EnterStudentDetailsActivityView.class);
                 context.startActivity(intent);
                 break;
             default:
@@ -186,12 +183,12 @@ public class CreateAccountController {
     }
 
 
-    public void setContextViewStudent(Context context, ICreateStudentAccount viewCreateStudentAccount) {
+    public void setContextViewStudent(Context context, ICreateStudentAccountView viewCreateStudentAccount) {
         this.context = context;
         this.viewCreateStudentAccount = viewCreateStudentAccount;
     }
 
-    public void setContextViewBusiness(Context context, ICreateBusinessAccount viewCreateBusinessAccount) {
+    public void setContextViewBusiness(Context context, ICreateBusinessAccountView viewCreateBusinessAccount) {
         this.context = context;
         this.viewCreateBusinessAccount = viewCreateBusinessAccount;
     }

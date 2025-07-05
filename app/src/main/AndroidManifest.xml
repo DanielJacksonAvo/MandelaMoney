@@ -26,13 +26,13 @@
             android:name=".RequestPayment_EnterAmountActivity"
             android:exported="false" />
         <activity
-            android:name=".CreateAccount_EnterBusinessDetailsActivity"
+            android:name=".CreateAccount_EnterBusinessDetailsActivityView"
             android:exported="false" />
         <activity
-            android:name=".CreateAccount_EnterStudentDetailsActivity"
+            android:name=".CreateAccount_EnterStudentDetailsActivityView"
             android:exported="false" />
         <activity
-            android:name=".CreateAccount_SelectUserTypeActivity"
+            android:name=".CreateAccount_SelectUserTypeActivityView"
             android:exported="false" />
         <activity
             android:name=".DashboardActivity"

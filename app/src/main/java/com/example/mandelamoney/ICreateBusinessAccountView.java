@@ -1,6 +1,6 @@
 package com.example.mandelamoney;
 
-public interface ICreateStudentAccount {
+public interface ICreateBusinessAccountView {
     public void showPasswordError(String message);
 
     public void hidePasswordError();
@@ -8,5 +8,4 @@ public interface ICreateStudentAccount {
     public void showDetailError(String message);
 
     public void hideDetailError();
-
 }

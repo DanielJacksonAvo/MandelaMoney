@@ -3,7 +3,6 @@ package com.example.mandelamoney;
 import android.content.Context;
 import android.content.Intent;
 
-import java.io.Serializable;
 import java.sql.SQLException;
 
 public class LoginController {
@@ -44,7 +43,7 @@ public class LoginController {
     }
 
     public void handleSignUp() {
-        Intent intent = new Intent(context, CreateAccount_SelectUserTypeActivity.class);
+        Intent intent = new Intent(context, CreateAccount_SelectUserTypeActivityView.class);
         context.startActivity(intent);
         view.finishActivity();
 
