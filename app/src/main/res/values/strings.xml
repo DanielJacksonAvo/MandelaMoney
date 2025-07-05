@@ -34,4 +34,8 @@
     <string name="invalid_vat_number">Invalid VAT Number</string>
     <string name="invalid_phone_number">Invalid Phone Number</string>
     <string name="enter_a_phone_number">Enter a Phone Number</string>
+    <string name="request_payment">Request Payment</string>
+    <string name="generate_qr">Generate QR</string>
+    <string name="cancel">Cancel</string>
+    <string name="amount">AMOUNT</string>
 </resources>
