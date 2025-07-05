@@ -21,4 +21,8 @@ public class RequestPayment_EnterAmountActivity extends AppCompatActivity {
             return insets;
         });
     }
+
+    private void connectToUI() {
+
+    }
 }

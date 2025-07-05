@@ -19,7 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class CreateAccount_EnterBusinessDetailsActivity extends AppCompatActivity implements ICreateBusinessAccount{
+public class CreateAccount_EnterBusinessDetailsActivityView extends AppCompatActivity implements ICreateBusinessAccountView {
 
     private CreateAccountController controller;
     private TextView txtPasswordError;
