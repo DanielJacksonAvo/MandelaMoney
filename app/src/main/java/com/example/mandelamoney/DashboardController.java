@@ -1,6 +1,8 @@
 package com.example.mandelamoney;
 
 import android.content.Context;
+import android.content.Intent;
+
 import java.util.ArrayList;
 
 public class DashboardController {
@@ -40,8 +42,9 @@ public class DashboardController {
 
     }
 
-    public void handleReceivePayment() {
-
+    public void handleRequestPayment() {
+        Intent intent = new Intent(context, RequestPayment_EnterAmountActivity.class);
+        context.startActivity(intent);
     }
 
     public void handleWithdraw() {
