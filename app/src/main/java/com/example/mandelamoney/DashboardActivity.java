@@ -5,6 +5,7 @@ import static android.icu.lang.UCharacter.toUpperCase;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import java.util.Locale;
 import androidx.activity.EdgeToEdge;
@@ -42,6 +43,8 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     private void connectToUI() {
         txtBalance = findViewById(R.id.txt_user_account_balance);
         txtUserName = findViewById(R.id.txt_user_name_dashboard);
+        Button btnRequestPay = findViewById(R.id.btn_request_pay_dashboard);
+        configureRequestPayButton(btnRequestPay);
 
     }
 
@@ -54,5 +57,10 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     @Override
     public void displayUserName(String name) {
         txtUserName.setText(toUpperCase(name));
+    }
+
+    private void configureRequestPayButton(Button btnRequestPay) {
+        btnRequestPay.setOnClickListener((view) -> dashboardController.handleRequestPayment());
+
     }
 }
