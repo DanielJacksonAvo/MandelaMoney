@@ -38,4 +38,10 @@
     <string name="generate_qr">Generate QR</string>
     <string name="cancel">Cancel</string>
     <string name="amount">AMOUNT</string>
+    <string name="close">Close</string>
+    <string name="success">Success</string>
+    <string name="mandela_money">Mandela Money</string>
+    <string name="to..">To:</string>
+    <string name="from..">From:</string>
+    <string name="amount..">Amount:</string>
 </resources>
