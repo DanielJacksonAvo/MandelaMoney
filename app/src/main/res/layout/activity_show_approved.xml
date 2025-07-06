@@ -9,7 +9,7 @@
     tools:context=".ShowApprovedActivity">
 
     <eightbitlab.com.blurview.BlurView
-        android:id="@+id/blurView_request_payment"
+        android:id="@+id/blurView_success"
         style="@style/BlurPanel"
         android:layout_width="0dp"
         android:layout_height="327dp"
@@ -27,7 +27,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/txt_request_payment"
+                android:id="@+id/txt_success"
                 style="@style/TitleText"
                 android:layout_marginTop="70dp"
                 android:text="@string/success"
@@ -39,7 +39,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
-                android:id="@+id/txt_request_payment2"
+                android:id="@+id/txt_fromname_success"
                 style="@style/TitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,11 +49,11 @@
                 app:layout_constraintEnd_toEndOf="@+id/divider"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/divider"
-                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                app:layout_constraintTop_toBottomOf="@+id/txt_fromtitle_success"
                 app:layout_constraintVertical_bias="0.96" />
 
             <TextView
-                android:id="@+id/txt_request_payment4"
+                android:id="@+id/txt_toname_success"
                 style="@style/TitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,11 +63,11 @@
                 app:layout_constraintEnd_toEndOf="@+id/divider7"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/divider"
-                app:layout_constraintTop_toBottomOf="@+id/textView3"
+                app:layout_constraintTop_toBottomOf="@+id/txt_totitle_success"
                 app:layout_constraintVertical_bias="0.96" />
 
             <TextView
-                android:id="@+id/txt_request_payment6"
+                android:id="@+id/txt_amount_success"
                 style="@style/TitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/divider5" />
 
             <TextView
-                android:id="@+id/txt_request_payment5"
+                android:id="@+id/txt_tonumber_success"
                 style="@style/TitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -89,11 +89,11 @@
                 app:layout_constraintEnd_toEndOf="@+id/divider7"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@+id/divider"
-                app:layout_constraintTop_toBottomOf="@+id/textView3"
+                app:layout_constraintTop_toBottomOf="@+id/txt_transactiontypeto_success"
                 app:layout_constraintVertical_bias="0.96" />
 
             <TextView
-                android:id="@+id/txt_request_payment3"
+                android:id="@+id/txt_fromnumber_success"
                 style="@style/TitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -103,12 +103,12 @@
                 app:layout_constraintEnd_toEndOf="@+id/divider"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@+id/divider"
-                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                app:layout_constraintTop_toBottomOf="@+id/txt_transactiontypefrom_success"
                 app:layout_constraintVertical_bias="0.96"
                 tools:text="s225021129" />
 
             <TextView
-                android:id="@+id/txt_error_request_payment"
+                android:id="@+id/txt_error_success"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/invalid_email"
@@ -127,7 +127,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_request_payment"
+                app:layout_constraintTop_toBottomOf="@+id/txt_success"
                 app:layout_constraintVertical_bias="0.0" />
 
             <View
@@ -157,7 +157,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_request_payment"
+                app:layout_constraintTop_toBottomOf="@+id/txt_success"
                 app:layout_constraintVertical_bias="1.0" />
 
             <View
@@ -189,7 +189,7 @@
                 app:layout_constraintVertical_bias="0.3" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/txt_fromtitle_success"
                 style="@style/TitleTextSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -203,7 +203,7 @@
                 app:layout_constraintVertical_bias="0.04000002" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/txt_transactiontypefrom_success"
                 style="@style/TitleTextSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -217,7 +217,7 @@
                 app:layout_constraintVertical_bias="0.04000002" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/txt_totitle_success"
                 style="@style/TitleTextSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -231,7 +231,7 @@
                 app:layout_constraintVertical_bias="0.04000002" />
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/txt_transactiontypeto_success"
                 style="@style/TitleTextSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -245,7 +245,7 @@
                 app:layout_constraintVertical_bias="0.04000002" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/txt_amounttitle_success"
                 style="@style/TitleTextSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -262,11 +262,11 @@
     </eightbitlab.com.blurview.BlurView>
 
     <ImageView
-        android:id="@+id/img_mandelamoney_request_payment"
+        android:id="@+id/img_mandelamoney_success"
         android:layout_width="375dp"
         android:layout_height="104dp"
         android:contentDescription="@string/todo"
-        app:layout_constraintBottom_toTopOf="@+id/blurView_request_payment"
+        app:layout_constraintBottom_toTopOf="@+id/blurView_success"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -274,7 +274,7 @@
         app:srcCompat="@drawable/img_mandelamoney_text" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_generate_qr_request_payment"
+        android:id="@+id/btn_generate_qr_success"
         style="@style/PrimaryButton"
         android:layout_width="wrap_content"
         android:layout_height="43dp"
@@ -282,9 +282,10 @@
         android:paddingHorizontal="50dp"
         android:text="@string/close"
         app:backgroundTint="@color/success"
-        app:layout_constraintEnd_toEndOf="@+id/blurView_request_payment"
-        app:layout_constraintStart_toStartOf="@+id/blurView_request_payment"
-        app:layout_constraintTop_toBottomOf="@id/blurView_request_payment" />
+        app:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="@+id/blurView_success"
+        app:layout_constraintStart_toStartOf="@+id/blurView_success"
+        app:layout_constraintTop_toBottomOf="@id/blurView_success" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -292,10 +293,10 @@
         android:layout_height="105dp"
         android:layout_marginBottom="-30dp"
         android:contentDescription="@string/mandela_money_logo"
-        app:layout_constraintBottom_toTopOf="@+id/blurView_request_payment"
+        app:layout_constraintBottom_toTopOf="@+id/blurView_success"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/blurView_request_payment"
+        app:layout_constraintTop_toTopOf="@+id/blurView_success"
         app:srcCompat="@drawable/img_green_success" />
 
     <ImageView
@@ -306,7 +307,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageView3"
         app:layout_constraintEnd_toEndOf="@+id/imageView3"
         app:layout_constraintStart_toStartOf="@+id/imageView3"
-        app:layout_constraintTop_toBottomOf="@+id/img_mandelamoney_request_payment"
+        app:layout_constraintTop_toTopOf="@+id/imageView3"
         app:srcCompat="@drawable/img_check_icon" />
 
 
