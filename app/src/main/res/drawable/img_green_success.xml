@@ -2,6 +2,5 @@
       
     <path android:fillColor="#A1F293" android:pathData="M54,54m-51,0a51,51 0,1 1,102 0a51,51 0,1 1,-102 0" android:strokeColor="#ffffff" android:strokeWidth="6"/>
       
-    <path android:fillAlpha="0.8" android:fillColor="url(#pattern0_0_1)" android:pathData="M12,12h84v84h-84z"/>
-    
+
 </vector>
