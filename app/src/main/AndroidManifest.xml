@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp.Light" >
         <activity
-            android:name=".ShowApprovedActivity"
+            android:name=".ShowSuccessActivity"
             android:exported="false" />
         <activity
             android:name=".ShowFailedActivity"
