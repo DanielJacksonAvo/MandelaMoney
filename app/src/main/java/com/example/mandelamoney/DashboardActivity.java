@@ -28,15 +28,8 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        Intent intent = getIntent();
-        User user = null;
-        try {
-            user = (User) intent.getSerializableExtra("user");
-        } catch (Exception e) {
-            Log.d("Dashboard","No user passed by intent.");
-        }
         connectToUI();
-        dashboardController = new DashboardController(this, this, user);
+        dashboardController = new DashboardController(this, this, UserSession.getUser());
         dashboardController.handleLoadUserToUI();
     }
 
