@@ -36,8 +36,8 @@ public class LoginController {
         }
 
         view.hideErrorMessage();
+        UserSession.setUser(user);
         Intent intent = new Intent(context, DashboardActivity.class);
-        intent.putExtra("user", user);
         context.startActivity(intent);
         view.finishActivity();
     }

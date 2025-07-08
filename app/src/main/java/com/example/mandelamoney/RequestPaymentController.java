@@ -1,6 +1,7 @@
 package com.example.mandelamoney;
 
 import android.content.Context;
+import android.content.Intent;
 
 public class RequestPaymentController {
     private Context context;
@@ -48,6 +49,11 @@ public class RequestPaymentController {
         this.context = context;
     }
 
+    public void handleCancelButton() {
+        Intent intent = new Intent(context, DashboardActivity.class);
+        context.startActivity(intent);
+    }
+
     private static class ValidateInput {
         public static boolean isEmpty(String s) {
             if (s == null) {
@@ -75,6 +81,8 @@ public class RequestPaymentController {
         }
 
     }
+
+
 
 
 

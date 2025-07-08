@@ -32,14 +32,20 @@ public class RequestPayment_EnterAmountActivity extends AppCompatActivity implem
     private void connectToUI() {
         Button btnGenerateQRButton = findViewById(R.id.btn_generate_qr_request_payment);
         EditText tbxPaymentAmount = findViewById(R.id.tbx_amount_request_payment);
+        TextView btnCancel = findViewById(R.id.btn_cancel_request_payment);
         txtErrorMessage = findViewById(R.id.txt_error_request_payment);
         configureGenerateQRButton(btnGenerateQRButton, tbxPaymentAmount);
+        configureCancelButton(btnCancel);
 
 
     }
 
     private void configureGenerateQRButton(Button btnGenerateQRButton, EditText tbxPaymentAmount) {
         btnGenerateQRButton.setOnClickListener((view) -> requestPaymentController.handleGenerateQR(String.valueOf(tbxPaymentAmount.getText())));
+    }
+
+    private void configureCancelButton(TextView btnCancel) {
+        btnCancel.setOnClickListener((view) -> requestPaymentController.handleCancelButton());
     }
 
     @Override
@@ -51,5 +57,10 @@ public class RequestPayment_EnterAmountActivity extends AppCompatActivity implem
     @Override
     public void hideError() {
         txtErrorMessage.setVisibility(TextView.GONE);
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 }
