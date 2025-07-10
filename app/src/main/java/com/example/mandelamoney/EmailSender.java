@@ -41,13 +41,3 @@ public class EmailSender {
     }
 }
 
-
-/*GMailSender sender = new GMailSender("yourappemail@gmail.com", "your-app-password");
-
-new Thread(() -> {
-        try {
-        sender.sendMail("Test Subject", "This is the body", "receiver@example.com");
-    } catch (MessagingException e) {
-        e.printStackTrace();
-    }
-            }).start();*/
