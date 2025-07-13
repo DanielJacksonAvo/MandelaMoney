@@ -56,15 +56,44 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/img_request_payment_qr"
-                android:layout_width="162sp"
-                android:layout_height="162sp"
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/qr_image_border"
+                android:clipToOutline="true"
+                android:elevation="2dp"
+                android:padding="1dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_cancel_request_payment3"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:layout_constraintTop_toBottomOf="@+id/btn_cancel_request_payment3">
+
+                <ImageView
+                    android:id="@+id/img_request_payment_qr"
+                    android:layout_width="162dp"
+                    android:layout_height="162dp"
+                    android:background="@drawable/qr_image_border"
+                    android:clipToOutline="true"
+                    android:outlineProvider="background"
+                    android:scaleType="fitXY"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </FrameLayout>
+
+
+            <TextView
+                android:id="@+id/lbl_error_qr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:ems="10"
+                android:text="@string/could_not_generate_qr"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_request_payment_qr" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </eightbitlab.com.blurview.BlurView>

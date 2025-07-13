@@ -21,17 +21,34 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dashboard);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         connectToUI();
-        dashboardController = new DashboardController(this, this, UserSession.getUser());
+
+        User currentUser = UserSession.getUser();
+
+        if (currentUser == null) {
+            Log.e("DashboardActivity", "User session is null. Returning to login.");
+            // Optionally navigate to login activity:
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        dashboardController = new DashboardController(this, this, currentUser);
         dashboardController.handleLoadUserToUI();
     }
+
 
     private void connectToUI() {
         txtBalance = findViewById(R.id.txt_user_account_balance);

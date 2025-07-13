@@ -5,6 +5,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -32,17 +33,30 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Attempt to restore session before calling super
+//        UserSessionLoader.tryRestoreSession(this);
+//        if (UserSession.getUser() != null) {
+//            Intent intent = new Intent(this, DashboardActivity.class);
+//            startActivity(intent);
+//            finish();
+//            return;
+//        }
+
+        // Proceed normally
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         loginController = new LoginController(this, this);
         connectToUI();
     }
+
 
     private void connectToUI() {
         Button btnLogin = findViewById(R.id.btn_login);
