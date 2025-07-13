@@ -23,6 +23,9 @@ public class RequestPaymentController {
         DataShare.send(this);
 
         /// move to next screen & generate qr ///
+        Intent intent = new Intent(context, RequestPayment_ShowQRActivity.class);
+        intent.putExtra("transaction_id", "1000"); //Needs to get altered to the actual QR Code
+        context.startActivity(intent);
     }
 
     private boolean isValidInput(String amount) {
