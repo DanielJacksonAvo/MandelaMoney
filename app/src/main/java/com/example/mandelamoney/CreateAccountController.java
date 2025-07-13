@@ -39,6 +39,7 @@ public class CreateAccountController {
         }
     }
 
+
     public void handleCreateStudentUser(String userEmail, String userFirstName, String userLastName, String userStudentNumber, String userPassword, String userPasswordReenter) {
         viewCreateStudentAccount.hidePasswordError();
         viewCreateStudentAccount.hideDetailError();
