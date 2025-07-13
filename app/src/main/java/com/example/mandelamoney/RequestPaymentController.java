@@ -12,6 +12,7 @@ public class RequestPaymentController {
 
     }
 
+
     public void handleGenerateQR(String amount) {
         if (!isValidInput(amount)) {
             //not a valid input
