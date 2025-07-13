@@ -270,6 +270,183 @@ public class MySQLConnector {
             return false;
         }
     }
+    public static Integer createTransaction(String toUserEmail, Float transactionAmount, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot create transaction: No valid database connection.");
+            return null;
+        }
+
+        Integer transactionId = null;
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.createTransaction(?, ?, ?)}")) {
+            callableStatement.setString(1, toUserEmail);
+            callableStatement.setFloat(2, transactionAmount);
+            callableStatement.registerOutParameter(3, Types.INTEGER);
+
+            Log.d("MySQLConnector", "Calling createTransaction for toUser: " + toUserEmail);
+            callableStatement.execute();
+
+            transactionId = callableStatement.getInt(3);
+            Log.d("MySQLConnector", "Transaction created with ID: " + transactionId);
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'createTransaction': " + e.getMessage());
+        }
+
+        return transactionId;
+    }
+    public static String getTransactionStatus(int transactionId, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot check transaction status: No valid DB connection.");
+            return null;
+        }
+
+        String status = null;
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.getTransactionStatus(?, ?)}")) {
+            stmt.setInt(1, transactionId);
+            stmt.registerOutParameter(2, Types.VARCHAR);
+
+            stmt.execute();
+            status = stmt.getString(2);
+            Log.d("MySQLConnector", "Transaction " + transactionId + " status: " + status);
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling getTransactionStatus: " + e.getMessage());
+        }
+
+        return status;
+    }
+    public static TransactionDetails getTransactionDetailsFromProcedure(int txnId, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "No valid DB connection.");
+            return null;
+        }
+
+        TransactionDetails details = null;
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.getTransactionDetails(?)}")) {
+            stmt.setInt(1, txnId);
+
+            boolean hasResults = stmt.execute();
+            if (hasResults) {
+                try (ResultSet rs = stmt.getResultSet()) {
+                    if (rs.next()) {
+                        details = new TransactionDetails(
+                                rs.getString("toUser"),
+                                rs.getString("fromUser"),
+                                rs.getFloat("transactionAmount"),
+                                rs.getString("formattedDate"),
+                                rs.getString("formattedTime")
+                        );
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error fetching transaction details: " + e.getMessage());
+        }
+
+        return details;
+    }
+    public static UserDetails getUserDetailsByEmail(String email, Context context) {
+        Connection conn = getConnection(context);
+        if (conn == null) {
+            Log.e("MySQLConnector", "No valid connection for getUserDetailsByEmail.");
+            return null;
+        }
+
+        UserDetails userDetails = null;
+
+        try (CallableStatement cs = conn.prepareCall("{CALL MandelaMoneyDB.getUserDetailsByEmail(?)}")) {
+            cs.setString(1, email);
+
+            try (ResultSet rs = cs.executeQuery()) {
+                if (rs.next()) {
+                    userDetails = new UserDetails();
+                    userDetails.setEmail(rs.getString("userEmail"));
+                    userDetails.setFirstName(rs.getString("firstName"));
+                    userDetails.setLastName(rs.getString("lastName"));
+                    userDetails.setNumber(rs.getString("userNumber"));
+                    userDetails.setUserType(rs.getString("userType"));
+                }
+            }
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error retrieving user details: " + e.getMessage());
+        }
+
+        return userDetails;
+    }
+
+
+    public static boolean deleteTransaction(int txnId, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot delete transaction: No valid DB connection.");
+            return false;
+        }
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.deleteTransaction(?)}")) {
+            stmt.setInt(1, txnId);
+            stmt.execute();
+
+            Log.d("MySQLConnector", "Transaction " + txnId + " deleted (marked as failed).");
+            return true;
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling deleteTransaction: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean hasSufficientFunds(float fromUserBalance, int transactionId, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot check funds: No valid DB connection.");
+            return false;
+        }
+        boolean isSufficient = false;
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.sufficientFunds(?, ?, ?)}")) {
+            stmt.setFloat(1, fromUserBalance);
+            stmt.setInt(2, transactionId);
+            stmt.registerOutParameter(3, Types.BOOLEAN);
+
+            stmt.execute();
+            isSufficient = stmt.getBoolean(3);
+            Log.d("MySQLConnector", "Sufficient funds? " + isSufficient);
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling sufficientFunds: " + e.getMessage());
+        }
+
+        return isSufficient;
+    }
+    public static boolean confirmTransaction(String fromUserEmail, int txnId, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot confirm transaction: No valid DB connection.");
+            return false;
+        }
+
+        boolean txnSuccess = false;
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.confirmTransaction(?, ?, ?)}")) {
+            stmt.setString(1, fromUserEmail);
+            stmt.setInt(2, txnId);
+            stmt.registerOutParameter(3, Types.BOOLEAN);
+
+            stmt.execute();
+            txnSuccess = stmt.getBoolean(3);
+            Log.d("MySQLConnector", "Transaction confirmed? " + txnSuccess);
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling confirmTransaction: " + e.getMessage());
+        }
+
+        return txnSuccess;
+    }
+
+
 
     public static boolean createStudentAccount(String userEmail, String userPassword, String studentFirstName,
                                                String studentLastName, String studentNumber, Context context) {
@@ -311,5 +488,9 @@ public class MySQLConnector {
             //Toast.makeText(context, "Error creating student account: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return false;
         }
+    }
+
+    public static double getUserBalance(String email, Context context) {
+        return 20.00;//create this procedure
     }
 }

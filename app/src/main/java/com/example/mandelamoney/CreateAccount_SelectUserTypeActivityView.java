@@ -12,9 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.io.Serializable;
-
-public class CreateAccount_SelectUserTypeActivity extends AppCompatActivity implements ISelectUserType_CreateAccount {
+public class CreateAccount_SelectUserTypeActivityView extends AppCompatActivity implements ISelectUserType_CreateAccountView {
 
     private CreateAccountController createAccountController;
     @Override

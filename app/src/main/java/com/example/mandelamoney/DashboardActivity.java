@@ -5,6 +5,7 @@ import static android.icu.lang.UCharacter.toUpperCase;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import java.util.Locale;
 import androidx.activity.EdgeToEdge;
@@ -20,28 +21,40 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dashboard);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        Intent intent = getIntent();
-        User user = null;
-        try {
-            user = (User) intent.getSerializableExtra("user");
-        } catch (Exception e) {
-            Log.d("Dashboard","No user passed by intent.");
-        }
+
         connectToUI();
-        dashboardController = new DashboardController(this, this, user);
+
+        User currentUser = UserSession.getUser();
+
+        if (currentUser == null) {
+            Log.e("DashboardActivity", "User session is null. Returning to login.");
+            // Optionally navigate to login activity:
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        dashboardController = new DashboardController(this, this, currentUser);
         dashboardController.handleLoadUserToUI();
     }
+
 
     private void connectToUI() {
         txtBalance = findViewById(R.id.txt_user_account_balance);
         txtUserName = findViewById(R.id.txt_user_name_dashboard);
+        Button btnRequestPay = findViewById(R.id.btn_request_pay_dashboard);
+        configureRequestPayButton(btnRequestPay);
 
     }
 
@@ -54,5 +67,10 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     @Override
     public void displayUserName(String name) {
         txtUserName.setText(toUpperCase(name));
+    }
+
+    private void configureRequestPayButton(Button btnRequestPay) {
+        btnRequestPay.setOnClickListener((view) -> dashboardController.handleRequestPayment());
+
     }
 }

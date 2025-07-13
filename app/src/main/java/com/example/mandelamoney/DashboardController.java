@@ -1,6 +1,9 @@
 package com.example.mandelamoney;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class DashboardController {
@@ -12,6 +15,16 @@ public class DashboardController {
         this.context = context;
         this.view = view;
         this.user = user;
+
+        if (user != null) {
+            double balance = user.getUserBalance();
+            // load into UI
+        } else {
+            // Fallback or redirect to login
+            Log.e("DashboardController", "User is null. Redirecting to login.");
+            // Optionally: redirect to login screen
+        }
+
     }
 
     public void handleLoadUserToUI() {
@@ -40,8 +53,9 @@ public class DashboardController {
 
     }
 
-    public void handleReceivePayment() {
-
+    public void handleRequestPayment() {
+        Intent intent = new Intent(context, RequestPayment_EnterAmountActivity.class);
+        context.startActivity(intent);
     }
 
     public void handleWithdraw() {

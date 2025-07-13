@@ -19,7 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class CreateAccount_EnterStudentDetailsActivity extends AppCompatActivity implements ICreateStudentAccount{
+public class CreateAccount_EnterStudentDetailsActivityView extends AppCompatActivity implements ICreateStudentAccountView {
 
     private CreateAccountController controller;
     TextView txtPasswordError;
