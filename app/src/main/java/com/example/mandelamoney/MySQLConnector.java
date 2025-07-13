@@ -179,6 +179,102 @@ public class MySQLConnector {
         }
         return objs;
     }
+    public static Object[] getRecoveryCodeHash(String userEmail, Context context) {
+        Connection currentConnection = getConnection(context);
+        Object[] result = new Object[3]; // [0]: userExists (Boolean), [1]: hashCode (String), [2]: connectionEstablished (Boolean)
+        boolean connectionEstablished = false;
+
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot return recovery code: No valid database connection.");
+            result[0] = false;
+            result[1] = null;
+            result[2] = false;
+            return result;
+        }
+        connectionEstablished = true;
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.GetRecoveryCodeHash(?, ?, ?)}")) {
+
+            callableStatement.setString(1, userEmail);
+            callableStatement.registerOutParameter(2, java.sql.Types.BOOLEAN);   // out_exists
+            callableStatement.registerOutParameter(3, java.sql.Types.VARCHAR);   // out_password_hash
+
+            Log.d("MySQLConnector", "Calling GetRecoveryCodeHash for user: " + userEmail);
+            callableStatement.execute();
+
+            boolean userExists = callableStatement.getBoolean(2);
+            String hashCode = callableStatement.getString(3);
+
+            result[0] = userExists;
+            result[1] = hashCode;
+            result[2] = connectionEstablished;
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'GetRecoveryCodeHash': " + e.getMessage());
+            result[0] = false;
+            result[1] = null;
+            result[2] = connectionEstablished;
+        }
+
+        return result;
+    }
+    public static boolean verifyRecoveryCode(String userEmail, String recoveryCode, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "No valid DB connection.");
+            return false;
+        }
+
+        boolean isMatch = false;
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.VerifyRecoveryCode(?, ?, ?)}")) {
+
+            callableStatement.setString(1, userEmail);
+            callableStatement.setString(2, recoveryCode);
+            callableStatement.registerOutParameter(3, java.sql.Types.BOOLEAN);  // out_match
+
+            Log.d("MySQLConnector", "Calling VerifyRecoveryCode for user: " + userEmail);
+            callableStatement.execute();
+
+            isMatch = callableStatement.getBoolean(3);
+            Log.d("MySQLConnector", "Recovery code match result: " + isMatch);
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'VerifyRecoveryCode': " + e.getMessage());
+        }
+
+        return isMatch;
+    }
+    public static Boolean resetPassword(String userEmail, String recoveryCode, String newPassword, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "No valid DB connection.");
+            return false;
+        }
+
+        boolean resetSuccess = false;
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.ResetPasswordWithRecoveryCode(?, ?, ?, ?)}")) {
+            callableStatement.setString(1, userEmail);
+            callableStatement.setString(2, recoveryCode);
+            callableStatement.setString(3, newPassword);
+            callableStatement.registerOutParameter(4, java.sql.Types.BOOLEAN);  // OUT parameter for success/failure
+
+            Log.d("MySQLConnector", "Calling ResetPasswordWithRecoveryCode for user: " + userEmail);
+            callableStatement.execute();
+
+            resetSuccess = callableStatement.getBoolean(4);
+            Log.d("MySQLConnector", "Password reset success: " + resetSuccess);
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'ResetPasswordWithRecoveryCode': " + e.getMessage());
+            resetSuccess = false;
+        }
+
+        return resetSuccess;
+    }
+
+
 
     public static boolean checkUniqueEmail(String userEmail, Context context) {
         Connection currentConnection = getConnection(context);
