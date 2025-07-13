@@ -63,6 +63,11 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         EditText tbxUserEmail = findViewById(R.id.tbx_studentnumber_createstudentaccount);
         tbxUserPassword = findViewById(R.id.tbx_password_reenter_createstudentaccount);
         txtError = findViewById(R.id.txt_error_login);
+        ImageView imgPasswordIcon = findViewById(R.id.img_password_icon);
+        TextView btnForgotPassword = findViewById(R.id.btn_forgotPassword_login);
+        configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
+        configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
+        configureForgotPasswordButton(btnForgotPassword);
         TextView btnSignup = findViewById(R.id.btn_signup_login);
         ImageView imgPasswordIcon = findViewById(R.id.img_password_reenter_createstudentaccount);
         configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
@@ -81,6 +86,11 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             }
 
 
+        });
+    }
+    private void configureForgotPasswordButton(TextView btnForgotPassword){
+        btnForgotPassword.setOnClickListener((view)->{
+            loginController.handleForgotPassword();
         });
     }
 

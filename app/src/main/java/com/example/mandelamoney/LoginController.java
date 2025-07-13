@@ -51,6 +51,11 @@ public class LoginController {
         context.startActivity(intent);
         view.finishActivity();
     }
+    public void handleForgotPassword(){
+        Intent intent = new Intent(context, ForgotPasswordActivity.class);
+        context.startActivity(intent);
+        view.finishActivity();
+    }
 
     public void handleSignUp() {
         Intent intent = new Intent(context, CreateAccount_SelectUserTypeActivityView.class);

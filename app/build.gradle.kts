@@ -23,6 +23,14 @@ android {
         buildConfigField("String", "DB_USERNAME", "\"user\"")
         buildConfigField("String", "DB_PASSWORD", "\"J!Hs7#BJv&tCmyhA6h^xd3AXtpnEWUe5\"")
         buildConfigField("String", "DB_URL", "\"jdbc:mysql://jacksonserver.ddns.net:3306/MandelaMoneyDB?useSSL=true&requireSSL=true&verifyServerCertificate=false&noAccessToProcedureBodies=true\"")
+        buildConfigField("String", "EMAIL_USERNAME", "\"mandelamoney.info@gmail.com\"")
+        buildConfigField("String","EMAIL_PASSWORD","\"nehg zpqu bbeb pshb\"")
+    }
+    packaging{
+        resources{
+         excludes.add("META-INF/NOTICE.md")
+            excludes.add("META-INF/LICENSE.md")
+        }
     }
 
     buildTypes {
@@ -42,6 +50,8 @@ android {
 
 dependencies {
 
+    implementation(libs.android.mail)
+    implementation (libs.android.activation)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
