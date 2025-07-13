@@ -3,8 +3,8 @@ package com.example.mandelamoney;
 import android.content.Context;
 import android.content.Intent;
 
-import java.io.Serializable;
 import java.sql.SQLException;
+import android.content.SharedPreferences;
 
 public class LoginController {
     private final Context context;
@@ -37,14 +37,23 @@ public class LoginController {
         }
 
         view.hideErrorMessage();
+        UserSession.setUser(user);
+        SharedPreferences prefs = context.getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("userEmail", user.getUserEmail());
+        if (user instanceof Student) {
+            editor.putString("userType", "student");
+        } else if (user instanceof Business) {
+            editor.putString("userType", "business");
+        }
+        editor.apply();
         Intent intent = new Intent(context, DashboardActivity.class);
-        intent.putExtra("user", user);
         context.startActivity(intent);
         view.finishActivity();
     }
 
     public void handleSignUp() {
-        Intent intent = new Intent(context, CreateAccount_SelectUserTypeActivity.class);
+        Intent intent = new Intent(context, CreateAccount_SelectUserTypeActivityView.class);
         context.startActivity(intent);
         view.finishActivity();
 

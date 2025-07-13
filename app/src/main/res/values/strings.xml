@@ -34,4 +34,20 @@
     <string name="invalid_vat_number">Invalid VAT Number</string>
     <string name="invalid_phone_number">Invalid Phone Number</string>
     <string name="enter_a_phone_number">Enter a Phone Number</string>
+    <string name="request_payment">Request Payment</string>
+    <string name="generate_qr">Generate QR</string>
+    <string name="cancel">Cancel</string>
+    <string name="amount">AMOUNT</string>
+    <string name="close">Close</string>
+    <string name="success">Success</string>
+    <string name="mandela_money">Mandela Money</string>
+    <string name="to..">To:</string>
+    <string name="from..">From:</string>
+    <string name="amount..">Amount:</string>
+    <string name="failed">Failed</string>
+    <string name="enter_a_valid_amount">Enter a Valid Amount</string>
+    <string name="enter_a_positive_amount">Enter a Positive Amount</string>
+    <string name="qr_instruction">The payee, must select pay and scan the QR code below.</string>
+    <string name="could_not_create_transaction">Error. Could not create transaction.</string>
+    <string name="could_not_generate_qr">Error: Could not generate QR code.</string>
 </resources>
