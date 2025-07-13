@@ -47,4 +47,5 @@
     <string name="failed">Failed</string>
     <string name="enter_a_valid_amount">Enter a Valid Amount</string>
     <string name="enter_a_positive_amount">Enter a Positive Amount</string>
+    <string name="qr_instruction">The payee, must select pay and scan the QR code below.</string>
 </resources>
