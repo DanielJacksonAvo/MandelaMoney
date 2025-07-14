@@ -311,7 +311,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blurView_failed"
-        app:srcCompat="@drawable/img_red_error" />
+        app:srcCompat="@drawable/img_red_failed" />
 
     <ImageView
         android:id="@+id/imageView2"
