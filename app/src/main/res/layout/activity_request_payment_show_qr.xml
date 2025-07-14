@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mandelaBlue"
-    tools:context=".RequestPayment_ShowQRActivity">
+    tools:context=".RequestPaymentShowQrActivity">
 
     <TextView
         android:id="@+id/btn_cancel_request_payment2"

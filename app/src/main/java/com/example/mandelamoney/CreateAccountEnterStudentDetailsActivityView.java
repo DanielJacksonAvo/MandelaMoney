@@ -19,48 +19,50 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class CreateAccount_EnterBusinessDetailsActivityView extends AppCompatActivity implements ICreateBusinessAccountView {
+public class CreateAccountEnterStudentDetailsActivityView extends AppCompatActivity implements ICreateStudentAccountView {
 
     private CreateAccountController controller;
-    private TextView txtPasswordError;
-    private TextView txtDetailError;
+    TextView txtPasswordError;
+    TextView txtDetailError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_create_account_enter_business_details);
+        setContentView(R.layout.activity_create_account_enter_student_details);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
         setController();
         connectToUI();
+
     }
 
     private void setController() {
         controller = (CreateAccountController) DataShare.receive();
-        controller.setContextViewBusiness(this, this);
+        controller.setContextViewStudent(this, this);
     }
 
     private void connectToUI() {
-        TextView btnCancel = findViewById(R.id.btn_cancel_createbusinessaccount);
-        Button btnCreateAccount = findViewById(R.id.btn_create_createbusinessaccount);
-        EditText tbxPassword = findViewById(R.id.tbx_password_createbusinessaccount);
-        EditText tbxPasswordReenter = findViewById(R.id.tbx_password_reenter_createbusinessaccount);
-        ImageView imgPasswordIcon = findViewById(R.id.img_password_icon_createbusinessaccount);
-        ImageView imgPasswordRenterIcon = findViewById(R.id.img_password_reenter_createbusinessaccount);
-        EditText tbxEmail = findViewById(R.id.tbx_email_createbusinessaccount);
-        EditText tbxName = findViewById(R.id.tbx_name_createbusinessaccount);
-        EditText tbxVAT = findViewById(R.id.tbx_vat_createbusinessaccount);
-        EditText tbxPhone = findViewById(R.id.tbx_phone_createbusinessaccount);
-        txtPasswordError = findViewById(R.id.txt_error_password_createbusinessaccount);
-        txtDetailError = findViewById(R.id.txt_error_details_createbusinessaccount);
+        TextView btnCancel = findViewById(R.id.btn_cancel_createstudentaccount);
+        EditText tbxEmail = findViewById(R.id.tbx_email_createstudentaccount);
+        EditText tbxFirstName = findViewById(R.id.tbx_firstname_createstudentaccount);
+        EditText tbxLastName = findViewById(R.id.tbx_lastname_createstudentaccount);
+        EditText tbxStudentNumber = findViewById(R.id.tbx_studentnumber_createstudentaccount);
+        Button btnCreateAccount = findViewById(R.id.btn_create_createstudentaccount);
+        EditText tbxPassword = findViewById(R.id.tbx_password_createstudentaccount);
+        EditText tbxPasswordReenter = findViewById(R.id.tbx_password_reenter_createstudentaccount);
+        ImageView imgPasswordIcon = findViewById(R.id.img_password_icon_createstudentaccount);
+        ImageView imgPasswordRenterIcon = findViewById(R.id.img_password_reenter_createstudentaccount);
+        txtPasswordError = findViewById(R.id.txt_error_password_createstudentaccount);
+        txtDetailError = findViewById(R.id.txt_error_details_createstudentaccount);
         configureCancelButton(btnCancel);
+        configureCreateAccountButton(btnCreateAccount, tbxEmail, tbxFirstName, tbxLastName, tbxStudentNumber, tbxPassword, tbxPasswordReenter);
         configurePasswordVisibility(imgPasswordIcon, tbxPassword);
         configurePasswordVisibility(imgPasswordRenterIcon, tbxPasswordReenter);
-        configureCreateAccountButton(btnCreateAccount, tbxEmail, tbxName, tbxVAT, tbxPhone, tbxPassword, tbxPasswordReenter);
     }
 
     private void configureCancelButton(TextView btnCancel) {
@@ -69,27 +71,28 @@ public class CreateAccount_EnterBusinessDetailsActivityView extends AppCompatAct
         });
     }
 
-    private void configureCreateAccountButton(Button btnCreateAccount, EditText tbxEmail, EditText tbxName, EditText tbxVAT, EditText tbxPhone, EditText tbxPassword, EditText tbxPasswordReenter) {
+    private void configureCreateAccountButton(Button btnCreateAccount, EditText tbxEmail, EditText tbxFirstName, EditText tbxLastName, EditText tbxStudentNumber, EditText tbxPassword, EditText tbxPasswordReenter) {
         btnCreateAccount.setOnClickListener((view) -> {
-            controller.handleCreateBusinessUser(String.valueOf(tbxEmail.getText()), String.valueOf(tbxName.getText()), String.valueOf(tbxVAT.getText()), String.valueOf(tbxPhone.getText()), String.valueOf(tbxPassword.getText()), String.valueOf(tbxPasswordReenter.getText()));
+            controller.handleCreateStudentUser(String.valueOf(tbxEmail.getText()), String.valueOf(tbxFirstName.getText()), String.valueOf(tbxLastName.getText()), String.valueOf(tbxStudentNumber.getText()), String.valueOf(tbxPassword.getText()), String.valueOf(tbxPasswordReenter.getText()));
         });
     }
 
     @Override
     public void showPasswordError(String message) {
-        txtPasswordError.setText(message);
         txtPasswordError.setVisibility(View.VISIBLE);
+        txtPasswordError.setText(message);
     }
 
     @Override
     public void hidePasswordError() {
         txtPasswordError.setVisibility(View.GONE);
+
     }
 
     @Override
     public void showDetailError(String message) {
-        txtDetailError.setText(message);
         txtDetailError.setVisibility(View.VISIBLE);
+        txtDetailError.setText(message);
     }
 
     @Override
@@ -141,4 +144,6 @@ public class CreateAccount_EnterBusinessDetailsActivityView extends AppCompatAct
             tbxUserPassword.setSelection(tbxUserPassword.getText().length());
         });
     }
+
+
 }

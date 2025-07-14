@@ -54,7 +54,7 @@ public class DashboardController {
     }
 
     public void handleRequestPayment() {
-        Intent intent = new Intent(context, RequestPayment_EnterAmountActivity.class);
+        Intent intent = new Intent(context, RequestPaymentEnterAmountActivity.class);
         context.startActivity(intent);
     }
 
