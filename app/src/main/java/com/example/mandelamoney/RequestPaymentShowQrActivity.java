@@ -1,6 +1,5 @@
 package com.example.mandelamoney;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-public class RequestPayment_ShowQRActivity extends AppCompatActivity implements IShowQRCode_RequestPaymentView {
+public class RequestPaymentShowQrActivity extends AppCompatActivity implements IShowQRCode_RequestPaymentView {
     private RequestPaymentController requestPaymentController;
     private ImageView qrImageView;
     private Integer transactionID;
@@ -33,7 +32,7 @@ public class RequestPayment_ShowQRActivity extends AppCompatActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_request_payment_show_qractivity);
+        setContentView(R.layout.activity_request_payment_show_qr);
 
         requestPaymentController = new RequestPaymentController(this, this);
 

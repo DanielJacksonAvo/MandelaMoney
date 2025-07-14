@@ -41,7 +41,7 @@ public class RequestPaymentController {
         }
         //sending the controller. Use DataShare.receive() to get the controller on next screen. Remember to update the context using setContext method.
         DataShare.send(this);
-        Intent intent = new Intent(context, RequestPayment_ShowQRActivity.class);
+        Intent intent = new Intent(context, RequestPaymentShowQrActivity.class);
         intent.putExtra("transaction_id", transactionID.toString());
         context.startActivity(intent);
         setContext(context);
