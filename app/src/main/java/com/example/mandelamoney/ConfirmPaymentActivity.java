@@ -25,6 +25,7 @@ public class ConfirmPaymentActivity extends AppCompatActivity implements IConfir
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        controller = (MakePaymentController)DataShare.receive();
         connectToUI();
     }
 
