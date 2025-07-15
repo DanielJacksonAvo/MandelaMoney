@@ -17,7 +17,7 @@
             android:name=".MakePaymentScanQrActivity"
             android:exported="false" />
         <activity
-            android:name=".MakePaymentConfirmActivity"
+            android:name=".ConfirmPaymentActivity"
             android:exported="false" />
         <activity
             android:name=".ShowSuccessActivity"
