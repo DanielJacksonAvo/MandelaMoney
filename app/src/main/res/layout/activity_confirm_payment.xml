@@ -9,7 +9,7 @@
     tools:context=".ConfirmPaymentActivity">
 
     <TextView
-        android:id="@+id/btn_makepayment_confirmpayment_cancel"
+        android:id="@+id/btn_confirmpayment_cancel"
         style="@style/HyperLinkButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -288,7 +288,7 @@
         app:srcCompat="@drawable/img_mandelamoney_text" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_generate_qr_confirmpayment"
+        android:id="@+id/btn_confirmpayment"
         style="@style/PrimaryButton"
         android:layout_width="wrap_content"
         android:layout_height="43dp"
