@@ -1,6 +1,6 @@
 package com.example.mandelamoney;
 
-public interface ISelectUserType_CreateAccountView {
+public interface ISelectUserTypeCreateAccountView {
     public void finishActivity();
 
 }

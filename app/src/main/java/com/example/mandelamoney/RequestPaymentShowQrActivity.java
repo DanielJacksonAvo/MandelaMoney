@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-public class RequestPaymentShowQrActivity extends AppCompatActivity implements IShowQRCode_RequestPaymentView {
+public class RequestPaymentShowQrActivity extends AppCompatActivity implements IShowQRCodeRequestPaymentView {
     private RequestPaymentController requestPaymentController;
     private ImageView qrImageView;
     private Integer transactionID;

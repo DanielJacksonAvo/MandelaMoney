@@ -11,11 +11,11 @@ import java.util.regex.Pattern;
 public class CreateAccountController {
     private int userType;
     private Context context;
-    private ISelectUserType_CreateAccountView viewSelectUserType;
+    private ISelectUserTypeCreateAccountView viewSelectUserType;
     private ICreateStudentAccountView viewCreateStudentAccount;
     private ICreateBusinessAccountView viewCreateBusinessAccount;
 
-    public CreateAccountController(Context context, ISelectUserType_CreateAccountView viewSelectUserType) {
+    public CreateAccountController(Context context, ISelectUserTypeCreateAccountView viewSelectUserType) {
         this.context = context;
         this.viewSelectUserType = viewSelectUserType;
     }

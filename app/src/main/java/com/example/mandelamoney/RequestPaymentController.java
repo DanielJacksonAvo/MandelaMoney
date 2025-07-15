@@ -6,21 +6,21 @@ import android.os.Handler;
 
 public class RequestPaymentController {
     private Context context;
-    private IEnterAmount_RequestPaymentView requestPaymentView;
-    private IShowQRCode_RequestPaymentView showQRCodeRequestPaymentView;
+    private IEnterAmountRequestPaymentView requestPaymentView;
+    private IShowQRCodeRequestPaymentView showQRCodeRequestPaymentView;
     private User user;
     private int transactionIdNumeric;
     private Handler handler = new Handler();
     private Runnable statusChecker;
     private boolean isPolling = false;
-    public RequestPaymentController(Context context, IEnterAmount_RequestPaymentView requestPaymentView) {
+    public RequestPaymentController(Context context, IEnterAmountRequestPaymentView requestPaymentView) {
         this.context = context;
         this.requestPaymentView = requestPaymentView;
         this.user = user;
 
     }
 
-    public RequestPaymentController(Context context, IShowQRCode_RequestPaymentView requestPaymentView) {
+    public RequestPaymentController(Context context, IShowQRCodeRequestPaymentView requestPaymentView) {
         this.context = context;
         this.showQRCodeRequestPaymentView = requestPaymentView;
         this.user = user;
