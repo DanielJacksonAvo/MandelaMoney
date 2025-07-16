@@ -55,6 +55,8 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         txtUserName = findViewById(R.id.txt_user_name_dashboard);
         Button btnRequestPay = findViewById(R.id.btn_request_pay_dashboard);
         configureRequestPayButton(btnRequestPay);
+        Button btnPayNow = findViewById(R.id.btn_pay_now);
+        configurePayNowButton(btnPayNow);
 
     }
 
@@ -72,5 +74,8 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     private void configureRequestPayButton(Button btnRequestPay) {
         btnRequestPay.setOnClickListener((view) -> dashboardController.handleRequestPayment());
 
+    }
+    private void configurePayNowButton(Button btnPayNow){
+        btnPayNow.setOnClickListener((view)->dashboardController.handleMakePayment());
     }
 }

@@ -5,6 +5,136 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/mandelaBlue"
     tools:context=".MakePaymentScanQrActivity">
+
+    <TextView
+        android:id="@+id/txt_make_payment_scan_qr"
+        style="@style/HyperLinkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/make_paymet"
+        android:textAllCaps="true"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/blurView_show_qr"
+        app:layout_constraintEnd_toEndOf="@+id/blurView_show_qr"
+        app:layout_constraintStart_toStartOf="@+id/blurView_show_qr" />
+
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blurView_show_qr"
+        style="@style/BlurPanel"
+        android:layout_width="0dp"
+        android:layout_height="327dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/txt_scan_qr"
+                style="@style/HyperLinkButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="32dp"
+                android:text="@string/scan_mandela_money_qr"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/qr_image_border"
+                android:clipToOutline="true"
+                android:elevation="2dp"
+                android:padding="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_scan_qr">
+
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/img_request_payment_qr"
+                    android:layout_width="162dp"
+                    android:layout_height="162dp"
+                    android:background="@drawable/qr_image_border"
+                    android:clipToOutline="true"
+                    android:outlineProvider="background"
+                    android:scaleType="fitXY" />
+            </FrameLayout>
+            <TextView
+                android:id="@+id/lbl_error_qr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:ems="10"
+                android:text="@string/could_not_generate_qr"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_logo_make_payment"
+                tools:ignore="NotSibling" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </eightbitlab.com.blurview.BlurView>
+
+    <ImageView
+        android:id="@+id/img_logo_make_payment"
+        android:layout_width="375dp"
+        android:layout_height="104dp"
+        android:contentDescription="@string/todo"
+        app:layout_constraintBottom_toTopOf="@+id/blurView_show_qr"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6"
+        app:srcCompat="@drawable/img_mandelamoney_text" />
+
+
+    <TextView
+        android:id="@+id/btn_cancel_scan_qr"
+        style="@style/HyperLinkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@android:string/cancel"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/blurView_show_qr"
+        app:layout_constraintStart_toStartOf="@+id/blurView_show_qr"
+        app:layout_constraintTop_toBottomOf="@+id/blurView_show_qr"
+        app:layout_constraintVertical_bias="0.19999999" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_scan_qr"
+        style="@style/PrimaryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="43dp"
+        android:layout_marginTop="-22dp"
+        android:paddingHorizontal="50dp"
+        android:text="@string/scan"
+        app:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="@+id/blurView_show_qr"
+        app:layout_constraintStart_toStartOf="@+id/blurView_show_qr"
+        app:layout_constraintTop_toBottomOf="@+id/blurView_show_qr" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
