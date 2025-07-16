@@ -6,6 +6,8 @@ import android.content.Intent;
 public class MakePaymentController {
     private IConfirmPaymentView confirmPaymentView;
     private Context context;
+    private int transactionId;
+
     public MakePaymentController(Context context) {
         this.context = context;
     }
@@ -18,8 +20,16 @@ public class MakePaymentController {
         this.context = context;
     }
 
+    public void setTransactionId(int id) {
+        this.transactionId = id;
+    }
+
+    public int getTransactionId() {
+        return transactionId;
+    }
+
     public void handleConfirmPayment() {
-        /// confirms, and moves to next screen.
+        // Send this controller to the next screen via DataShare
         DataShare.send(this);
     }
 

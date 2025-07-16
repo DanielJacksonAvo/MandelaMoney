@@ -50,8 +50,11 @@ public class DashboardController {
     }
 
     public void handleMakePayment() {
-
+        DataShare.send(this);  // Persist controller to next screen
+        Intent intent = new Intent(context, MakePaymentScanQrActivity.class);
+        context.startActivity(intent);
     }
+
 
     public void handleRequestPayment() {
         Intent intent = new Intent(context, RequestPaymentEnterAmountActivity.class);
