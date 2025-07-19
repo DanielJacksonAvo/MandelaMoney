@@ -1,7 +1,9 @@
 package com.example.mandelamoney;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,8 +13,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import org.w3c.dom.Text;
-
 public class ShowFailedActivity extends AppCompatActivity implements ITransactionStatusDisplayView {
 
     private int transactionId;
@@ -20,6 +20,9 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
     private UserDetails toUser;
     private TransactionDetails txnDetails;
     private String errorReason;
+    private Button btn_close;
+    private MakePaymentController makePaymentController;
+    private RequestPaymentController requestPaymentController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,14 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
             return insets;
         });
 
+        // Get controller
+        if (DataShare.receive() instanceof MakePaymentController) {
+            makePaymentController = (MakePaymentController) DataShare.receive();
+        } else if (DataShare.receive() instanceof RequestPaymentController) {
+            requestPaymentController = (RequestPaymentController) DataShare.receive();
+        }
+
+        // Extract Intent data
         transactionId = getIntent().getIntExtra("TRANSACTION_ID", 0);
         errorReason = getIntent().getStringExtra("ERROR_REASON");
 
@@ -40,6 +51,8 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
             displayErrorMessage(errorReason);
         }
 
+        btn_close = findViewById(R.id.btn_generate_qr_failed);
+        configureCloseButton(btn_close);
         if (transactionId != 0) {
             fetchDataAndPopulateUI();
         } else {
@@ -48,8 +61,8 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
     }
 
     private void fetchDataAndPopulateUI() {
+
         txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
-       // Log.d()
         if (txnDetails != null) {
             fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);
             toUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getToUser(), this);
@@ -60,6 +73,13 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
             displayToUserName(toUser.getFirstName() + " " + toUser.getLastName());
             displayToUserNumber(toUser.getNumber());
         }
+    }
+
+    private void configureCloseButton(Button btnClose) {
+        btnClose.setOnClickListener(v -> {
+            startActivity(new Intent(ShowFailedActivity.this, DashboardActivity.class));
+            finish();
+        });
     }
 
     @Override
@@ -76,8 +96,8 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
 
     @Override
     public void displayToUserNumber(String number) {
-       TextView tbx = findViewById(R.id.txt_tonumber_failed);
-       tbx.setText(number);
+        TextView tbx = findViewById(R.id.txt_tonumber_failed);
+        tbx.setText(number);
     }
 
     @Override
@@ -89,11 +109,11 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
     @Override
     public void displayAmount(double amount) {
         TextView tbx = findViewById(R.id.txt_amount_failed);
-        tbx.setText("R "+ String.format("%.2f",amount));
+        tbx.setText("R " + String.format("%.2f", amount));
     }
 
     public void displayErrorMessage(String reason) {
-        TextView tbx = findViewById(R.id.txt_errormessage_failed);
+        TextView tbx = findViewById(R.id.txt_errormessage_failed); // Ensure this ID matches XML
         tbx.setText(reason);
     }
 }
