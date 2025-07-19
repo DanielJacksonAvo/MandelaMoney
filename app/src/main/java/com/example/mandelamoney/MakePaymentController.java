@@ -68,7 +68,29 @@ public class MakePaymentController {
                         if (latestImage != null) latestImage.close();
                         latestImage = image;
                     }
+
+                    try {
+                        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                        byte[] bytes = new byte[buffer.remaining()];
+                        buffer.get(bytes);
+
+                        PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(
+                                bytes, image.getWidth(), image.getHeight(),
+                                0, 0, image.getWidth(), image.getHeight(), false);
+                        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+                        Result result = new MultiFormatReader().decode(bitmap);
+
+                        int scanned = Integer.parseInt(result.getText().trim());
+                        transactionId = scanned;
+                        Log.d("QRScan", "Transaction ID detected: " + transactionId);
+
+                    } catch (Exception e) {
+                        // Ignore if no QR found – normal for continuous scan
+                    } finally {
+                        image.close();
+                    }
                 });
+
 
                 cameraProvider.unbindAll();
                 cameraProvider.bindToLifecycle((MakePaymentScanQrActivity) context,
@@ -87,73 +109,30 @@ public class MakePaymentController {
             return;
         }
 
-        ImageProxy image;
-        synchronized (imageLock) {
-            if (latestImage == null) {
-                Toast.makeText(context, "No image available yet", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            image = latestImage;
-            latestImage = null;
+        if (transactionId == 0) {
+            Toast.makeText(context, "No QR code detected yet. Try again.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        try {
-            // Convert image planes to NV21 byte array
-            ImageProxy.PlaneProxy[] planes = image.getPlanes();
-            ByteBuffer yBuffer = planes[0].getBuffer();
-            ByteBuffer uBuffer = planes[1].getBuffer();
-            ByteBuffer vBuffer = planes[2].getBuffer();
+        if (Boolean.TRUE.equals(MySQLConnector.transactionExists(context, transactionId))) {
+            Log.i("TRANSACTION EXISTS","f"+(transactionId));
+            String email = user.getUserEmail();
+            Log.i("FROM USER EMAIL",email);
+            MySQLConnector.updateTransactionFromUser(context, transactionId, email);
+            Log.i("MAKE PAYMENT CONTROLLER", "Attempt to updateTransactionFromUser complete");
+            TransactionDetails tx = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, context);
+            this.transactionAmount = tx.getAmount();
+            this.toUserDetails = MySQLConnector.getUserDetailsByEmail(tx.getToUser(), context);
+            this.fromUserDetails = MySQLConnector.getUserDetailsByEmail(email, context);
+            Log.i("TRANSACTION DETAILS CAPTURED", "TransactionAmount: "+transactionAmount + " toUserEmail: "+ toUserDetails.getEmail()+" fromUserDetails: "+ fromUserDetails.getEmail());
 
-            int ySize = yBuffer.remaining();
-            int uSize = uBuffer.remaining();
-            int vSize = vBuffer.remaining();
-
-            byte[] nv21 = new byte[ySize + uSize + vSize];
-            yBuffer.get(nv21, 0, ySize);
-            vBuffer.get(nv21, ySize, vSize);
-            uBuffer.get(nv21, ySize + vSize, uSize);
-
-            // Create luminance source for ZXing
-            int width = image.getWidth();
-            int height = image.getHeight();
-            PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(
-                    nv21, width, height, 0, 0, width, height, false);
-            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
-            Result result = new MultiFormatReader().decode(bitmap);
-            int scannedId = Integer.parseInt(result.getText().trim());
-            this.transactionId = scannedId;
-
-            if (Boolean.TRUE.equals(MySQLConnector.transactionExists(context, scannedId))) {
-                String email = user.getUserEmail();
-                MySQLConnector.updateTransactionFromUser(context, scannedId, email);
-
-                TransactionDetails tx = MySQLConnector.getTransactionDetailsFromProcedure(scannedId, context);
-                this.transactionAmount = tx.getAmount();
-                this.toUserDetails = MySQLConnector.getUserDetailsByEmail(tx.getToUser(), context);
-                this.fromUserDetails = MySQLConnector.getUserDetailsByEmail(email, context);
-
-                DataShare.send(this);
-                context.startActivity(new Intent(context, ConfirmPaymentActivity.class));
-            } else {
-                Toast.makeText(context, "Invalid Transaction ID", Toast.LENGTH_SHORT).show();
-            }
-
-        } catch (NotFoundException e) {
-            Toast.makeText(context, "QR code not detected. Try again.", Toast.LENGTH_SHORT).show();
-            Log.e("ScanQR", "QR not found", e);
-        } catch (NumberFormatException e) {
-            Toast.makeText(context, "Invalid QR code format", Toast.LENGTH_SHORT).show();
-            Log.e("ScanQR", "Invalid QR code format", e);
-        } catch (Exception e) {
-            Toast.makeText(context, "Error processing QR", Toast.LENGTH_SHORT).show();
-            Log.e("ScanQR", "Unhandled QR scan error", e);
-        } finally {
-            image.close();
+            DataShare.send(this);
+            context.startActivity(new Intent(context, ConfirmPaymentActivity.class));
+        } else {
+            Toast.makeText(context, "Invalid Transaction ID", Toast.LENGTH_SHORT).show();
         }
+
     }
-
-
 
     public void handleCancel() {
         DataShare.send(this);

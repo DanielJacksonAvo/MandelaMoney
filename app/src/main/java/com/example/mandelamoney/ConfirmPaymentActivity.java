@@ -91,7 +91,7 @@ public class ConfirmPaymentActivity extends AppCompatActivity implements IConfir
     @Override
     public void displayAmount(double amount) {
         TextView tbx = findViewById(R.id.txt_amount_confirmpayment);
-        String stringAmount = String.format("R %2f",amount);
+        String stringAmount = "R" + String.format("%.2f",amount);
         tbx.setText(stringAmount);    }
 
     @Override
