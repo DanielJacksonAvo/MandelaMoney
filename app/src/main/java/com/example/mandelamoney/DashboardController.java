@@ -11,11 +11,10 @@ public class DashboardController {
     private final Context context;
     private User user;
 
-    public DashboardController(Context context, IDashboardView view, User user) {
+    public DashboardController(Context context, IDashboardView view) {
         this.context = context;
         this.view = view;
-        this.user = user;
-
+        this.user = UserSession.getUser();
         if (user != null) {
             double balance = user.getUserBalance();
             // load into UI

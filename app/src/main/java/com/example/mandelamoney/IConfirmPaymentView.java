@@ -8,8 +8,5 @@ public interface IConfirmPaymentView {
     void displayToUserTransactionType(String type);
     void displayFromUserTransactionType(String type);
     void displayAmount(double amount);
-
-
-
-
+    void finishActivity();
 }
