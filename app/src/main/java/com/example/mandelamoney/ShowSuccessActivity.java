@@ -1,6 +1,8 @@
 package com.example.mandelamoney;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +18,9 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
     private UserDetails fromUser;
     private UserDetails toUser;
     private TransactionDetails txnDetails;
+    private Button btnClose;
+    private MakePaymentController makePaymentController;
+    private RequestPaymentController requestPaymentController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +34,28 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
             return insets;
         });
 
+        if (DataShare.receive() instanceof MakePaymentController) {
+            makePaymentController = (MakePaymentController) DataShare.receive();
+        } else if (DataShare.receive() instanceof RequestPaymentController) {
+            requestPaymentController = (RequestPaymentController) DataShare.receive();
+        }
+
         transactionId = getIntent().getIntExtra("TRANSACTION_ID", 0);
+
         if (transactionId != 0) {
             fetchDataAndPopulateUI();
-        } else {
-            Toast.makeText(this, "Transaction data missing.", Toast.LENGTH_SHORT).show();
         }
+
+        btnClose = findViewById(R.id.btn_generate_qr_success);
+        btnClose.setOnClickListener(v -> {
+            startActivity(new Intent(ShowSuccessActivity.this, DashboardActivity.class));
+            finish();
+        });
     }
 
     private void fetchDataAndPopulateUI() {
         txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
+
         if (txnDetails != null) {
             fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);
             toUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getToUser(), this);
@@ -73,7 +90,6 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
 
     @Override
     public void displayAmount(double amount) {
-        ((TextView) findViewById(R.id.txt_amount_success)).setText("R" + String.format("%.2f", amount));
+        ((TextView) findViewById(R.id.txt_amount_success)).setText("R " + String.format("%.2f", amount));
     }
-
 }

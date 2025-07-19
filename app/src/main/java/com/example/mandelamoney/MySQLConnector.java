@@ -442,6 +442,7 @@ public class MySQLConnector {
         }
     }
 
+
     public static boolean hasSufficientFunds(String fromUserEmail, int transactionId, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
@@ -554,6 +555,28 @@ public class MySQLConnector {
     }
 
     public static double getUserBalance(String email, Context context) {
-        return 20.00;//create this procedure
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot fetch balance: No valid DB connection.");
+            return 0.0;
+        }
+
+        double balance = 0.0;
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.getUserBalance(?, ?)}")) {
+            stmt.setString(1, email);
+            stmt.registerOutParameter(2, Types.FLOAT);
+
+            stmt.execute();
+            balance = stmt.getFloat(2);
+
+            Log.d("MySQLConnector", "Fetched balance for " + email + ": " + balance);
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling getUserBalance: " + e.getMessage());
+        }
+
+        return balance;
     }
+
 }

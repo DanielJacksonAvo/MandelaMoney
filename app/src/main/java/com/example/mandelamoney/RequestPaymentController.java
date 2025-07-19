@@ -8,45 +8,42 @@ public class RequestPaymentController {
     private Context context;
     private IEnterAmountRequestPaymentView requestPaymentView;
     private IShowQRCodeRequestPaymentView showQRCodeRequestPaymentView;
-    private User user;
     private int transactionIdNumeric;
     private Handler handler = new Handler();
     private Runnable statusChecker;
     private boolean isPolling = false;
+
     public RequestPaymentController(Context context, IEnterAmountRequestPaymentView requestPaymentView) {
         this.context = context;
         this.requestPaymentView = requestPaymentView;
-        this.user = user;
-
     }
 
     public RequestPaymentController(Context context, IShowQRCodeRequestPaymentView requestPaymentView) {
         this.context = context;
         this.showQRCodeRequestPaymentView = requestPaymentView;
-        this.user = user;
     }
 
-
     public void handleGenerateQR(String amount) {
-        if (!isValidInput(amount)) {
-            //not a valid input
-            return;
-        }
+        if (!isValidInput(amount)) return;
+
         float transactionAmount = Float.parseFloat(amount);
         String toUserEmail = UserSession.getUser().getUserEmail().trim();
         Integer transactionID = MySQLConnector.createTransaction(toUserEmail, transactionAmount, context);
+
         if (transactionID == null) {
             requestPaymentView.showError(context.getString(R.string.could_not_create_transaction));
             return;
         }
-        //sending the controller. Use DataShare.receive() to get the controller on next screen. Remember to update the context using setContext method.
+
         DataShare.send(this);
         Intent intent = new Intent(context, RequestPaymentShowQrActivity.class);
         intent.putExtra("transaction_id", transactionID.toString());
         context.startActivity(intent);
         setContext(context);
     }
-    public void startPollingStatus() {
+
+    public void startPollingStatus(int txnId) {
+        this.transactionIdNumeric = txnId;
         isPolling = true;
 
         statusChecker = new Runnable() {
@@ -56,34 +53,19 @@ public class RequestPaymentController {
 
                 if ("success".equalsIgnoreCase(status)) {
                     stopPolling();
-
-                    TransactionDetails txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(
-                            transactionIdNumeric, context);
-
-                    if (txnDetails != null) {
-                        Intent intent = new Intent(context, ShowSuccessActivity.class);
-                        context.startActivity(intent);
-                        setContext(context);
-                    } else {
-                        System.out.println("Transaction completed, but details could not be retrieved.");
-                    }
+                    Intent intent = new Intent(context, ShowSuccessActivity.class);
+                    intent.putExtra("TRANSACTION_ID", transactionIdNumeric);
+                    DataShare.send(RequestPaymentController.this);
+                    context.startActivity(intent);
 
                 } else if ("failed".equalsIgnoreCase(status)) {
                     stopPolling();
-
-                    TransactionDetails txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(
-                            transactionIdNumeric, context);
-
-                    if (txnDetails != null) {
-                        Intent intent = new Intent(context, ShowFailedActivity.class);
-                        context.startActivity(intent);
-                        setContext(context);
-                    } else {
-                        System.out.println("Transaction failed, but details could not be retrieved.");
-                    }
-
+                    Intent intent = new Intent(context, ShowFailedActivity.class);
+                    intent.putExtra("TRANSACTION_ID", transactionIdNumeric);
+                    intent.putExtra("ERROR_REASON", "Transaction was not completed.");
+                    DataShare.send(RequestPaymentController.this);
+                    context.startActivity(intent);
                 } else {
-                    // Status still pending
                     handler.postDelayed(this, 3000);
                 }
             }
@@ -91,30 +73,20 @@ public class RequestPaymentController {
 
         handler.post(statusChecker);
     }
+
     private void stopPolling() {
         if (isPolling && handler != null && statusChecker != null) {
             handler.removeCallbacks(statusChecker);
             isPolling = false;
         }
     }
+
     private boolean isValidInput(String amount) {
         requestPaymentView.hideError();
-
-        if (ValidateInput.isEmpty(amount)) {
+        if (ValidateInput.isEmpty(amount) || !ValidateInput.isDouble(amount) || !ValidateInput.isPositive(Double.parseDouble(amount))) {
             requestPaymentView.showError(context.getString(R.string.enter_a_valid_amount));
             return false;
         }
-
-        if (!ValidateInput.isDouble(amount)) {
-            requestPaymentView.showError(context.getString(R.string.enter_a_valid_amount));
-            return false;
-        }
-
-        if (!ValidateInput.isPositive(Double.parseDouble(amount))) {
-            requestPaymentView.showError(context.getString(R.string.enter_a_positive_amount));
-            return false;
-        }
-
         return true;
     }
 
@@ -129,15 +101,7 @@ public class RequestPaymentController {
 
     private static class ValidateInput {
         public static boolean isEmpty(String s) {
-            if (s == null) {
-                return true;
-            }
-
-            if (s.isEmpty()) {
-                return true;
-            }
-
-            return false;
+            return s == null || s.isEmpty();
         }
 
         public static boolean isPositive(double amount) {
@@ -152,11 +116,5 @@ public class RequestPaymentController {
                 return false;
             }
         }
-
     }
-
-
-
-
-
 }

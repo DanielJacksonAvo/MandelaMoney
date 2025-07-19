@@ -70,6 +70,14 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     public void displayUserName(String name) {
         txtUserName.setText(toUpperCase(name));
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (dashboardController != null) {
+            dashboardController.handleBalanceRefresh();
+        }
+    }
+
 
     private void configureRequestPayButton(Button btnRequestPay) {
         btnRequestPay.setOnClickListener((view) -> dashboardController.handleRequestPayment());
