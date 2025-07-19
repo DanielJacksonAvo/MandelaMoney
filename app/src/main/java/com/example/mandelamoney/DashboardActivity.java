@@ -45,7 +45,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
             return;
         }
 
-        dashboardController = new DashboardController(this, this, currentUser);
+        dashboardController = new DashboardController(this, this);
         dashboardController.handleLoadUserToUI();
     }
 

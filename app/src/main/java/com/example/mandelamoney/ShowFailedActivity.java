@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class ShowFailedActivity extends AppCompatActivity {
 
-    private TextView fromName, fromNumber, toName, toNumber, amount;
+    private TextView fromName, fromNumber, toName, toNumber, amount, errorMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +27,11 @@ public class ShowFailedActivity extends AppCompatActivity {
 
         initViews();
         loadTransactionData();
+        String error = getIntent().getStringExtra("ERROR_REASON");
+        if (error != null) {
+            errorMessage.setText(error);
+        }
+
     }
 
     private void initViews() {
@@ -35,6 +40,7 @@ public class ShowFailedActivity extends AppCompatActivity {
         toName = findViewById(R.id.txt_toname_failed);
         toNumber = findViewById(R.id.txt_tonumber_failed);
         amount = findViewById(R.id.txt_amount_failed);
+        errorMessage = findViewById(R.id.txt_error_failed);
     }
 
     private void loadTransactionData() {
@@ -57,5 +63,6 @@ public class ShowFailedActivity extends AppCompatActivity {
         }
 
         amount.setText("R" + String.format("%.2f", details.getAmount()));
+
     }
 }

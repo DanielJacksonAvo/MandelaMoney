@@ -20,14 +20,18 @@ public class ConfirmPaymentActivity extends AppCompatActivity implements IConfir
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_confirm_payment);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        controller = (MakePaymentController)DataShare.receive();
+        controller = (MakePaymentController) DataShare.receive();
         connectToUI();
+        controller.setConfirmPaymentView(this);
+        controller.handleLoadUsersUI();
     }
+
 
     private void connectToUI() {
         Button btnConfirm = findViewById(R.id.btn_confirmpayment);
@@ -87,7 +91,13 @@ public class ConfirmPaymentActivity extends AppCompatActivity implements IConfir
     @Override
     public void displayAmount(double amount) {
         TextView tbx = findViewById(R.id.txt_amount_confirmpayment);
-        tbx.setText(String.valueOf(amount));    }
+        String stringAmount = String.format("R %2f",amount);
+        tbx.setText(stringAmount);    }
+
+    @Override
+    public void finishActivity() {
+
+    }
 
 
 }
