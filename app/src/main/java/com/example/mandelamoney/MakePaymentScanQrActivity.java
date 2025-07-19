@@ -3,6 +3,7 @@ package com.example.mandelamoney;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +55,11 @@ public class MakePaymentScanQrActivity extends AppCompatActivity implements ISca
     private void connectToUI() {
         Button btnScan = findViewById(R.id.btn_scan_qr);
         TextView btnCancel = findViewById(R.id.btn_cancel_scan_qr);
-        btnScan.setOnClickListener(v -> controller.handleScanQR());
+        btnScan.setOnClickListener(v -> {
+            Log.d("DEBUG", "Scan button clicked — transactionId: " + controller.getTransactionId());
+            controller.handleScanQR();
+        });
+
         btnCancel.setOnClickListener(v -> controller.handleCancel());
     }
 

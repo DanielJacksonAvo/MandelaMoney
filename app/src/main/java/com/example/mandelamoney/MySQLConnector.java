@@ -474,12 +474,12 @@ public class MySQLConnector {
         }
 
         boolean txnSuccess = false;
-
+        Log.i("JHGG", "HERE");
         try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.confirmTransaction(?, ?, ?)}")) {
             stmt.setString(1, fromUserEmail);
             stmt.setInt(2, txnId);
             stmt.registerOutParameter(3, Types.BOOLEAN);
-
+            Log.i("JHGG", "HERE2");
             stmt.execute();
             txnSuccess = stmt.getBoolean(3);
             Log.d("MySQLConnector", "Transaction confirmed? " + txnSuccess);
@@ -489,6 +489,25 @@ public class MySQLConnector {
 
         return txnSuccess;
     }
+    public static void updateTransactionStatus(int transactionId, String newStatus, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot update transaction status: No valid DB connection.");
+            return;
+        }
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.updateTransactionStatus(?, ?)}")) {
+            stmt.setInt(1, transactionId);
+            stmt.setString(2, newStatus);
+
+            stmt.execute();
+            Log.d("MySQLConnector", "Transaction status updated to: " + newStatus + " for ID: " + transactionId);
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error updating transaction status: " + e.getMessage());
+        }
+    }
+
 
 
 
