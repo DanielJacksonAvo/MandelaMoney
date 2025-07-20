@@ -130,8 +130,8 @@
         android:id="@+id/btn_verify"
         style="@style/PrimaryButton"
         android:layout_width="167dp"
-        android:layout_height="57dp"
-        android:layout_marginTop="-30dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="-21dp"
         android:text="@string/verify"
         app:layout_constraintEnd_toEndOf="@+id/blurView_recover_account"
         app:layout_constraintStart_toStartOf="@+id/blurView_recover_account"
@@ -161,6 +161,6 @@
         app:layout_constraintEnd_toEndOf="@+id/blurView_recover_account"
         app:layout_constraintStart_toStartOf="@+id/blurView_recover_account"
         app:layout_constraintTop_toBottomOf="@+id/btn_verify"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.19" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
