@@ -13,13 +13,14 @@
         style="@style/HyperLinkButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="@android:string/cancel"
         android:textAllCaps="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/blurView_createaccountstudent"
         app:layout_constraintStart_toStartOf="@+id/blurView_createaccountstudent"
         app:layout_constraintTop_toBottomOf="@+id/blurView_createaccountstudent"
-        app:layout_constraintVertical_bias="0.55" />
+        app:layout_constraintVertical_bias="0.19999999" />
 
     <ImageView
         android:id="@+id/img_mandelamoney_createstudentaccount"
@@ -40,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="43dp"
         android:layout_marginTop="-21.5dp"
-        android:text="Create Account"
+        android:text="@string/create_account"
         app:layout_constraintEnd_toEndOf="@+id/blurView_createaccountstudent"
         app:layout_constraintStart_toStartOf="@+id/blurView_createaccountstudent"
         app:layout_constraintTop_toBottomOf="@id/blurView_createaccountstudent" />
@@ -110,7 +111,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:autofillHints="@string/password"
-                    android:hint="CONFIRM"
+                    android:hint="@string/confirm"
                     android:inputType="textPassword"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -162,7 +163,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:autofillHints="Student Number"
-                    android:hint="STUDENT NUMBER"
+                    android:hint="@string/student_number"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
