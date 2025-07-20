@@ -62,4 +62,10 @@
     <string name="qr_instruction">The payee, must select pay and scan the QR code below.</string>
     <string name="could_not_create_transaction">Error. Could not create transaction.</string>
     <string name="could_not_generate_qr">Error: Could not generate QR code.</string>
+    <string name="confirm">Confirm</string>
+    <string name="confirm_payment">Confirm Payment</string>
+    <string name="make_paymet">MAKE PAYMENT</string>
+    <string name="scan_mandela_money_qr">Scan a Mandela Money QR</string>
+    <string name="scan">SCAN</string>
+
 </resources>

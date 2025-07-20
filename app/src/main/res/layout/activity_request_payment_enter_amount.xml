@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mandelaBlue"
-    tools:context=".RequestPayment_EnterAmountActivity">
+    tools:context=".RequestPaymentEnterAmountActivity">
 
     <eightbitlab.com.blurview.BlurView
         android:id="@+id/blurView_request_payment"

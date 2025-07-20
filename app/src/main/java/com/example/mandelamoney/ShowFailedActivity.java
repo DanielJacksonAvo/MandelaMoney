@@ -1,7 +1,11 @@
 package com.example.mandelamoney;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,9 +13,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class ShowFailedActivity extends AppCompatActivity {
+public class ShowFailedActivity extends AppCompatActivity implements ITransactionStatusDisplayView {
 
-    private TextView fromName, fromNumber, toName, toNumber, amount;
+    private int transactionId;
+    private UserDetails fromUser;
+    private UserDetails toUser;
+    private TransactionDetails txnDetails;
+    private String errorReason;
+    private Button btn_close;
+    private MakePaymentController makePaymentController;
+    private RequestPaymentController requestPaymentController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,37 +36,84 @@ public class ShowFailedActivity extends AppCompatActivity {
             return insets;
         });
 
-        initViews();
-        loadTransactionData();
-    }
-
-    private void initViews() {
-        fromName = findViewById(R.id.txt_fromname_failed);
-        fromNumber = findViewById(R.id.txt_fromnumber_failed);
-        toName = findViewById(R.id.txt_toname_failed);
-        toNumber = findViewById(R.id.txt_tonumber_failed);
-        amount = findViewById(R.id.txt_amount_failed);
-    }
-
-    private void loadTransactionData() {
-        int transactionId = getIntent().getIntExtra("transaction_id", -1);
-        if (transactionId == -1) return;
-
-        TransactionDetails details = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
-        if (details == null) return;
-
-        UserDetails fromUser = MySQLConnector.getUserDetailsByEmail(details.getFromUser(), this);
-        UserDetails toUser = MySQLConnector.getUserDetailsByEmail(details.getToUser(), this);
-
-        if (fromUser != null) {
-            fromName.setText(fromUser.getFullName());
-            fromNumber.setText(fromUser.getNumber());
-        }
-        if (toUser != null) {
-            toName.setText(toUser.getFullName());
-            toNumber.setText(toUser.getNumber());
+        // Get controller
+        if (DataShare.receive() instanceof MakePaymentController) {
+            makePaymentController = (MakePaymentController) DataShare.receive();
+        } else if (DataShare.receive() instanceof RequestPaymentController) {
+            requestPaymentController = (RequestPaymentController) DataShare.receive();
         }
 
-        amount.setText("R" + String.format("%.2f", details.getAmount()));
+        // Extract Intent data
+        transactionId = getIntent().getIntExtra("TRANSACTION_ID", 0);
+        errorReason = getIntent().getStringExtra("ERROR_REASON");
+
+        if (errorReason != null) {
+            displayErrorMessage(errorReason);
+        }
+
+        btn_close = findViewById(R.id.btn_generate_qr_failed);
+        configureCloseButton(btn_close);
+        if (transactionId != 0) {
+            fetchDataAndPopulateUI();
+        } else {
+            Toast.makeText(this, "Transaction ID missing. Cannot load transaction details.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void fetchDataAndPopulateUI() {
+
+        txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
+        if (txnDetails != null) {
+            fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);
+            toUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getToUser(), this);
+
+            displayAmount(txnDetails.getAmount());
+            displayFromUserName(fromUser.getFirstName() + " " + fromUser.getLastName());
+            displayFromUserNumber(fromUser.getNumber());
+            displayToUserName(toUser.getFirstName() + " " + toUser.getLastName());
+            displayToUserNumber(toUser.getNumber());
+        }
+    }
+
+    private void configureCloseButton(Button btnClose) {
+        btnClose.setOnClickListener(v -> {
+            startActivity(new Intent(ShowFailedActivity.this, DashboardActivity.class));
+            finish();
+        });
+    }
+
+    @Override
+    public void displayToUserName(String name) {
+        TextView tbx = findViewById(R.id.txt_toname_failed);
+        tbx.setText(name);
+    }
+
+    @Override
+    public void displayFromUserName(String name) {
+        TextView tbx = findViewById(R.id.txt_fromname_failed);
+        tbx.setText(name);
+    }
+
+    @Override
+    public void displayToUserNumber(String number) {
+        TextView tbx = findViewById(R.id.txt_tonumber_failed);
+        tbx.setText(number);
+    }
+
+    @Override
+    public void displayFromUserNumber(String number) {
+        TextView tbx = findViewById(R.id.txt_fromnumber_failed);
+        tbx.setText(number);
+    }
+
+    @Override
+    public void displayAmount(double amount) {
+        TextView tbx = findViewById(R.id.txt_amount_failed);
+        tbx.setText("R " + String.format("%.2f", amount));
+    }
+
+    public void displayErrorMessage(String reason) {
+        TextView tbx = findViewById(R.id.txt_errormessage_failed); // Ensure this ID matches XML
+        tbx.setText(reason);
     }
 }

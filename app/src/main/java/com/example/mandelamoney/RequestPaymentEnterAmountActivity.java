@@ -11,7 +11,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class RequestPayment_EnterAmountActivity extends AppCompatActivity implements IEnterAmount_RequestPaymentView {
+public class RequestPaymentEnterAmountActivity extends AppCompatActivity implements IEnterAmountRequestPaymentView {
 
     private RequestPaymentController requestPaymentController;
     private TextView txtErrorMessage;

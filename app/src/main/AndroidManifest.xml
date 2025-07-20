@@ -2,7 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
 
     <application
         android:allowBackup="true"
@@ -24,25 +30,31 @@
             android:screenOrientation="portrait"/>
         android:theme="@style/Theme.MyApp.Light" >
         <activity
+            android:name=".MakePaymentScanQrActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ConfirmPaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".ShowSuccessActivity"
             android:exported="false" />
         <activity
             android:name=".ShowFailedActivity"
             android:exported="false" />
         <activity
-            android:name=".RequestPayment_ShowQRActivity"
+            android:name=".RequestPaymentShowQrActivity"
             android:exported="false" />
         <activity
-            android:name=".RequestPayment_EnterAmountActivity"
+            android:name=".RequestPaymentEnterAmountActivity"
             android:exported="false" />
         <activity
-            android:name=".CreateAccount_EnterBusinessDetailsActivityView"
+            android:name=".CreateAccountEnterBusinessDetailsActivityView"
             android:exported="false" />
         <activity
-            android:name=".CreateAccount_EnterStudentDetailsActivityView"
+            android:name=".CreateAccountEnterStudentDetailsActivityView"
             android:exported="false" />
         <activity
-            android:name=".CreateAccount_SelectUserTypeActivityView"
+            android:name=".CreateAccountSelectUserTypeActivityView"
             android:exported="false" />
         <activity
             android:name=".DashboardActivity"
