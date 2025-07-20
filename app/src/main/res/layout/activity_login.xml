@@ -37,7 +37,7 @@
                 app:layout_constraintVertical_bias="0.333">
 
                 <ImageView
-                    android:id="@+id/img_studentnumber_icon_createstudentaccount"
+                    android:id="@+id/img_email_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/todo"
@@ -48,7 +48,7 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_studentnumber_createstudentaccount"
+                    android:id="@+id/tbx_email_login"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -65,7 +65,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout_password_reenter_createstudentaccount"
+                android:id="@+id/constraintLayout_password_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
@@ -77,7 +77,7 @@
                 app:layout_constraintVertical_bias="0.666">
 
                 <EditText
-                    android:id="@+id/tbx_password_reenter_createstudentaccount"
+                    android:id="@+id/tbx_password_login"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -90,17 +90,17 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/img_password_reenter_createstudentaccount"
+                    android:id="@+id/img_password_login"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:contentDescription="@string/view_hide"
                     android:src="@drawable/img_password_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/tbx_password_reenter_createstudentaccount"
+                    app:layout_constraintEnd_toEndOf="@+id/tbx_password_login"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/tbx_password_reenter_createstudentaccount"
-                    app:layout_constraintTop_toTopOf="@+id/tbx_password_reenter_createstudentaccount" />
+                    app:layout_constraintStart_toStartOf="@+id/tbx_password_login"
+                    app:layout_constraintTop_toTopOf="@+id/tbx_password_login" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -115,7 +115,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createstudentaccount"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_login"
                 app:layout_constraintVertical_bias="0.155" />
 
             <TextView

@@ -66,15 +66,11 @@ public class CreateAccountEnterStudentDetailsActivityView extends AppCompatActiv
     }
 
     private void configureCancelButton(TextView btnCancel) {
-        btnCancel.setOnClickListener((view) -> {
-            controller.handleCreateAccountCancel();
-        });
+        btnCancel.setOnClickListener((view) -> controller.handleCreateStudentAccountCancel());
     }
 
     private void configureCreateAccountButton(Button btnCreateAccount, EditText tbxEmail, EditText tbxFirstName, EditText tbxLastName, EditText tbxStudentNumber, EditText tbxPassword, EditText tbxPasswordReenter) {
-        btnCreateAccount.setOnClickListener((view) -> {
-            controller.handleCreateStudentUser(String.valueOf(tbxEmail.getText()), String.valueOf(tbxFirstName.getText()), String.valueOf(tbxLastName.getText()), String.valueOf(tbxStudentNumber.getText()), String.valueOf(tbxPassword.getText()), String.valueOf(tbxPasswordReenter.getText()));
-        });
+        btnCreateAccount.setOnClickListener((view) -> controller.handleCreateStudentUser(String.valueOf(tbxEmail.getText()), String.valueOf(tbxFirstName.getText()), String.valueOf(tbxLastName.getText()), String.valueOf(tbxStudentNumber.getText()), String.valueOf(tbxPassword.getText()), String.valueOf(tbxPasswordReenter.getText())));
     }
 
     @Override
@@ -98,6 +94,11 @@ public class CreateAccountEnterStudentDetailsActivityView extends AppCompatActiv
     @Override
     public void hideDetailError() {
         txtDetailError.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void finishActivity() {
+
     }
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {

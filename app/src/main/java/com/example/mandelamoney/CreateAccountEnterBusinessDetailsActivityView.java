@@ -64,15 +64,11 @@ public class CreateAccountEnterBusinessDetailsActivityView extends AppCompatActi
     }
 
     private void configureCancelButton(TextView btnCancel) {
-        btnCancel.setOnClickListener((view) -> {
-            controller.handleCreateAccountCancel();
-        });
+        btnCancel.setOnClickListener((view) -> controller.handleCreateBusinessAccountCancel());
     }
 
     private void configureCreateAccountButton(Button btnCreateAccount, EditText tbxEmail, EditText tbxName, EditText tbxVAT, EditText tbxPhone, EditText tbxPassword, EditText tbxPasswordReenter) {
-        btnCreateAccount.setOnClickListener((view) -> {
-            controller.handleCreateBusinessUser(String.valueOf(tbxEmail.getText()), String.valueOf(tbxName.getText()), String.valueOf(tbxVAT.getText()), String.valueOf(tbxPhone.getText()), String.valueOf(tbxPassword.getText()), String.valueOf(tbxPasswordReenter.getText()));
-        });
+        btnCreateAccount.setOnClickListener((view) -> controller.handleCreateBusinessUser(String.valueOf(tbxEmail.getText()), String.valueOf(tbxName.getText()), String.valueOf(tbxVAT.getText()), String.valueOf(tbxPhone.getText()), String.valueOf(tbxPassword.getText()), String.valueOf(tbxPasswordReenter.getText())));
     }
 
     @Override
@@ -95,6 +91,11 @@ public class CreateAccountEnterBusinessDetailsActivityView extends AppCompatActi
     @Override
     public void hideDetailError() {
         txtDetailError.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void finishActivity() {
+
     }
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {

@@ -9,7 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CreateAccountController {
-    private int userType;
     private Context context;
     private ISelectUserTypeCreateAccountView viewSelectUserType;
     private ICreateStudentAccountView viewCreateStudentAccount;
@@ -35,7 +34,6 @@ public class CreateAccountController {
                 context.startActivity(intent);
                 break;
             default:
-                return;
         }
     }
 
@@ -96,7 +94,7 @@ public class CreateAccountController {
         viewCreateStudentAccount.hidePasswordError();
         viewCreateStudentAccount.hideDetailError();
 
-        if(MySQLConnector.createStudentAccount(userEmail, userPassword, userFirstName, userLastName, userStudentNumber, context) == false) {
+        if(!MySQLConnector.createStudentAccount(userEmail, userPassword, userFirstName, userLastName, userStudentNumber, context)) {
             Toast.makeText(context, "Account Failed to Created!", Toast.LENGTH_LONG).show();
             return;
         }
@@ -160,7 +158,7 @@ public class CreateAccountController {
         viewCreateBusinessAccount.hidePasswordError();
         viewCreateBusinessAccount.hideDetailError();
 
-        if(MySQLConnector.createBusinessAccount(userEmail, userPassword, userBusinessName, userBusinessPhone, userBusinessVAT, context) == false) {
+        if(!MySQLConnector.createBusinessAccount(userEmail, userPassword, userBusinessName, userBusinessPhone, userBusinessVAT, context)) {
             Toast.makeText(context, "Account Failed to Created!", Toast.LENGTH_LONG).show();
             return;
         }
@@ -175,11 +173,19 @@ public class CreateAccountController {
         viewSelectUserType.finishActivity();
     }
 
-    public void handleCreateAccountCancel() {
+    public void handleCreateStudentAccountCancel() {
         DataShare.send(this);
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
-        viewSelectUserType.finishActivity();
+        viewCreateStudentAccount.finishActivity();
+
+    }
+
+    public void handleCreateBusinessAccountCancel() {
+        DataShare.send(this);
+        Intent intent = new Intent(context, LoginActivity.class);
+        context.startActivity(intent);
+        viewCreateBusinessAccount.finishActivity();
 
     }
 
@@ -205,10 +211,6 @@ public class CreateAccountController {
         }
 
         if (s.isEmpty()) {
-            return true;
-        }
-
-        if (s.equals("")) {
             return true;
         }
 

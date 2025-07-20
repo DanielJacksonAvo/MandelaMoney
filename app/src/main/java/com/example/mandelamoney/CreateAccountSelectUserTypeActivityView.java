@@ -38,28 +38,13 @@ public class CreateAccountSelectUserTypeActivityView extends AppCompatActivity i
         configureUserSelectButtons(btnStudentType, btnBusinessType);
     }
 
-    private void connectToCreateStudentUI() {
-        TextView btnCancel = findViewById(R.id.btn_cancel_createstudentaccount);
-    }
-
-
-    private void connectToCreateBusinessUI() {
-
-    }
-
     private void configureCancelButton(TextView btnCancel) {
-        btnCancel.setOnClickListener((view) -> {
-            createAccountController.handleSelectUserTypeCancel();
-        });
+        btnCancel.setOnClickListener((view) -> createAccountController.handleSelectUserTypeCancel());
     }
 
     private void configureUserSelectButtons(Button btnStudentType, Button btnBusinessType) {
-        btnStudentType.setOnClickListener((view) -> {
-            createAccountController.handleUserTypeSelection(1);
-        });
-        btnBusinessType.setOnClickListener((view) -> {
-            createAccountController.handleUserTypeSelection(0);
-        });
+        btnStudentType.setOnClickListener((view) -> createAccountController.handleUserTypeSelection(1));
+        btnBusinessType.setOnClickListener((view) -> createAccountController.handleUserTypeSelection(0));
     }
 
     @Override

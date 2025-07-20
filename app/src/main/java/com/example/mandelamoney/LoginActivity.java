@@ -5,7 +5,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -29,7 +28,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public class LoginActivity extends AppCompatActivity implements ILoginView {
     private LoginController loginController;
     private TextView txtError;
-    private EditText tbxUserPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +58,15 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
 
     private void connectToUI() {
         Button btnLogin = findViewById(R.id.btn_login);
-        EditText tbxUserEmail = findViewById(R.id.tbx_studentnumber_createstudentaccount);
-        tbxUserPassword = findViewById(R.id.tbx_password_reenter_createstudentaccount);
+        EditText tbxUserEmail = findViewById(R.id.tbx_email_login);
+        EditText tbxUserPassword = findViewById(R.id.tbx_password_login);
         txtError = findViewById(R.id.txt_error_login);
-        ImageView imgPasswordIcon = findViewById(R.id.img_password_icon);
+        ImageView imgPasswordIcon = findViewById(R.id.img_password_login);
         TextView btnForgotPassword = findViewById(R.id.btn_forgotPassword_login);
         configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
         configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
         configureForgotPasswordButton(btnForgotPassword);
         TextView btnSignup = findViewById(R.id.btn_signup_login);
-        ImageView imgPasswordIcon = findViewById(R.id.img_password_reenter_createstudentaccount);
         configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
         configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
         configureSignupButton(btnSignup);
@@ -89,15 +86,11 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         });
     }
     private void configureForgotPasswordButton(TextView btnForgotPassword){
-        btnForgotPassword.setOnClickListener((view)->{
-            loginController.handleForgotPassword();
-        });
+        btnForgotPassword.setOnClickListener((view)-> loginController.handleForgotPassword());
     }
 
     private void configureSignupButton(TextView btnSignup) {
-        btnSignup.setOnClickListener((view) -> {
-            loginController.handleSignUp();
-        });
+        btnSignup.setOnClickListener((view) -> loginController.handleSignUp());
     }
 
     @Override
