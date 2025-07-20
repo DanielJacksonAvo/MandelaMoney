@@ -22,10 +22,9 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ResetPasswordActivity extends AppCompatActivity implements IResetPasswordView{
-    private ResetPasswordController resetPasswordController;
+    private ForgotPasswordController controller;
     private TextView txtError;
-    private EditText tbxNewPassword;
-    private EditText tbxConfirmNewPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -38,29 +37,35 @@ public class ResetPasswordActivity extends AppCompatActivity implements IResetPa
         });
         String userEmail = getIntent().getStringExtra("userEmail");
         String recoveryCode = getIntent().getStringExtra("recoveryCode");
-        resetPasswordController = new ResetPasswordController(this,this);
-        resetPasswordController.setUserEmail(userEmail);
-        resetPasswordController.setUserRecoveryCode(recoveryCode);
+        getController();
+        controller.setUserEmail(userEmail);
+        controller.setUserRecoveryCode(recoveryCode);
         connectToUI();
-        
+
+    }
+    
+    private void getController() {
+        controller = (ForgotPasswordController)DataShare.receive();
+        controller.setContext(this);
+        controller.setResetPasswordView(this);
     }
 
     private void connectToUI() {
         Button btnResetPassword = findViewById(R.id.btn_reset_password);
-        tbxNewPassword = findViewById(R.id.tbx_password_reset_password);
-        tbxConfirmNewPassword = findViewById(R.id.tbx_confirm_password);
+        EditText tbxNewPassword = findViewById(R.id.tbx_password_reset_password);
+        EditText tbxConfirmNewPassword = findViewById(R.id.tbx_confirm_password);
         txtError = findViewById(R.id.txt_error_reset_password);
         TextView btnCancel = findViewById(R.id.btn_cancel_reset_password);
         ImageView imgPasswordIcon_password = findViewById(R.id.img_password_icon_reset_password);
         ImageView imgPasswordIcon_confirmPassword = findViewById(R.id.img_confirm_password_icon_reset_password);
-        configureResetPasswordButton(btnResetPassword,tbxNewPassword,tbxConfirmNewPassword,txtError);
-        configurePasswordVisibility(imgPasswordIcon_password,tbxNewPassword);
-        configurePasswordVisibility(imgPasswordIcon_confirmPassword,tbxConfirmNewPassword);
+        configureResetPasswordButton(btnResetPassword, tbxNewPassword, tbxConfirmNewPassword,txtError);
+        configurePasswordVisibility(imgPasswordIcon_password, tbxNewPassword);
+        configurePasswordVisibility(imgPasswordIcon_confirmPassword, tbxConfirmNewPassword);
         configureCancel(btnCancel);
     }
 
     private void configureCancel(TextView btnCancel) {
-        btnCancel.setOnClickListener((view)->{resetPasswordController.handleCancel();});
+        btnCancel.setOnClickListener((view)->{controller.handleCancel();});
     }
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
@@ -112,7 +117,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements IResetPa
         btnResetPassword.setOnClickListener((view)->{
             String newPassword = String.valueOf(tbxNewPassword.getText());
             String confirmPassword = String.valueOf(tbxConfirmNewPassword.getText());
-            resetPasswordController.handleResetPassword(newPassword,confirmPassword);
+            controller.handleResetPassword(newPassword,confirmPassword);
         });
     }
 
@@ -129,7 +134,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements IResetPa
 
     @Override
     public void showErrorMessage_Minimum8Characters(String string) {
-       txtError.setText(string);
+        txtError.setText(string);
         txtError.setVisibility(VISIBLE);
     }
 
