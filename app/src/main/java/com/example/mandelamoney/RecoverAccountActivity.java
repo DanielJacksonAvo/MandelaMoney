@@ -19,7 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 import java.sql.SQLException;
 
 public class RecoverAccountActivity extends AppCompatActivity implements IRecoverAccountView{
-    private RecoverAccountController recoverAccountController;
+    private ForgotPasswordController controller;
     private TextView txtError;
     EditText tbxRecoveryCode;
 
@@ -38,10 +38,17 @@ public class RecoverAccountActivity extends AppCompatActivity implements IRecove
             finish();
             return;
         }
-        recoverAccountController = new RecoverAccountController(this,this);
-        recoverAccountController.setUserEmail(userEmail);
+        getController(userEmail);
         connectToUI();
     }
+
+    private void getController(String userEmail) {
+        controller = (ForgotPasswordController) DataShare.receive();
+        controller.setContext(this);
+        controller.setRecoverAccountView(this);
+        controller.setUserEmail(userEmail);
+    }
+
     private void connectToUI(){
         Button btnVerify = findViewById(R.id.btn_verify);
         TextView btnCancel = findViewById(R.id.btn_cancel_recover_account);
@@ -55,7 +62,7 @@ public class RecoverAccountActivity extends AppCompatActivity implements IRecove
         btnVerify.setOnClickListener((view)->{
             String recoveryCode = toLowerCase(String.valueOf(tbxRecoveryCode.getText()));
             try{
-                recoverAccountController.handleVerify(recoveryCode);
+                controller.handleVerify(recoveryCode);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -63,7 +70,7 @@ public class RecoverAccountActivity extends AppCompatActivity implements IRecove
     }
     private void configureCancelButton(TextView btnCancel){
         btnCancel.setOnClickListener((view)->{
-            recoverAccountController.handleCancel();
+            controller.handleCancel();
         });
     }
     @Override
