@@ -66,7 +66,7 @@ public class RequestPaymentController {
                     DataShare.send(RequestPaymentController.this);
                     context.startActivity(intent);
                 } else {
-                    handler.postDelayed(this, 3000);
+                    handler.postDelayed(this, 1000);
                 }
             }
         };
