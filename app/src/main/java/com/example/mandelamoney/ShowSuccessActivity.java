@@ -1,7 +1,10 @@
 package com.example.mandelamoney;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,9 +12,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class ShowSuccessActivity extends AppCompatActivity {
+public class ShowSuccessActivity extends AppCompatActivity implements ITransactionStatusDisplayView {
 
-    private TextView fromName, fromNumber, toName, toNumber, amount;
+    private int transactionId;
+    private UserDetails fromUser;
+    private UserDetails toUser;
+    private TransactionDetails txnDetails;
+    private Button btnClose;
+    private MakePaymentController makePaymentController;
+    private RequestPaymentController requestPaymentController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,37 +34,62 @@ public class ShowSuccessActivity extends AppCompatActivity {
             return insets;
         });
 
-        initViews();
-        loadTransactionData();
-    }
-
-    private void initViews() {
-        fromName = findViewById(R.id.txt_fromname_success);
-        fromNumber = findViewById(R.id.txt_fromnumber_success);
-        toName = findViewById(R.id.txt_toname_success);
-        toNumber = findViewById(R.id.txt_tonumber_success);
-        amount = findViewById(R.id.txt_amount_success);
-    }
-
-    private void loadTransactionData() {
-        int transactionId = getIntent().getIntExtra("transaction_id", -1);
-        if (transactionId == -1) return;
-
-        TransactionDetails details = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
-        if (details == null) return;
-
-        UserDetails fromUser = MySQLConnector.getUserDetailsByEmail(details.getFromUser(), this);
-        UserDetails toUser = MySQLConnector.getUserDetailsByEmail(details.getToUser(), this);
-
-        if (fromUser != null) {
-            fromName.setText(fromUser.getFullName());
-            fromNumber.setText(fromUser.getNumber());
-        }
-        if (toUser != null) {
-            toName.setText(toUser.getFullName());
-            toNumber.setText(toUser.getNumber());
+        if (DataShare.receive() instanceof MakePaymentController) {
+            makePaymentController = (MakePaymentController) DataShare.receive();
+        } else if (DataShare.receive() instanceof RequestPaymentController) {
+            requestPaymentController = (RequestPaymentController) DataShare.receive();
         }
 
-        amount.setText("R" + String.format("%.2f", details.getAmount()));
+        transactionId = getIntent().getIntExtra("TRANSACTION_ID", 0);
+
+        if (transactionId != 0) {
+            fetchDataAndPopulateUI();
+        }
+
+        btnClose = findViewById(R.id.btn_generate_qr_success);
+        btnClose.setOnClickListener(v -> {
+            startActivity(new Intent(ShowSuccessActivity.this, DashboardActivity.class));
+            finish();
+        });
+    }
+
+    private void fetchDataAndPopulateUI() {
+        txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
+
+        if (txnDetails != null) {
+            fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);
+            toUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getToUser(), this);
+
+            displayAmount(txnDetails.getAmount());
+            displayFromUserName(fromUser.getFirstName() + " " + fromUser.getLastName());
+            displayFromUserNumber(fromUser.getNumber());
+            displayToUserName(toUser.getFirstName() + " " + toUser.getLastName());
+            displayToUserNumber(toUser.getNumber());
+        }
+    }
+
+    @Override
+    public void displayToUserName(String name) {
+        ((TextView) findViewById(R.id.txt_toname_success)).setText(name);
+    }
+
+    @Override
+    public void displayFromUserName(String name) {
+        ((TextView) findViewById(R.id.txt_fromname_success)).setText(name);
+    }
+
+    @Override
+    public void displayToUserNumber(String number) {
+        ((TextView) findViewById(R.id.txt_tonumber_success)).setText(number);
+    }
+
+    @Override
+    public void displayFromUserNumber(String number) {
+        ((TextView) findViewById(R.id.txt_fromnumber_success)).setText(number);
+    }
+
+    @Override
+    public void displayAmount(double amount) {
+        ((TextView) findViewById(R.id.txt_amount_success)).setText("R " + String.format("%.2f", amount));
     }
 }

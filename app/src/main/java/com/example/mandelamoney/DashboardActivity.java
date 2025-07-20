@@ -45,7 +45,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
             return;
         }
 
-        dashboardController = new DashboardController(this, this, currentUser);
+        dashboardController = new DashboardController(this, this);
         dashboardController.handleLoadUserToUI();
     }
 
@@ -55,6 +55,8 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         txtUserName = findViewById(R.id.txt_user_name_dashboard);
         Button btnRequestPay = findViewById(R.id.btn_request_pay_dashboard);
         configureRequestPayButton(btnRequestPay);
+        Button btnPayNow = findViewById(R.id.btn_pay_now);
+        configurePayNowButton(btnPayNow);
 
     }
 
@@ -68,9 +70,20 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     public void displayUserName(String name) {
         txtUserName.setText(toUpperCase(name));
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (dashboardController != null) {
+            dashboardController.handleBalanceRefresh();
+        }
+    }
+
 
     private void configureRequestPayButton(Button btnRequestPay) {
         btnRequestPay.setOnClickListener((view) -> dashboardController.handleRequestPayment());
 
+    }
+    private void configurePayNowButton(Button btnPayNow){
+        btnPayNow.setOnClickListener((view)->dashboardController.handleMakePayment());
     }
 }

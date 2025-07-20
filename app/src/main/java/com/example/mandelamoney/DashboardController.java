@@ -11,73 +11,48 @@ public class DashboardController {
     private final Context context;
     private User user;
 
-    public DashboardController(Context context, IDashboardView view, User user) {
+    public DashboardController(Context context, IDashboardView view) {
         this.context = context;
         this.view = view;
-        this.user = user;
-
-        if (user != null) {
-            double balance = user.getUserBalance();
-            // load into UI
-        } else {
-            // Fallback or redirect to login
-            Log.e("DashboardController", "User is null. Redirecting to login.");
-            // Optionally: redirect to login screen
-        }
-
+        this.user = UserSession.getUser();
     }
 
     public void handleLoadUserToUI() {
         view.displayBalance(user.getUserBalance());
         if (user instanceof Student) {
-            String fullname = ((Student)user).getStudentFirstName() + " " + ((Student)user).getStudentLastName();
+            String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
             view.displayUserName(fullname);
-        }
-        if (user instanceof Business) {
-            view.displayUserName((((Business) user).getBusinessName()));
+        } else if (user instanceof Business) {
+            view.displayUserName(((Business) user).getBusinessName());
         }
     }
 
     public void handleBalanceRefresh() {
-        pullSQLUserBalance();
-        view.displayBalance(user.getUserBalance());
+        if (user != null) {
+            double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
+            user.setUserBalance(updatedBalance); // Update in-session user object
+            view.displayBalance(updatedBalance);
+        }
     }
 
     public void handleLoadTransactionsToUI() {
         pullSQLTransaction();
-        //load arraylist to ui
-
+        // TODO: load into UI
     }
 
     public void handleMakePayment() {
-
-    }
-
-    public void handleRequestPayment() {
-        Intent intent = new Intent(context, RequestPayment_EnterAmountActivity.class);
+        DataShare.send(this);
+        Intent intent = new Intent(context, MakePaymentScanQrActivity.class);
         context.startActivity(intent);
     }
 
-    public void handleWithdraw() {
-
+    public void handleRequestPayment() {
+        Intent intent = new Intent(context, RequestPaymentEnterAmountActivity.class);
+        context.startActivity(intent);
     }
 
-    public void handleViewAllTransactions() {
-
-    }
-
-    //Pulls balance from SQL server and updates the user object
-    private void pullSQLUserBalance() {
-        //double balance = call SQL procedure to get balance
-        //user.setUserBalance(balance);
-    }
-
-    private void pullSQLTransaction(){
+    private void pullSQLTransaction() {
         ArrayList<Transaction> transactionList = new ArrayList<>();
-        //sql must get recent transaction and fill into array
+        // TODO: SQL logic to fill transactionList
     }
-
-
-
-
 }

@@ -11,11 +11,11 @@ import java.util.regex.Pattern;
 public class CreateAccountController {
     private int userType;
     private Context context;
-    private ISelectUserType_CreateAccountView viewSelectUserType;
+    private ISelectUserTypeCreateAccountView viewSelectUserType;
     private ICreateStudentAccountView viewCreateStudentAccount;
     private ICreateBusinessAccountView viewCreateBusinessAccount;
 
-    public CreateAccountController(Context context, ISelectUserType_CreateAccountView viewSelectUserType) {
+    public CreateAccountController(Context context, ISelectUserTypeCreateAccountView viewSelectUserType) {
         this.context = context;
         this.viewSelectUserType = viewSelectUserType;
     }
@@ -26,12 +26,12 @@ public class CreateAccountController {
         switch (userNewType) {
             case 0:
                 DataShare.send(this);
-                intent = new Intent(context, CreateAccount_EnterBusinessDetailsActivityView.class);
+                intent = new Intent(context, CreateAccountEnterBusinessDetailsActivityView.class);
                 context.startActivity(intent);
                 break;
             case 1:
                 DataShare.send(this);
-                intent = new Intent(context, CreateAccount_EnterStudentDetailsActivityView.class);
+                intent = new Intent(context, CreateAccountEnterStudentDetailsActivityView.class);
                 context.startActivity(intent);
                 break;
             default:

@@ -58,7 +58,7 @@ public class LoginController {
     }
 
     public void handleSignUp() {
-        Intent intent = new Intent(context, CreateAccount_SelectUserTypeActivityView.class);
+        Intent intent = new Intent(context, CreateAccountSelectUserTypeActivityView.class);
         context.startActivity(intent);
         view.finishActivity();
 

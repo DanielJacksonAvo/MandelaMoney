@@ -1,7 +1,7 @@
 package com.example.mandelamoney;
 
-public interface IShowQRCode_RequestPaymentView {
-    void showError();
+public interface IEnterAmountRequestPaymentView {
+    void showError(String message);
 
     void hideError();
 

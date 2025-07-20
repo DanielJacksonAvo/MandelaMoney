@@ -414,6 +414,48 @@ public class MySQLConnector {
 
         return status;
     }
+    public static void updateTransactionFromUser(Context context, int transactionID, String fromUserEmail) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "No valid DB connection");
+            return;
+        }
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL UpdateTransactionFromUser(?, ?)}")) {
+            stmt.setInt(1, transactionID);
+            stmt.setString(2, fromUserEmail);
+
+            stmt.execute();
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error updating transaction: " + e.getMessage());
+        }
+    }
+
+    public static Boolean transactionExists(Context context, int transactionID) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "No valid DB connection.");
+            return null;
+        }
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL CheckTransactionExists(?, ?)}")) {
+            stmt.setInt(1, transactionID);
+            stmt.registerOutParameter(2, Types.BOOLEAN);
+
+            stmt.execute();
+            boolean exists = stmt.getBoolean(2);
+            Log.d("MySQLConnector", "CheckTransactionExists for ID " + transactionID + ": " + exists);
+
+            return exists;
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error checking transaction existence: " + e.getMessage());
+            return null;
+        }
+    }
+
+
     public static TransactionDetails getTransactionDetailsFromProcedure(int txnId, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
@@ -496,7 +538,8 @@ public class MySQLConnector {
         }
     }
 
-    public static boolean hasSufficientFunds(float fromUserBalance, int transactionId, Context context) {
+
+    public static boolean hasSufficientFunds(String fromUserEmail, int transactionId, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
             Log.e("MySQLConnector", "Cannot check funds: No valid DB connection.");
@@ -505,12 +548,13 @@ public class MySQLConnector {
         boolean isSufficient = false;
 
         try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.sufficientFunds(?, ?, ?)}")) {
-            stmt.setFloat(1, fromUserBalance);
-            stmt.setInt(2, transactionId);
-            stmt.registerOutParameter(3, Types.BOOLEAN);
+            stmt.setString(1, fromUserEmail);      // userEmail as first IN param
+            stmt.setInt(2, transactionId);         // transactionId as second IN param
+            stmt.registerOutParameter(3, Types.BOOLEAN); // isSufficient as OUT param
 
             stmt.execute();
             isSufficient = stmt.getBoolean(3);
+
             Log.d("MySQLConnector", "Sufficient funds? " + isSufficient);
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error calling sufficientFunds: " + e.getMessage());
@@ -518,6 +562,7 @@ public class MySQLConnector {
 
         return isSufficient;
     }
+
     public static boolean confirmTransaction(String fromUserEmail, int txnId, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
@@ -526,12 +571,12 @@ public class MySQLConnector {
         }
 
         boolean txnSuccess = false;
-
+        Log.i("JHGG", "HERE");
         try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.confirmTransaction(?, ?, ?)}")) {
             stmt.setString(1, fromUserEmail);
             stmt.setInt(2, txnId);
             stmt.registerOutParameter(3, Types.BOOLEAN);
-
+            Log.i("JHGG", "HERE2");
             stmt.execute();
             txnSuccess = stmt.getBoolean(3);
             Log.d("MySQLConnector", "Transaction confirmed? " + txnSuccess);
@@ -541,6 +586,25 @@ public class MySQLConnector {
 
         return txnSuccess;
     }
+    public static void updateTransactionStatus(int transactionId, String newStatus, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot update transaction status: No valid DB connection.");
+            return;
+        }
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.updateTransactionStatus(?, ?)}")) {
+            stmt.setInt(1, transactionId);
+            stmt.setString(2, newStatus);
+
+            stmt.execute();
+            Log.d("MySQLConnector", "Transaction status updated to: " + newStatus + " for ID: " + transactionId);
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error updating transaction status: " + e.getMessage());
+        }
+    }
+
 
 
 
@@ -587,6 +651,28 @@ public class MySQLConnector {
     }
 
     public static double getUserBalance(String email, Context context) {
-        return 20.00;//create this procedure
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot fetch balance: No valid DB connection.");
+            return 0.0;
+        }
+
+        double balance = 0.0;
+
+        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.getUserBalance(?, ?)}")) {
+            stmt.setString(1, email);
+            stmt.registerOutParameter(2, Types.FLOAT);
+
+            stmt.execute();
+            balance = stmt.getFloat(2);
+
+            Log.d("MySQLConnector", "Fetched balance for " + email + ": " + balance);
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling getUserBalance: " + e.getMessage());
+        }
+
+        return balance;
     }
+
 }
