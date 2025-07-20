@@ -2,23 +2,30 @@ package com.example.mandelamoney;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.util.Log;
 import android.util.Size;
 import android.widget.Toast;
 
+import androidx.annotation.OptIn;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.zxing.*;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.ChecksumException;
+import com.google.zxing.FormatException;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,8 +36,9 @@ public class MakePaymentController {
     private final IScanQRView scanQrView;
     private PreviewView previewView;
     private final ExecutorService cameraExecutor;
-    private volatile ImageProxy latestImage;
-    private final Object imageLock = new Object();
+
+    // Remove volatile ImageProxy latestImage; and Object imageLock = new Object();
+    // They are not needed with this approach as image.close() is handled in finally.
 
     private int transactionId;
     private float transactionAmount;
@@ -48,6 +56,7 @@ public class MakePaymentController {
         this.previewView = previewView;
     }
 
+    @OptIn(markerClass = ExperimentalGetImage.class)
     public void startCamera() {
         ListenableFuture<ProcessCameraProvider> future = ProcessCameraProvider.getInstance(context);
         future.addListener(() -> {
@@ -62,20 +71,49 @@ public class MakePaymentController {
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build();
 
-                analysis.setAnalyzer(cameraExecutor, image -> {
-                    synchronized (imageLock) {
-                        if (latestImage != null) latestImage.close();
-                        latestImage = image;
+                analysis.setAnalyzer(cameraExecutor, imageProxy -> { // Use imageProxy for clarity
+                    Image image = imageProxy.getImage(); // Get the underlying Image object
+
+                    if (image == null) {
+                        imageProxy.close();
+                        return;
                     }
 
                     try {
-                        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                        byte[] bytes = new byte[buffer.remaining()];
-                        buffer.get(bytes);
+                        // 1. Convert ImageProxy to NV21 byte array, handling strides
+                        byte[] nv21Bytes = ImageUtils.yuv420_888toNv21(image);
+                        if (nv21Bytes == null) {
+                            Log.e("QRScan", "Failed to convert ImageProxy to NV21.");
+                            return; // Don't proceed if conversion failed
+                        }
 
+                        // 2. Get rotation degrees from ImageProxy and apply to NV21 data
+                        int rotationDegrees = imageProxy.getImageInfo().getRotationDegrees();
+                        byte[] rotatedNv21Bytes = ImageUtils.rotateNv21(nv21Bytes, image.getWidth(), image.getHeight(), rotationDegrees);
+
+                        // Determine effective width and height after rotation for PlanarYUVLuminanceSource
+                        int rotatedWidth = image.getWidth();
+                        int rotatedHeight = image.getHeight();
+                        if (rotationDegrees == 90 || rotationDegrees == 270) {
+                            rotatedWidth = image.getHeight();
+                            rotatedHeight = image.getWidth();
+                        }
+
+                        // 3. Create PlanarYUVLuminanceSource with the rotated data
+                        // For NV21, PlanarYUVLuminanceSource expects the Y plane as its first argument
+                        // and handles the UV component internally if the overall data is NV21.
+                        // The 'dataWidth' and 'dataHeight' arguments are crucial here; they should
+                        // be the dimensions of the *decoded* image after any rotation.
                         PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(
-                                bytes, image.getWidth(), image.getHeight(),
-                                0, 0, image.getWidth(), image.getHeight(), false);
+                                rotatedNv21Bytes,
+                                rotatedWidth, // Use rotated width
+                                rotatedHeight, // Use rotated height
+                                0, 0, // Crop x, y (no cropping in this example)
+                                rotatedWidth, // Crop width
+                                rotatedHeight, // Crop height
+                                false // Don't invert (common for QR)
+                        );
+
                         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
                         Result result = new MultiFormatReader().decode(bitmap);
 
@@ -83,10 +121,20 @@ public class MakePaymentController {
                         transactionId = scanned;
                         Log.d("QRScan", "Transaction ID detected: " + transactionId);
 
+                        // If you only want to process one QR code and then stop scanning
+                        // consider adding a mechanism to stop the analyzer or unbind the use case
+                        // once a QR code is successfully detected.
+                        // Example: cameraProvider.unbind(analysis); // This stops the stream
+                        // You'd need a way to re-bind if you want to scan again later.
+
+                    } catch (NotFoundException e) {
+                        // This is the common exception when no QR code is found in the image.
+                        // Log.d("QRScan", "No QR code found in image.");
                     } catch (Exception e) {
-                        // Normal behavior when no QR is detected
+                        Log.e("QRScan", "Unexpected error during image analysis: " + e.getMessage(), e);
                     } finally {
-                        image.close();
+                        // ALWAYS close the ImageProxy when you are done with it to release the buffer.
+                        imageProxy.close();
                     }
                 });
 
@@ -110,8 +158,8 @@ public class MakePaymentController {
             return;
         }
 
-        if (transactionId == 0) {
-            Log.e("DEBUG", "transactionId = 0");
+        if (transactionId == 0) { // Assuming 0 is an invalid transactionId
+            Log.e("DEBUG", "transactionId = 0, no valid QR code detected yet.");
             Toast.makeText(context, "No QR code detected yet. Try again.", Toast.LENGTH_SHORT).show();
             return;
         }
