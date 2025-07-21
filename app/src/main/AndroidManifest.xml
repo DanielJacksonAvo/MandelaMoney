@@ -19,53 +19,61 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp.Light">
-        <activity android:name=".ResetPasswordActivity"
+        <activity android:name="com.example.mandelamoney.view.activity.ResetPasswordActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".RecoverAccountActivity"
+        <activity android:name="com.example.mandelamoney.view.activity.RecoverAccountActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ForgotPasswordActivity"
+        <activity android:name="com.example.mandelamoney.view.activity.ForgotPasswordActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
-        android:theme="@style/Theme.MyApp.Light" >
         <activity
-            android:name=".MakePaymentScanQrActivity"
-            android:exported="false" />
+            android:name="com.example.mandelamoney.view.activity.MakePaymentScanQrActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".ConfirmPaymentActivity"
-            android:exported="false" />
+            android:name="com.example.mandelamoney.view.activity.ConfirmPaymentActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".ShowSuccessActivity"
-            android:exported="false" />
+            android:name="com.example.mandelamoney.view.activity.ShowSuccessActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".ShowFailedActivity"
-            android:exported="false" />
+            android:name="com.example.mandelamoney.view.activity.ShowFailedActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".RequestPaymentShowQrActivity"
-            android:exported="false" />
+            android:name="com.example.mandelamoney.view.activity.RequestPaymentShowQrActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".RequestPaymentEnterAmountActivity"
-            android:exported="false" />
+            android:name="com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".CreateAccountEnterBusinessDetailsActivityView"
-            android:exported="false" />
+            android:name="com.example.mandelamoney.view.activity.CreateAccountEnterBusinessDetailsActivityView"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".CreateAccountEnterStudentDetailsActivityView"
-            android:exported="false" />
+            android:name="com.example.mandelamoney.view.activity.CreateAccountEnterStudentDetailsActivityView"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".CreateAccountSelectUserTypeActivityView"
-            android:exported="false" />
+            android:name="com.example.mandelamoney.view.activity.CreateAccountSelectUserTypeActivityView"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".DashboardActivity"
+            android:name="com.example.mandelamoney.view.activity.DashboardActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.example.mandelamoney.view.activity.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.mandelamoney.view.activity.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait" >
             <intent-filter>

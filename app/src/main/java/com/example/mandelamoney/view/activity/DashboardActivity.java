@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DashboardController;
-import com.example.mandelamoney.model.data.User;
+import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 

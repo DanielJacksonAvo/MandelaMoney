@@ -1,6 +1,6 @@
 package com.example.mandelamoney.util;
 
-import com.example.mandelamoney.model.data.User;
+import com.example.mandelamoney.model.User;
 
 /// this is the currently logged in used
 public class UserSession {

@@ -1,8 +1,8 @@
 package com.example.mandelamoney.util;
 
-import com.example.mandelamoney.model.data.Business;
-import com.example.mandelamoney.model.data.Student;
-import com.example.mandelamoney.model.data.User;
+import com.example.mandelamoney.model.Business;
+import com.example.mandelamoney.model.Student;
+import com.example.mandelamoney.model.User;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

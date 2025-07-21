@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.example.mandelamoney.model.data.Business;
-import com.example.mandelamoney.model.data.Student;
-import com.example.mandelamoney.model.data.User;
+import com.example.mandelamoney.model.Business;
+import com.example.mandelamoney.model.Student;
+import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.ILoginView;
