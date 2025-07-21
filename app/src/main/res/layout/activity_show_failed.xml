@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mandelaBlue"
-    tools:context=".ShowFailedActivity">
+    tools:context="view.activity.ShowFailedActivity">
 
     <eightbitlab.com.blurview.BlurView
         android:id="@+id/blurView_failed"
