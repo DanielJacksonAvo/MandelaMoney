@@ -1,8 +1,12 @@
 package com.example.mandelamoney.view.Iface;
 
 public interface IDashboardView {
-    void displayBalance(double balance);
+    void displayHome();
 
-    void displayUserName(String name);
+    void displayLock();
+
+    void displaySettings();
+
+    void displayProfile();
 
 }
