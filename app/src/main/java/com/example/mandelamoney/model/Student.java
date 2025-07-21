@@ -1,4 +1,4 @@
-package com.example.mandelamoney.model.data;
+package com.example.mandelamoney.model;
 
 import java.io.Serializable;
 
