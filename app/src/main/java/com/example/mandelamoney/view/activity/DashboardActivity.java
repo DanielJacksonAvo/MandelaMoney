@@ -1,29 +1,31 @@
 package com.example.mandelamoney.view.activity;
 
-import static android.icu.lang.UCharacter.toUpperCase;
-
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
-import java.util.Locale;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
+
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DashboardController;
-import com.example.mandelamoney.model.User;
-import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IDashboardView;
+import com.example.mandelamoney.view.fragment.HomeDashboardFragment;
+import com.example.mandelamoney.view.fragment.ProfileDashboardFragment;
+import com.example.mandelamoney.view.fragment.SettingsDashboardFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class DashboardActivity extends AppCompatActivity implements IDashboardView {
 
     private DashboardController dashboardController;
-    private TextView txtBalance, txtUserName;
+    private BottomNavigationView bottomNavigationView;
+    private Fragment selectedFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,59 +39,67 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
             return insets;
         });
 
-        connectToUI();
-
-        User currentUser = UserSession.getUser();
-
-        if (currentUser == null) {
-            Log.e("DashboardActivity", "User session is null. Returning to login.");
-            // Optionally navigate to login activity:
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-            return;
-        }
-
         dashboardController = new DashboardController(this, this);
-        dashboardController.handleLoadUserToUI();
-    }
+        connectToUI();
+        displayHome();
 
+    }
 
     private void connectToUI() {
-        txtBalance = findViewById(R.id.txt_user_account_balance);
-        txtUserName = findViewById(R.id.txt_user_name_dashboard);
-        Button btnRequestPay = findViewById(R.id.btn_request_pay_dashboard);
-        configureRequestPayButton(btnRequestPay);
-        Button btnPayNow = findViewById(R.id.btn_pay_now);
-        configurePayNowButton(btnPayNow);
+        bottomNavigationView = findViewById(R.id.dashboardNavView);
+        configureBottomNav();
 
     }
 
-    @Override
-    public void displayBalance(double balance) {
-        String display = "R " + String.format(Locale.getDefault(), "%.2f", balance);
-        txtBalance.setText(display);
+    private void configureBottomNav() {
+        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                selectedFragment = null;
+
+                int itemId = item.getItemId();
+                dashboardController.handleSelection(itemId);
+                return true;
+
+            }
+        });
     }
 
+
     @Override
-    public void displayUserName(String name) {
-        txtUserName.setText(toUpperCase(name));
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (dashboardController != null) {
-            dashboardController.handleBalanceRefresh();
+    public void displayHome() {
+        selectedFragment = new HomeDashboardFragment(dashboardController);
+        if (selectedFragment != null) {
+            loadFragment(selectedFragment);
         }
     }
 
-
-    private void configureRequestPayButton(Button btnRequestPay) {
-        btnRequestPay.setOnClickListener((view) -> dashboardController.handleRequestPayment());
+    @Override
+    public void displayLock() {
 
     }
-    private void configurePayNowButton(Button btnPayNow){
-        btnPayNow.setOnClickListener((view)->dashboardController.handleMakePayment());
+
+    @Override
+    public void displaySettings() {
+        selectedFragment = new SettingsDashboardFragment();
+        if (selectedFragment != null) {
+            loadFragment(selectedFragment);
+        }
+
+    }
+
+    @Override
+    public void displayProfile() {
+        selectedFragment = new ProfileDashboardFragment();
+        if (selectedFragment != null) {
+            loadFragment(selectedFragment);
+        }
+
+    }
+
+    private void loadFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.dashboardFrame, fragment)
+                .commit();
     }
 }

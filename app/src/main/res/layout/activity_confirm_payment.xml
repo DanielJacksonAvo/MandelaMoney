@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mandelaBlue"
-    tools:context=".ConfirmPaymentActivity">
+    tools:context="view.activity.ConfirmPaymentActivity">
 
     <TextView
         android:id="@+id/btn_confirmpayment_cancel"
