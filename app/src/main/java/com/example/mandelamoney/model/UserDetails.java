@@ -1,4 +1,4 @@
-package com.example.mandelamoney.model.data;
+package com.example.mandelamoney.model;
 public class UserDetails {
     private String email;
     private String firstName;
