@@ -92,4 +92,12 @@
         <item name="android:textSize">10sp</item>
     </style>
 
+
+
+    <style name="BottomNavigationView.NoActiveIndicator" parent="Widget.MaterialComponents.BottomNavigationView.PrimarySurface">
+        <item name="android:itemBackground">@drawable/bottom_nav_transparent_item_bg</item>
+        <item name="itemRippleColor">@android:color/transparent</item>
+    </style>
+
+
 </resources>

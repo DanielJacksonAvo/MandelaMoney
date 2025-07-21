@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mandelaBlue"
-    tools:context=".MakePaymentScanQrActivity">
+    tools:context="view.activity.MakePaymentScanQrActivity">
 
     <TextView
         android:id="@+id/txt_make_payment_scan_qr"
