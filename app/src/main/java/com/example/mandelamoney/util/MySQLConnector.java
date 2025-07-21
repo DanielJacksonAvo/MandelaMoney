@@ -6,9 +6,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.mandelamoney.BuildConfig;
-import com.example.mandelamoney.model.data.TransactionDetails;
-import com.example.mandelamoney.model.data.User;
-import com.example.mandelamoney.model.data.UserDetails;
+import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.model.UserDetails;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;

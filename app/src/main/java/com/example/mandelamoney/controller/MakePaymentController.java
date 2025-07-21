@@ -17,9 +17,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
-import com.example.mandelamoney.model.data.TransactionDetails;
-import com.example.mandelamoney.model.data.User;
-import com.example.mandelamoney.model.data.UserDetails;
+import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.model.UserDetails;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.ImageUtils;
 import com.example.mandelamoney.util.MySQLConnector;
