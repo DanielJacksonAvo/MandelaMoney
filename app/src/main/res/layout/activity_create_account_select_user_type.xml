@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/mandelaBlue"
     android:elevation="100dp"
-    tools:context="view.activity.CreateAccountSelectUserTypeActivityView">
+    tools:context=".view.activity.CreateAccountSelectUserTypeActivity">
 
     <TextView
         android:id="@+id/btn_cancel_selectaccounttype_createaccount"

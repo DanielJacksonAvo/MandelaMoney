@@ -16,7 +16,7 @@ import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.CreateAccountController;
 import com.example.mandelamoney.view.Iface.ISelectUserTypeCreateAccountView;
 
-public class CreateAccountSelectUserTypeActivityView extends AppCompatActivity implements ISelectUserTypeCreateAccountView {
+public class CreateAccountSelectUserTypeActivity extends AppCompatActivity implements ISelectUserTypeCreateAccountView {
 
     private CreateAccountController createAccountController;
     @Override

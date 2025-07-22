@@ -10,8 +10,8 @@ import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.ICreateBusinessAccountView;
 import com.example.mandelamoney.view.Iface.ICreateStudentAccountView;
 import com.example.mandelamoney.view.Iface.ISelectUserTypeCreateAccountView;
-import com.example.mandelamoney.view.activity.CreateAccountEnterBusinessDetailsActivityView;
-import com.example.mandelamoney.view.activity.CreateAccountEnterStudentDetailsActivityView;
+import com.example.mandelamoney.view.activity.CreateAccountEnterBusinessDetailsActivity;
+import com.example.mandelamoney.view.activity.CreateAccountEnterStudentDetailsActivity;
 import com.example.mandelamoney.view.activity.LoginActivity;
 
 import java.util.Objects;
@@ -35,12 +35,12 @@ public class CreateAccountController {
         switch (userNewType) {
             case 0:
                 DataShare.send(this);
-                intent = new Intent(context, CreateAccountEnterBusinessDetailsActivityView.class);
+                intent = new Intent(context, CreateAccountEnterBusinessDetailsActivity.class);
                 context.startActivity(intent);
                 break;
             case 1:
                 DataShare.send(this);
-                intent = new Intent(context, CreateAccountEnterStudentDetailsActivityView.class);
+                intent = new Intent(context, CreateAccountEnterStudentDetailsActivity.class);
                 context.startActivity(intent);
                 break;
             default:

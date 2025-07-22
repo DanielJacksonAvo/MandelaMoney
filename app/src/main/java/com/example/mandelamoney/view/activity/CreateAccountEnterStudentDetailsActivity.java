@@ -24,7 +24,7 @@ import com.example.mandelamoney.view.Iface.ICreateStudentAccountView;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class CreateAccountEnterStudentDetailsActivityView extends AppCompatActivity implements ICreateStudentAccountView {
+public class CreateAccountEnterStudentDetailsActivity extends AppCompatActivity implements ICreateStudentAccountView {
 
     private CreateAccountController controller;
     TextView txtPasswordError;
