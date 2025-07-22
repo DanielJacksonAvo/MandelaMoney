@@ -53,15 +53,15 @@
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.example.mandelamoney.view.activity.CreateAccountEnterBusinessDetailsActivityView"
+            android:name="com.example.mandelamoney.view.activity.CreateAccountEnterBusinessDetailsActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.example.mandelamoney.view.activity.CreateAccountEnterStudentDetailsActivityView"
+            android:name="com.example.mandelamoney.view.activity.CreateAccountEnterStudentDetailsActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.example.mandelamoney.view.activity.CreateAccountSelectUserTypeActivityView"
+            android:name="com.example.mandelamoney.view.activity.CreateAccountSelectUserTypeActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity

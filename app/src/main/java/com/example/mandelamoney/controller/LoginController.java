@@ -10,7 +10,7 @@ import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.ILoginView;
-import com.example.mandelamoney.view.activity.CreateAccountSelectUserTypeActivityView;
+import com.example.mandelamoney.view.activity.CreateAccountSelectUserTypeActivity;
 import com.example.mandelamoney.view.activity.DashboardActivity;
 import com.example.mandelamoney.view.activity.ForgotPasswordActivity;
 
@@ -69,7 +69,7 @@ public class LoginController {
     }
 
     public void handleSignUp() {
-        Intent intent = new Intent(context, CreateAccountSelectUserTypeActivityView.class);
+        Intent intent = new Intent(context, CreateAccountSelectUserTypeActivity.class);
         context.startActivity(intent);
         view.finishActivity();
 
