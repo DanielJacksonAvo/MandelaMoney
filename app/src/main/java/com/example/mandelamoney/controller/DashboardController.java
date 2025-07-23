@@ -1,6 +1,5 @@
 package com.example.mandelamoney.controller;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
