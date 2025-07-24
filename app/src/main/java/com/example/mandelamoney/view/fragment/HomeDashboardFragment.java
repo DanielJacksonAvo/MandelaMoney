@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -51,9 +52,22 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
         txtUserName = rootView.findViewById(R.id.txt_user_name_dashboard);
         Button btnRequestPay = rootView.findViewById(R.id.btn_request_pay_dashboard);
         configureRequestPayButton(btnRequestPay);
+        TextView btnTransactionHistory = rootView.findViewById(R.id.txt_transaction_history_dashboard);
+        configureTransactionHistoryButton(btnTransactionHistory);
         Button btnPayNow = rootView.findViewById(R.id.btn_pay_now);
         configurePayNowButton(btnPayNow);
     }
+
+    private void configureTransactionHistoryButton(TextView btnTransactionHistory) {
+        btnTransactionHistory.setOnClickListener((view) -> {
+            if (getActivity() instanceof AppCompatActivity) {
+                DashboardController.TransactionHistoryController transactionController =
+                        new DashboardController.TransactionHistoryController((AppCompatActivity) getActivity());
+                transactionController.handleViewTransactionHistory();
+            }
+        });
+    }
+
 
     @Override
     public void displayBalance(double balance) {

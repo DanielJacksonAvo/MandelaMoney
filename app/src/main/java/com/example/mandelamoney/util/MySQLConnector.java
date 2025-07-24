@@ -16,6 +16,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MySQLConnector {
     private final static String DB_URL = BuildConfig.DB_URL;
@@ -396,6 +398,32 @@ public class MySQLConnector {
 
         return transactionId;
     }
+    public static List<TransactionDetails> getTransactionHistory(String userEmail, Context context) {
+        List<TransactionDetails> transactions = new ArrayList<>();
+        int transactionCount = 0;
+        try (Connection conn = getConnection(context)) {
+            CallableStatement stmt = conn.prepareCall("{call MandelaMoneyDB.getUserTransactionHistory(?)}");
+            stmt.setString(1, userEmail);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String from = rs.getString("fromUser");
+                String to = rs.getString("toUser");
+                float amount = rs.getFloat("transactionAmount");
+                String date = rs.getString("date");
+                String time = rs.getString("time");
+                Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
+                transactions.add(new TransactionDetails(from, to, amount, date, time));
+                transactionCount++;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d("MySQLConnector", "Transaction count: " + transactionCount);
+        return transactions;
+    }
+
     public static String getTransactionStatus(int transactionId, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
@@ -524,24 +552,24 @@ public class MySQLConnector {
     }
 
 
-    public static boolean deleteTransaction(int txnId, Context context) {
-        Connection currentConnection = getConnection(context);
-        if (currentConnection == null) {
-            Log.e("MySQLConnector", "Cannot delete transaction: No valid DB connection.");
-            return false;
-        }
-
-        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.deleteTransaction(?)}")) {
-            stmt.setInt(1, txnId);
-            stmt.execute();
-
-            Log.d("MySQLConnector", "Transaction " + txnId + " deleted (marked as failed).");
-            return true;
-        } catch (SQLException e) {
-            Log.e("MySQLConnector", "Error calling deleteTransaction: " + e.getMessage());
-            return false;
-        }
-    }
+//    public static boolean deleteTransaction(int txnId, Context context) {
+//        Connection currentConnection = getConnection(context);
+//        if (currentConnection == null) {
+//            Log.e("MySQLConnector", "Cannot delete transaction: No valid DB connection.");
+//            return false;
+//        }
+//
+//        try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.deleteTransaction(?)}")) {
+//            stmt.setInt(1, txnId);
+//            stmt.execute();
+//
+//            Log.d("MySQLConnector", "Transaction " + txnId + " deleted (marked as failed).");
+//            return true;
+//        } catch (SQLException e) {
+//            Log.e("MySQLConnector", "Error calling deleteTransaction: " + e.getMessage());
+//            return false;
+//        }
+//    }
 
 
     public static boolean hasSufficientFunds(String fromUserEmail, int transactionId, Context context) {

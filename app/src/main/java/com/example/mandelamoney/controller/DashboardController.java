@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Looper;
 import android.os.Handler;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
@@ -15,8 +18,10 @@ import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
+import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
+import com.example.mandelamoney.view.fragment.TransactionHistoryFragment;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,6 +36,7 @@ public class DashboardController {
     private int currentFragment = -1; //0 - home, 1 - lock, 2 - settings, 3 - profile
 
     public DashboardHomeController DashboardHomeController;
+    public TransactionHistoryController TransactionHistoryController;
 
 
     public DashboardController(Context context, IDashboardView view) {
@@ -38,6 +44,7 @@ public class DashboardController {
         this.view = view;
         this.user = UserSession.getUser();
     }
+
 
     public void handleHome() {
         currentFragment = 0;
@@ -70,7 +77,6 @@ public class DashboardController {
         } else {
             DashboardHomeController.stopPolling();
         }
-
 
     }
 
@@ -192,4 +198,37 @@ public class DashboardController {
     private class DashboardProfileController {
 
     }
+    public static class TransactionHistoryController {
+        private final AppCompatActivity context;
+        private ITransactionHistoryView view;
+        private final User user;
+
+        public TransactionHistoryController(AppCompatActivity context) {
+            this.context = context;
+            this.user = UserSession.getUser();
+        }
+
+        public void createTransactionHistoryController(ITransactionHistoryView view) {
+            this.view = view;
+        }
+
+        public void handleLoadUserToUI() {
+            if (user instanceof Student) {
+                String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
+                view.displayUserName(fullname);
+            } else if (user instanceof Business) {
+                view.displayUserName(((Business) user).getBusinessName());
+            }
+        }
+
+        public void handleViewTransactionHistory() {
+            TransactionHistoryFragment fragment = new TransactionHistoryFragment(this);
+            context.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.dashboardFrame, fragment)
+                    .commit();
+        }
+    }
+
+
 }
