@@ -1,9 +1,11 @@
 package com.example.mandelamoney.util;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.util.Log;
-// import android.widget.Toast; // REMOVE THIS IMPORT - No more Toasts here!
+import android.widget.Toast;
 
 import com.example.mandelamoney.BuildConfig;
 import com.example.mandelamoney.model.TransactionDetails;
@@ -30,8 +32,26 @@ public class MySQLConnector {
     private final static int MAX_RETRIES = 3;
     private final static long RETRY_DELAY_MS = 3000;
 
-    private MySQLConnector() {
+    private static Handler uiHandler;
+
+    private MySQLConnector() {}
+
+    public static synchronized void initializeUiHandler(Context context) {
+        if (uiHandler == null) {
+            uiHandler = new Handler(Looper.getMainLooper());
+        }
     }
+
+    private static void showToastOnUI(Context context, String message, int duration) {
+        if (uiHandler == null) {
+            Log.e("MySQLConnector", "UI Handler not initialized. Cannot show Toast: " + message);
+            return;
+        }
+        uiHandler.post(() -> {
+            Toast.makeText(context.getApplicationContext(), message, duration).show();
+        });
+    }
+
 
     private static synchronized boolean connectToDB(Context context) {
         if (connection != null) {
@@ -56,16 +76,19 @@ public class MySQLConnector {
         while (attempts < MAX_RETRIES) {
             try {
                 Log.d("MySQLConnector", "Attempting to connect to DB. Attempt " + (attempts + 1) + " of " + MAX_RETRIES);
+                if (attempts != 0) {
+                    showToastOnUI(context, "Database connection lost. Reconnecting...", Toast.LENGTH_SHORT);
+                }
 
                 Class.forName("com.mysql.jdbc.Driver");
-
                 DriverManager.setLoginTimeout(CONNECTION_TIMEOUT_SECONDS);
-
                 connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
                 if (connection != null && connection.isValid(CONNECTION_TIMEOUT_SECONDS)) {
                     Log.d("MySQLConnector", "Connected successfully to database.");
-
+                    if(attempts != 0) {
+                        showToastOnUI(context, "Connected successfully to database.", Toast.LENGTH_LONG);
+                    }
                     return true;
                 } else {
                     Log.e("MySQLConnector", "Connection failed: Connection object is null or invalid.");
@@ -75,9 +98,11 @@ public class MySQLConnector {
                 Log.e("MySQLConnector", "SQLException during connection attempt: " + e.getMessage());
             } catch (ClassNotFoundException e) {
                 Log.e("MySQLConnector", "JDBC Driver not found: " + e.getMessage());
+                showToastOnUI(context, "App Error: Database driver missing!", Toast.LENGTH_LONG);
                 break;
             } catch (Exception e) {
                 Log.e("MySQLConnector", "Unexpected Exception during connection attempt: " + e.getMessage());
+                showToastOnUI(context, "Connection error: " + e.getMessage(), Toast.LENGTH_LONG);
             }
 
             attempts++;
@@ -93,10 +118,12 @@ public class MySQLConnector {
             }
         }
         Log.e("MySQLConnector", "Failed to connect to database after " + MAX_RETRIES + " attempts.");
+        showToastOnUI(context, "Failed to connect to database.",Toast.LENGTH_LONG);
         return false;
     }
 
     public static void AppStartUpConnection(Context context) {
+        initializeUiHandler(context.getApplicationContext());
         connectToDB(context);
     }
 
@@ -104,9 +131,11 @@ public class MySQLConnector {
         try {
             if (connection == null || !connection.isValid(CONNECTION_TIMEOUT_SECONDS)) {
                 Log.d("MySQLConnector", "Connection is null or invalid. Attempting to reconnect.");
+                showToastOnUI(context, "Database connection lost. Reconnecting...", Toast.LENGTH_LONG);
 
                 if (!connectToDB(context)) {
                     Log.e("MySQLConnector", "Failed to establish a new connection.");
+                    showToastOnUI(context, "Failed to connect to database.", Toast.LENGTH_LONG);
                     return null;
                 }
             }
@@ -114,6 +143,7 @@ public class MySQLConnector {
             Log.e("MySQLConnector", "Error checking connection validity in getConnection: " + e.getMessage());
             if (!connectToDB(context)) {
                 Log.e("MySQLConnector", "Failed to establish a new connection after validity check error.");
+                showToastOnUI(context, "Failed to connect to database.", Toast.LENGTH_LONG);
                 return null;
             }
         }
@@ -160,7 +190,6 @@ public class MySQLConnector {
         }
         return objs;
     }
-
     public static Object[] getRecoveryCodeHash(String userEmail, Context context) {
         Connection currentConnection = getConnection(context);
         Object[] result = new Object[3];
@@ -200,7 +229,6 @@ public class MySQLConnector {
 
         return result;
     }
-
     public static boolean verifyRecoveryCode(String userEmail, String recoveryCode, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
@@ -228,7 +256,6 @@ public class MySQLConnector {
 
         return isMatch;
     }
-
     public static Boolean resetPassword(String userEmail, String recoveryCode, String newPassword, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
@@ -323,6 +350,7 @@ public class MySQLConnector {
             callableStatement.setString(3, businessName);
             callableStatement.setString(4, businessPhoneNumber);
             callableStatement.setString(5, businessVAT);
+
             callableStatement.registerOutParameter(6, Types.INTEGER);
 
             Log.d("MySQLConnector", "Calling CreateBusiness for email: " + userEmail);
@@ -332,18 +360,20 @@ public class MySQLConnector {
 
             if (result == 1) {
                 Log.d("MySQLConnector", "Business account created successfully for email: " + userEmail);
+                showToastOnUI(context, "Business account created successfully!", Toast.LENGTH_SHORT);
                 return true;
             } else {
                 Log.e("MySQLConnector", "Failed to create business account for email: " + userEmail + ". Email might already exist.");
+                showToastOnUI(context, "Failed to create business account. Email might already exist.", Toast.LENGTH_LONG);
                 return false;
             }
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error calling stored procedure 'CreateBusiness': " + e.getMessage());
+            showToastOnUI(context, "Error creating business account: " + e.getMessage(), Toast.LENGTH_LONG);
             return false;
         }
     }
-
     public static Integer createTransaction(String toUserEmail, Float transactionAmount, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
@@ -369,7 +399,6 @@ public class MySQLConnector {
 
         return transactionId;
     }
-
     public static List<TransactionDetails> getTransactionHistory(String userEmail, Context context) {
         List<TransactionDetails> transactions = new ArrayList<>();
         int transactionCount = 0;
@@ -426,12 +455,10 @@ public class MySQLConnector {
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error calling getTransactionStatus: " + e.getMessage());
-            // No Toast here.
         }
 
         return status;
     }
-
     public static void updateTransactionFromUser(Context context, int transactionID, String fromUserEmail) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
@@ -447,7 +474,6 @@ public class MySQLConnector {
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error updating transaction: " + e.getMessage());
-            // No Toast here.
         }
     }
 
@@ -470,7 +496,6 @@ public class MySQLConnector {
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error checking transaction existence: " + e.getMessage());
-            // No Toast here.
             return null;
         }
     }
@@ -504,7 +529,6 @@ public class MySQLConnector {
             }
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error fetching transaction details: " + e.getMessage());
-            // No Toast here.
         }
 
         return details;
@@ -535,7 +559,6 @@ public class MySQLConnector {
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error retrieving user details: " + e.getMessage());
-            // No Toast here.
         }
 
         return userDetails;
@@ -561,7 +584,6 @@ public class MySQLConnector {
             Log.d("MySQLConnector", "Sufficient funds? " + isSufficient);
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error calling sufficientFunds: " + e.getMessage());
-            // No Toast here.
         }
 
         return isSufficient;
@@ -575,18 +597,17 @@ public class MySQLConnector {
         }
 
         boolean txnSuccess = false;
-        Log.i("JHGG", "HERE"); // Keep logs for debugging!
+        Log.i("JHGG", "HERE");
         try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.confirmTransaction(?, ?, ?)}")) {
             stmt.setString(1, fromUserEmail);
             stmt.setInt(2, txnId);
             stmt.registerOutParameter(3, Types.BOOLEAN);
-            Log.i("JHGG", "HERE2"); // Keep logs for debugging!
+            Log.i("JHGG", "HERE2");
             stmt.execute();
             txnSuccess = stmt.getBoolean(3);
             Log.d("MySQLConnector", "Transaction confirmed? " + txnSuccess);
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error calling confirmTransaction: " + e.getMessage());
-            // No Toast here.
         }
 
         return txnSuccess;
@@ -626,6 +647,7 @@ public class MySQLConnector {
             callableStatement.setString(3, studentFirstName);
             callableStatement.setString(4, studentLastName);
             callableStatement.setString(5, studentNumber);
+
             callableStatement.registerOutParameter(6, Types.INTEGER);
 
             Log.d("MySQLConnector", "Calling CreateStudent for email: " + userEmail);
@@ -635,14 +657,17 @@ public class MySQLConnector {
 
             if (result == 1) {
                 Log.d("MySQLConnector", "Student account created successfully for email: " + userEmail);
+                showToastOnUI(context, "Student account created successfully!", Toast.LENGTH_SHORT);
                 return true;
             } else {
                 Log.e("MySQLConnector", "Failed to create student account for email: " + userEmail + ". Email might already exist.");
+                showToastOnUI(context, "Failed to create student account. Email might already exist.", Toast.LENGTH_LONG);
                 return false;
             }
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error calling stored procedure 'CreateStudent': " + e.getMessage());
+            showToastOnUI(context, "Error creating student account: " + e.getMessage(), Toast.LENGTH_LONG);
             return false;
         }
     }
