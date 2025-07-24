@@ -164,12 +164,11 @@
         android:id="@+id/imageView3"
         android:layout_width="130dp"
         android:layout_height="105dp"
-        android:layout_marginBottom="-30dp"
+        android:layout_marginBottom="-55dp"
         android:contentDescription="@string/mandela_money_logo"
         app:layout_constraintBottom_toTopOf="@+id/blurView_createaccountstudent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_mandelamoney_login"
         app:srcCompat="@drawable/img_mandelamoneylogo" />
 
     <TextView
