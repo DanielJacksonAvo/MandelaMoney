@@ -19,10 +19,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     private final List<TransactionDetails> transactionList;
     private final String currentUserEmail;
+    private static final String TAG = "TransactionAdapter";
 
     // Constructor
     public TransactionAdapter(List<TransactionDetails> transactionList, String currentUserEmail) {
-        this.transactionList = new ArrayList<>(transactionList); // Defensive copy for mutability
+        // Always ensure transactionList is not null, and make a defensive copy
+        this.transactionList = (transactionList != null) ? new ArrayList<>(transactionList) : new ArrayList<>();
         this.currentUserEmail = currentUserEmail;
     }
 
@@ -45,8 +47,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         String displayName;
 
         if (currentUserEmail != null && fromUser != null && fromUser.equals(currentUserEmail)) {
+            // If the current user is the sender, display the receiver's name
             displayName = toUser != null ? toUser : "Unknown";
         } else if (fromUser != null) {
+            // If the current user is the receiver, display the sender's name
             displayName = fromUser;
         } else {
             displayName = "Unknown";
@@ -62,12 +66,17 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
     public void updateData(List<TransactionDetails> newList) {
-        Log.d("TransactionAdapter", "Updating adapter with new data. Size: " + newList.size());
-        transactionList.clear();
-        transactionList.addAll(newList);
-        notifyDataSetChanged();
+        Log.d(TAG, "Updating adapter with new data. New size: " + newList.size() + ", Old size: " + transactionList.size());
+        // Ensure newList is not null before clearing and adding
+        if (newList != null) {
+            transactionList.clear();
+            transactionList.addAll(newList);
+            // Notify the adapter that the data set has changed to refresh the RecyclerView
+            notifyDataSetChanged();
+        } else {
+            Log.w(TAG, "Attempted to update data with a null list.");
+        }
     }
-
 
     static class TransactionViewHolder extends RecyclerView.ViewHolder {
         TextView txtDate, txtTime, txtToFrom, txtAmount;
