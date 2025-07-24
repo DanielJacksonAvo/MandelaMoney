@@ -9,4 +9,6 @@ public interface IDashboardView {
 
     void displayProfile();
 
+    void displayUserNameTablet(String name);
+
 }

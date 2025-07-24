@@ -89,6 +89,10 @@ public class DashboardController {
         DashboardHomeController = new DashboardHomeController(view);
     }
 
+    public void handleLoadUserToUITablet() {
+        view.displayUserNameTablet(DashboardHomeController.getUserName());
+    }
+
     public class DashboardHomeController {
         private final IHomeDashboardView view;
         private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -101,13 +105,17 @@ public class DashboardController {
 
         public void handleLoadUserToUI() {
             view.displayBalance(user.getUserBalance());
-            if (user instanceof Student) {
-                String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
-                view.displayUserName(fullname);
-            } else if (user instanceof Business) {
-                view.displayUserName(((Business) user).getBusinessName());
-            }
+            view.displayUserName(getUserName());
             startPolling();
+        }
+
+        public String getUserName() {
+            if (user instanceof Student) {
+                return ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
+            } else if (user instanceof Business) {
+                return ((Business) user).getBusinessName();
+            }
+            return null;
         }
 
         public void handleBalanceRefresh() {
@@ -179,6 +187,8 @@ public class DashboardController {
             mainThreadHandler.removeCallbacksAndMessages(null);
         }
     }
+
+
 
     private class DashboardLockController {
 

@@ -4,12 +4,13 @@ import static android.icu.lang.UCharacter.toLowerCase;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,23 +29,20 @@ import com.example.mandelamoney.view.Iface.ILoginView;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicReference;
 
-
 public class LoginActivity extends AppCompatActivity implements ILoginView {
     private LoginController loginController;
     private TextView txtError;
 
+    private Button btnLogin;
+    private EditText tbxUserEmail;
+    private EditText tbxUserPassword;
+    private ImageView imgPasswordIcon;
+    private TextView btnForgotPassword;
+    private TextView btnSignup;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Attempt to restore session before calling super
-//        UserSessionLoader.tryRestoreSession(this);
-//        if (UserSession.getUser() != null) {
-//            Intent intent = new Intent(this, DashboardActivity.class);
-//            startActivity(intent);
-//            finish();
-//            return;
-//        }
-
-        // Proceed normally
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
@@ -56,55 +54,113 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         });
 
         loginController = new LoginController(this, this);
-        connectToUI();
+
+        // This is the crucial part: determine which layout was loaded
+        // by checking for a view that is unique to the tablet layout.
+        View tabletSpecificViewCheck = findViewById(R.id.blurView_login1);
+
+        if (tabletSpecificViewCheck != null) {
+            Log.d("LoginActivity", "Tablet layout (layout-sw600dp) loaded.");
+            setupTabletUI();
+        } else {
+            Log.d("LoginActivity", "Phone layout (default layout) loaded.");
+            setupPhoneUI();
+        }
     }
 
-
-    private void connectToUI() {
-        Button btnLogin = findViewById(R.id.btn_login);
-        EditText tbxUserEmail = findViewById(R.id.tbx_email_login);
-        EditText tbxUserPassword = findViewById(R.id.tbx_password_login);
+    private void setupPhoneUI() {
+        btnLogin = findViewById(R.id.btn_login);
+        tbxUserEmail = findViewById(R.id.tbx_email_login);
+        tbxUserPassword = findViewById(R.id.tbx_password_login);
         txtError = findViewById(R.id.txt_error_login);
-        ImageView imgPasswordIcon = findViewById(R.id.img_password_login);
-        TextView btnForgotPassword = findViewById(R.id.btn_forgotPassword_login);
-        configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
-        configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
-        configureForgotPasswordButton(btnForgotPassword);
-        TextView btnSignup = findViewById(R.id.btn_signup_login);
-        configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
-        configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
-        configureSignupButton(btnSignup);
+        imgPasswordIcon = findViewById(R.id.img_password_login);
+        btnForgotPassword = findViewById(R.id.btn_forgotPassword_login);
+        btnSignup = findViewById(R.id.btn_signup_login);
+
+        if (btnLogin != null && tbxUserEmail != null && tbxUserPassword != null) {
+            configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
+        }
+        if (imgPasswordIcon != null && tbxUserPassword != null) {
+            configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
+        }
+        if (btnForgotPassword != null) {
+            configureForgotPasswordButton(btnForgotPassword);
+        }
+        if (btnSignup != null) {
+            configureSignupButton(btnSignup);
+        }
+    }
+
+    private void setupTabletUI() {
+        // Note the ID for the login button is different in the tablet layout
+        btnLogin = findViewById(R.id.btn_login3);
+        tbxUserEmail = findViewById(R.id.tbx_email_login);
+        tbxUserPassword = findViewById(R.id.tbx_password_login);
+        txtError = findViewById(R.id.txt_error_login);
+        imgPasswordIcon = findViewById(R.id.img_password_login);
+        btnForgotPassword = findViewById(R.id.btn_forgotPassword_login);
+        // Note the ID for the signup button is different in the tablet layout
+        btnSignup = findViewById(R.id.btn_signup_login2);
+
+        if (btnLogin != null && tbxUserEmail != null && tbxUserPassword != null) {
+            configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
+        }
+        if (imgPasswordIcon != null && tbxUserPassword != null) {
+            configurePasswordVisibility(imgPasswordIcon, tbxUserPassword);
+        }
+        if (btnForgotPassword != null) {
+            configureForgotPasswordButton(btnForgotPassword);
+        }
+        if (btnSignup != null) {
+            configureSignupButton(btnSignup);
+        }
     }
 
     private void configureLoginButton(Button btnLogin, EditText tbxUserEmail, EditText tbxUserPassword) {
-        btnLogin.setOnClickListener((view) -> {
-            String userEmail = toLowerCase(String.valueOf(tbxUserEmail.getText()));
-            String userPassword = String.valueOf(tbxUserPassword.getText());
-            try {
-                loginController.handleLogin(userEmail, userPassword);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-
-
-        });
+        if (btnLogin != null) {
+            btnLogin.setOnClickListener((view) -> {
+                String userEmail = toLowerCase(String.valueOf(tbxUserEmail.getText()));
+                String userPassword = String.valueOf(tbxUserPassword.getText());
+                try {
+                    loginController.handleLogin(userEmail, userPassword);
+                } catch (SQLException e) {
+                    Log.e("LoginActivity", "SQL Exception during login: " + e.getMessage());
+                    throw new RuntimeException(e);
+                }
+            });
+        } else {
+            Log.e("LoginActivity", "Login button is null in configureLoginButton.");
+        }
     }
+
     private void configureForgotPasswordButton(TextView btnForgotPassword){
-        btnForgotPassword.setOnClickListener((view)-> loginController.handleForgotPassword());
+        if (btnForgotPassword != null) {
+            btnForgotPassword.setOnClickListener((view)-> loginController.handleForgotPassword());
+        } else {
+            Log.e("LoginActivity", "Forgot Password button is null in configureForgotPasswordButton.");
+        }
     }
 
     private void configureSignupButton(TextView btnSignup) {
-        btnSignup.setOnClickListener((view) -> loginController.handleSignUp());
+        if (btnSignup != null) {
+            btnSignup.setOnClickListener((view) -> loginController.handleSignUp());
+        } else {
+            Log.e("LoginActivity", "Sign Up button is null in configureSignupButton.");
+        }
     }
 
     @Override
     public void showErrorMessage() {
-        txtError.setVisibility(VISIBLE);
+        if (txtError != null) {
+            txtError.setVisibility(VISIBLE);
+        }
     }
 
     @Override
     public void hideErrorMessage() {
-        txtError.setVisibility(GONE);
+        if (txtError != null) {
+            txtError.setVisibility(GONE);
+        }
     }
 
     @Override
@@ -112,8 +168,12 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         finish();
     }
 
-
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
+        if (tbxUserPassword == null || imgPasswordIcon == null) {
+            Log.e("LoginActivity", "Password EditText or Icon is null in configurePasswordVisibility.");
+            return;
+        }
+
         tbxUserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         tbxUserPassword.setTransformationMethod(new PasswordTransformationMethod());
         imgPasswordIcon.setImageResource(R.drawable.img_password_icon);
@@ -157,5 +217,4 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             tbxUserPassword.setSelection(tbxUserPassword.getText().length());
         });
     }
-
 }

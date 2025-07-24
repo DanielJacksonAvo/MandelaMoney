@@ -12,10 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DashboardController;
+import com.example.mandelamoney.controller.MakePaymentController;
+import com.example.mandelamoney.controller.RequestPaymentController;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 
 import java.util.Locale;
@@ -24,12 +27,18 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
 
     DashboardController controller;
     private TextView txtBalance, txtUserName;
+    private EditText tbxRequestPayAmount;
+
     // ... other class members
 
     public HomeDashboardFragment(DashboardController controller) {
         this.controller = controller;
         controller.createDashboardHomeController(this);
 
+    }
+
+    public boolean checkTablet() {
+        return getResources().getBoolean(R.bool.is_tablet_landscape);
     }
 
 
@@ -42,17 +51,38 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        connectToUI(view);
+        if (checkTablet()) {
+            connectToUITablet(view);
+        } else {
+            connectToUIMobile(view);
+        }
         controller.DashboardHomeController.handleLoadUserToUI();
     }
 
-    private void connectToUI(View rootView) {
+    private void connectToUIMobile(View rootView) {
         txtBalance = rootView.findViewById(R.id.txt_user_account_balance);
         txtUserName = rootView.findViewById(R.id.txt_user_name_dashboard);
         Button btnRequestPay = rootView.findViewById(R.id.btn_request_pay_dashboard);
         configureRequestPayButton(btnRequestPay);
         Button btnPayNow = rootView.findViewById(R.id.btn_pay_now);
         configurePayNowButton(btnPayNow);
+    }
+
+    private void connectToUITablet(View rootView) {
+        txtBalance = rootView.findViewById(R.id.txt_user_account_balance);
+        Button btnWithdraw = rootView.findViewById(R.id.btn_withdraw);
+        congifureWithdrawButton(btnWithdraw);
+        Button btnPayNow = rootView.findViewById(R.id.btn_pay_now);
+        configurePayNowButton(btnPayNow);
+        tbxRequestPayAmount = rootView.findViewById(R.id.tbx_amount_request_payment);
+        Button btnGenerateQR = rootView.findViewById(R.id.btn_generate_qr_request_payment);
+        configureGenerateQRCodeButton(btnGenerateQR);
+
+
+    }
+
+    private void congifureWithdrawButton(Button btnWithdraw) {
+
     }
 
     @Override
@@ -63,17 +93,35 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
 
     @Override
     public void displayUserName(String name) {
-        txtUserName.setText(toUpperCase(name));
+        if (txtUserName != null && !checkTablet()) {
+            txtUserName.setText(toUpperCase(name));
+        }
     }
 
 
     private void configureRequestPayButton(Button btnRequestPay) {
-        btnRequestPay.setOnClickListener((view) -> {
-            controller.DashboardHomeController.handleRequestPayment();
-        });
+        if (btnRequestPay != null && !checkTablet()) {
+            btnRequestPay.setOnClickListener((view) -> {
+                controller.DashboardHomeController.handleRequestPayment();
+            });
+        }
+
     }
 
-    private void configurePayNowButton(Button btnPayNow){
-            btnPayNow.setOnClickListener((view)->controller.DashboardHomeController.handleMakePayment());
+    private void configurePayNowButton(Button btnPayNow) {
+        if (btnPayNow != null) {
+            btnPayNow.setOnClickListener((view) -> controller.DashboardHomeController.handleMakePayment());
+
+        }
+    }
+
+    private void configureGenerateQRCodeButton(Button btnGenerateQR) {
+        if (btnGenerateQR != null && checkTablet()) {
+            btnGenerateQR.setOnClickListener((view) -> {
+                RequestPaymentController requestPaymentController = new RequestPaymentController(getContext(), this);
+                requestPaymentController.handleGenerateQR(tbxRequestPayAmount.getText().toString());
+            });
+
+        }
     }
 }
