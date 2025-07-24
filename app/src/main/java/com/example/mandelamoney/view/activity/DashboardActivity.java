@@ -18,6 +18,7 @@ import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.fragment.HomeDashboardFragment;
 import com.example.mandelamoney.view.fragment.ProfileDashboardFragment;
 import com.example.mandelamoney.view.fragment.SettingsDashboardFragment;
+import com.example.mandelamoney.view.fragment.TransactionHistoryFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class DashboardActivity extends AppCompatActivity implements IDashboardView {
@@ -91,6 +92,15 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     @Override
     public void displayProfile() {
         selectedFragment = new ProfileDashboardFragment();
+        if (selectedFragment != null) {
+            loadFragment(selectedFragment);
+        }
+
+    }
+
+    @Override
+    public void displayTransactionHistoryScreen() {
+        selectedFragment = new TransactionHistoryFragment(dashboardController);
         if (selectedFragment != null) {
             loadFragment(selectedFragment);
         }

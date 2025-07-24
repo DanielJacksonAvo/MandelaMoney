@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -70,6 +71,10 @@ public class DashboardController {
         view.displayProfile();
         manageControllers();
     }
+    public void handleViewTransactionHistory() {
+        view.displayTransactionHistoryScreen();
+        manageControllers();
+    }
 
     private void manageControllers() {
         if (currentFragment == 0) {
@@ -96,6 +101,10 @@ public class DashboardController {
         DashboardHomeController = new DashboardHomeController(view);
     }
 
+    public void createTransactionHistoryController(ITransactionHistoryView view) {
+        TransactionHistoryController = new TransactionHistoryController(view);
+    }
+
     public class DashboardHomeController {
         private final IHomeDashboardView view;
         private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -119,11 +128,19 @@ public class DashboardController {
 
         public void handleBalanceRefresh() {
             if (user != null) {
+                double previousBalance = user.getUserBalance();
                 double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
-                user.setUserBalance(updatedBalance);
-                mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
+
+                if (updatedBalance != previousBalance) {
+                    user.setUserBalance(updatedBalance);
+                    mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
+                    UserSession.refreshTransactionHistory(context, () -> {
+                        Log.d("DashboardPolling", "Transactions updated after balance change.");
+                    });
+                }
             }
         }
+
 
 //    public void handleLoadTransactionsToUI() {
 //        pullSQLTransaction();
@@ -198,36 +215,28 @@ public class DashboardController {
     private class DashboardProfileController {
 
     }
-    public static class TransactionHistoryController {
-        private final AppCompatActivity context;
-        private ITransactionHistoryView view;
+    public class TransactionHistoryController {
+        private ITransactionHistoryView transactionHistoryView;
         private final User user;
 
-        public TransactionHistoryController(AppCompatActivity context) {
-            this.context = context;
+        public TransactionHistoryController(ITransactionHistoryView transactionHistoryView) {
             this.user = UserSession.getUser();
+            this.transactionHistoryView = transactionHistoryView;
         }
 
-        public void createTransactionHistoryController(ITransactionHistoryView view) {
-            this.view = view;
-        }
+
 
         public void handleLoadUserToUI() {
             if (user instanceof Student) {
                 String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
-                view.displayUserName(fullname);
+                transactionHistoryView.displayUserName(fullname);
             } else if (user instanceof Business) {
-                view.displayUserName(((Business) user).getBusinessName());
+                transactionHistoryView.displayUserName(((Business) user).getBusinessName());
             }
         }
 
-        public void handleViewTransactionHistory() {
-            TransactionHistoryFragment fragment = new TransactionHistoryFragment(this);
-            context.getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.dashboardFrame, fragment)
-                    .commit();
-        }
+
+
     }
 
 

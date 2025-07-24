@@ -19,7 +19,7 @@
             android:layout_height="2dp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
-            android:background="@color/white30"
+            android:background="@color/white10"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
