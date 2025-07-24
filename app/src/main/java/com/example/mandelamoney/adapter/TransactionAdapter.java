@@ -35,21 +35,22 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
         TransactionDetails transaction = transactionList.get(position);
-
-        // Set date and time
         holder.txtDate.setText(transaction.getDate());
         holder.txtTime.setText(transaction.getTime());
 
-        // Display the "other" user
-        String toFromUser;
-        if (transaction.getFromUser().equals(currentUserEmail)) {
-            toFromUser = transaction.getToUser(); // outgoing
-        } else {
-            toFromUser = transaction.getFromUser(); // incoming
-        }
-        holder.txtToFrom.setText(toFromUser);
+        String fromUser = transaction.getFromUser();
+        String toUser = transaction.getToUser();
+        String displayName;
 
-        // Display amount with optional formatting
+        if (currentUserEmail != null && fromUser != null && fromUser.equals(currentUserEmail)) {
+            displayName = toUser != null ? toUser : "Unknown";
+        } else if (fromUser != null) {
+            displayName = fromUser;
+        } else {
+            displayName = "Unknown";
+        }
+
+        holder.txtToFrom.setText(displayName);
         holder.txtAmount.setText(String.format("R %.2f", transaction.getAmount()));
     }
 
