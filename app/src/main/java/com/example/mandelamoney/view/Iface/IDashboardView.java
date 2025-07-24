@@ -8,5 +8,6 @@ public interface IDashboardView {
     void displaySettings();
 
     void displayProfile();
+    void displayTransactionHistoryScreen();
 
 }

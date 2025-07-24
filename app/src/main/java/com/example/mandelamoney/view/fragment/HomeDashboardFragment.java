@@ -24,6 +24,7 @@ import java.util.Locale;
 public class HomeDashboardFragment extends Fragment implements IHomeDashboardView {
 
     DashboardController controller;
+    DashboardController.TransactionHistoryController transactionController;
     private TextView txtBalance, txtUserName;
     // ... other class members
 
@@ -60,11 +61,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
 
     private void configureTransactionHistoryButton(TextView btnTransactionHistory) {
         btnTransactionHistory.setOnClickListener((view) -> {
-            if (getActivity() instanceof AppCompatActivity) {
-                DashboardController.TransactionHistoryController transactionController =
-                        new DashboardController.TransactionHistoryController((AppCompatActivity) getActivity());
-                transactionController.handleViewTransactionHistory();
-            }
+            controller.handleViewTransactionHistory();
         });
     }
 
@@ -90,4 +87,10 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     private void configurePayNowButton(Button btnPayNow){
             btnPayNow.setOnClickListener((view)->controller.DashboardHomeController.handleMakePayment());
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        controller.DashboardHomeController.handleLoadUserToUI(); // rebinding + balance refresh
+    }
+
 }

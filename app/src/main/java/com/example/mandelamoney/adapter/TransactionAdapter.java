@@ -1,5 +1,6 @@
 package com.example.mandelamoney.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.TransactionDetails;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
@@ -20,7 +22,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     // Constructor
     public TransactionAdapter(List<TransactionDetails> transactionList, String currentUserEmail) {
-        this.transactionList = transactionList;
+        this.transactionList = new ArrayList<>(transactionList); // Defensive copy for mutability
         this.currentUserEmail = currentUserEmail;
     }
 
@@ -58,6 +60,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public int getItemCount() {
         return transactionList.size();
     }
+
+    public void updateData(List<TransactionDetails> newList) {
+        Log.d("TransactionAdapter", "Updating adapter with new data. Size: " + newList.size());
+        transactionList.clear();
+        transactionList.addAll(newList);
+        notifyDataSetChanged();
+    }
+
 
     static class TransactionViewHolder extends RecyclerView.ViewHolder {
         TextView txtDate, txtTime, txtToFrom, txtAmount;

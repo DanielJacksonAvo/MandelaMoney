@@ -1,5 +1,6 @@
 package com.example.mandelamoney.view.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,11 +31,32 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
     private RecyclerView recyclerView;
     private TransactionAdapter adapter;
-    private final DashboardController.TransactionHistoryController controller;
+    private final DashboardController controller;
+    private static final String TAG = "TransactionHistoryDebug";
 
-    public TransactionHistoryFragment(DashboardController.TransactionHistoryController controller) {
+
+    public TransactionHistoryFragment(DashboardController controller) {
         this.controller = controller;
-        this.controller.createTransactionHistoryController(this); // bind interface
+        controller.createTransactionHistoryController(this);
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (recyclerView == null){
+            Log.d("TransactionHistory", "recyclerView is null");
+            return;
+        }
+        UserSession.refreshTransactionHistory(requireContext(), () -> {
+            List<TransactionDetails> updatedList = UserSession.getCachedTransactionHistory();
+
+            if (adapter != null) {
+                adapter.updateData(updatedList);
+            } else {
+                adapter = new TransactionAdapter(updatedList, UserSession.getUser().getUserEmail());
+                recyclerView.setAdapter(adapter);
+            }
+        });
+        controller.TransactionHistoryController.handleLoadUserToUI();
     }
 
     @Override
@@ -47,18 +69,26 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Init UI
         recyclerView = view.findViewById(R.id.recyclerView_transactionHistory);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Set user name
-        controller.handleLoadUserToUI();
+        // Load user name into header
+        controller.TransactionHistoryController.handleLoadUserToUI();
 
-        // Load transactions
+        // Load or fetch transactions
+        loadOrFetchTransactions();
+    }
+
+    private void loadOrFetchTransactions() {
         new Thread(() -> {
             String currentUserEmail = UserSession.getUser().getUserEmail();
-            List<TransactionDetails> transactionList = MySQLConnector.getTransactionHistory(currentUserEmail, getContext());
-            Log.d("TransactionHistory", "List size: " + transactionList.size());
+            Context context = requireContext();
+            Log.d("TransactionHistory", "Fetching transaction history for user: " + currentUserEmail + " Context: " + context.toString());
+            List<TransactionDetails> transactionList = MySQLConnector.getTransactionHistory(currentUserEmail, requireContext());
+
+            Log.d("TransactionHistory", "Fetched transaction count: " + transactionList.size());
+
+            UserSession.setCachedTransactionHistory(transactionList);
 
             new Handler(Looper.getMainLooper()).post(() -> {
                 adapter = new TransactionAdapter(transactionList, currentUserEmail);
@@ -71,5 +101,22 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     public void displayUserName(String name) {
         TextView txtUserName = requireView().findViewById(R.id.txt_user_name_transaction_history);
         txtUserName.setText(name.toUpperCase());
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("TransactionHistory", "onResume called");
+        if (recyclerView == null) return;
+        UserSession.refreshTransactionHistory(requireContext(), () -> {
+            List<TransactionDetails> updatedList = UserSession.getCachedTransactionHistory();
+            if (adapter != null) {
+                adapter.updateData(updatedList);
+            } else {
+                adapter = new TransactionAdapter(updatedList, UserSession.getUser().getUserEmail());
+                recyclerView.setAdapter(adapter);
+            }
+        });
+        controller.TransactionHistoryController.handleLoadUserToUI();
+
     }
 }
