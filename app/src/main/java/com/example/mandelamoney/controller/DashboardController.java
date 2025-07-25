@@ -17,6 +17,8 @@ import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -276,6 +278,33 @@ public class DashboardController {
             }).start();
         }
 
+        public void queryWithFilters(String searchQuery, String period, String type) {
+            new Thread(() -> {
+                String userEmail = UserSession.getUser().getUserEmail();
+                List<TransactionDetails> fullList = MySQLConnector.getTransactionHistory(userEmail, context);
+                List<TransactionDetails> filtered = new ArrayList<>();
+
+                for (TransactionDetails txn : fullList) {
+                    boolean matches = true;
+
+                    if (searchQuery != null && !searchQuery.isEmpty()) {
+                        String targetName = txn.getFromUser() + " " + txn.getToUser();
+                        if (!targetName.toLowerCase().contains(searchQuery.toLowerCase())) {
+                            matches = false;
+                        }
+                    }
+
+                    // Add future logic for period/type here
+
+                    if (matches) {
+                        filtered.add(txn);
+                    }
+                }
+
+                List<TransactionDetails> formatted = formatTransactionHistory(filtered, context);
+                mainThreadHandler.post(() -> transactionHistoryView.updateData(formatted));
+            }).start();
+        }
 
 
     }
