@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import java.util.Locale;
 public class HomeDashboardFragment extends Fragment implements IHomeDashboardView {
 
     DashboardController controller;
+    DashboardController.TransactionHistoryController transactionController;
     private TextView txtBalance, txtUserName;
     private EditText tbxRequestPayAmount;
 
@@ -64,8 +66,16 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
         txtUserName = rootView.findViewById(R.id.txt_user_name_dashboard);
         Button btnRequestPay = rootView.findViewById(R.id.btn_request_pay_dashboard);
         configureRequestPayButton(btnRequestPay);
+        TextView btnTransactionHistory = rootView.findViewById(R.id.txt_transaction_history_dashboard);
+        configureTransactionHistoryButton(btnTransactionHistory);
         Button btnPayNow = rootView.findViewById(R.id.btn_pay_now);
         configurePayNowButton(btnPayNow);
+    }
+
+    private void configureTransactionHistoryButton(TextView btnTransactionHistory) {
+        btnTransactionHistory.setOnClickListener((view) -> {
+            controller.handleViewTransactionHistory();
+        });
     }
 
     private void connectToUITablet(View rootView) {
@@ -77,8 +87,6 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
         tbxRequestPayAmount = rootView.findViewById(R.id.tbx_amount_request_payment);
         Button btnGenerateQR = rootView.findViewById(R.id.btn_generate_qr_request_payment);
         configureGenerateQRCodeButton(btnGenerateQR);
-
-
     }
 
     private void congifureWithdrawButton(Button btnWithdraw) {
@@ -124,4 +132,10 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
 
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        controller.DashboardHomeController.handleLoadUserToUI(); // rebinding + balance refresh
+    }
+
 }
