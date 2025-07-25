@@ -4,14 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
 import android.os.Handler;
-import android.util.Log;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
+import com.example.mandelamoney.model.TransactionDetails;
 import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.util.DataShare;
@@ -21,8 +17,10 @@ import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
-import com.example.mandelamoney.view.fragment.TransactionHistoryFragment;
-
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -142,9 +140,7 @@ public class DashboardController {
                 if (updatedBalance != previousBalance) {
                     user.setUserBalance(updatedBalance);
                     mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                    UserSession.refreshTransactionHistory(context, () -> {
-                        Log.d("DashboardPolling", "Transactions updated after balance change.");
-                    });
+                    TransactionHistoryController.refreshAndDisplayTransactions();
                 }
             }
         }
@@ -166,11 +162,6 @@ public class DashboardController {
             Intent intent = new Intent(context, RequestPaymentEnterAmountActivity.class);
             context.startActivity(intent);
         }
-
-//    private void pullSQLTransaction() {
-//        ArrayList<Transaction> transactionList = new ArrayList<>();
-//        // TODO: SQL logic to fill transactionList
-//    }
 
         public void startPolling() {
             if (pollingHandle != null && !pollingHandle.isDone()) {
@@ -228,6 +219,8 @@ public class DashboardController {
     public class TransactionHistoryController {
         private ITransactionHistoryView transactionHistoryView;
         private final User user;
+        private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+
 
         public TransactionHistoryController(ITransactionHistoryView transactionHistoryView) {
             this.user = UserSession.getUser();
@@ -243,6 +236,55 @@ public class DashboardController {
             } else if (user instanceof Business) {
                 transactionHistoryView.displayUserName(((Business) user).getBusinessName());
             }
+        }
+
+
+        public List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
+            String currentUserEmail = UserSession.getUser().getUserEmail();
+            Set<String> emailsToLookup = new HashSet<>();
+            for (TransactionDetails tx : transactionList) {
+                String from = tx.getFromUser();
+                String to = tx.getToUser();
+                if (from.equals(currentUserEmail)) {
+                    emailsToLookup.add(to);
+                }
+                if (to.equals(currentUserEmail)) {
+                    emailsToLookup.add(from);
+                }
+            }
+
+            Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup, context);
+
+            for (TransactionDetails tx : transactionList) {
+                String from = tx.getFromUser();
+                String to = tx.getToUser();
+
+                if (from.equals(currentUserEmail)) {
+                    tx.setFromUser(emailToDisplayName.getOrDefault(to, to));
+
+                }
+
+                if (to.equals(currentUserEmail)) {
+                    tx.setToUser(emailToDisplayName.getOrDefault(from, from));
+                    tx.setAmount(tx.getAmount()*-1);
+                }
+            }
+
+            return transactionList;
+        }
+        public void refreshAndDisplayTransactions() {
+            new Thread(() -> {
+                String email = UserSession.getUser().getUserEmail();
+                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistory(email, context);
+                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
+                UserSession.setCachedTransactionHistory(formattedList);
+
+                mainThreadHandler.post(() -> {
+                    if (transactionHistoryView != null) {
+                        transactionHistoryView.updateData(formattedList);
+                    }
+                });
+            }).start();
         }
 
 
