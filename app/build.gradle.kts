@@ -10,14 +10,27 @@ android {
         buildConfig = true
     }
 
+    flavorDimensions += "device"
+
+    productFlavors {
+        create("phone") {
+            applicationIdSuffix = ".phone"
+            minSdk = 31
+            targetSdk = 35
+            versionCode = 1
+            versionName = "1.0"
+        }
+        create("tablet") {
+            applicationIdSuffix = ".tablet"
+            minSdk = 31
+            targetSdk = 35
+            versionCode = 1
+            versionName = "1.0"
+        }
+    }
 
     defaultConfig {
         applicationId = "com.example.mandelamoney"
-        minSdk = 31
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "DB_USERNAME", "\"user\"")
@@ -26,9 +39,10 @@ android {
         buildConfigField("String", "EMAIL_USERNAME", "\"mandelamoney.info@gmail.com\"")
         buildConfigField("String","EMAIL_PASSWORD","\"***REMOVED_EMAIL_APP_PASSWORD***\"")
     }
+
     packaging{
         resources{
-         excludes.add("META-INF/NOTICE.md")
+            excludes.add("META-INF/NOTICE.md")
             excludes.add("META-INF/LICENSE.md")
         }
     }
@@ -45,6 +59,17 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    sourceSets {
+        getByName("main") {
+            manifest.srcFile("src/main/AndroidManifest.xml")
+        }
+        // Configure the source set for the 'tablet' product flavor
+        getByName("tablet") {
+            // Updated path to the standard location for flavor-specific manifests
+            manifest.srcFile("src/tablet/AndroidManifest.xml")
+        }
     }
 }
 
@@ -69,6 +94,4 @@ dependencies {
     implementation (libs.camera.lifecycle)
     implementation (libs.camera.view)
     implementation(libs.zxing.android.embedded)
-
-
 }
