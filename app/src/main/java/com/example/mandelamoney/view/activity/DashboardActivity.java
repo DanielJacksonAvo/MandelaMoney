@@ -2,7 +2,6 @@ package com.example.mandelamoney.view.activity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -15,8 +14,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DashboardController;
-import com.example.mandelamoney.model.User;
-import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.fragment.HomeDashboardFragment;
 import com.example.mandelamoney.view.fragment.ProfileDashboardFragment;
@@ -29,6 +26,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     private DashboardController dashboardController;
     private BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment;
+    private Fragment selectedFragmentExtra;
     private TextView txtUserName;
 
     @Override
@@ -49,6 +47,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
             connectToUITablet();
             displayHome();
             displayUserName();
+            displayTransactionHistoryScreen();
         } else {
             connectToUI();
             displayHome();
@@ -66,6 +65,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     private void connectToUITablet() {
         txtUserName = findViewById(R.id.txt_user_name_dashboard);
         bottomNavigationView = findViewById(R.id.dashboardNavView);
+
         configureBottomNav();
     }
 
@@ -76,16 +76,13 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     }
 
     private void configureBottomNav() {
-        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                selectedFragment = null;
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            selectedFragment = null;
 
-                int itemId = item.getItemId();
-                dashboardController.handleSelection(itemId);
-                return true;
+            int itemId = item.getItemId();
+            dashboardController.handleSelection(itemId);
+            return true;
 
-            }
         });
     }
 
@@ -96,6 +93,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         if (selectedFragment != null) {
             loadFragment(selectedFragment);
         }
+
     }
 
     @Override
@@ -123,14 +121,32 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
 
     @Override
     public void displayTransactionHistoryScreen() {
-        selectedFragment = new TransactionHistoryFragment(dashboardController);
-        if (selectedFragment != null) {
-            loadFragment(selectedFragment);
+        if (checkTablet()) {
+            selectedFragmentExtra = new TransactionHistoryFragment(dashboardController);
+            if (selectedFragmentExtra != null) {
+                loadFragmentExtra(selectedFragmentExtra);
+            }
         }
+        else {
+            selectedFragment = new TransactionHistoryFragment(dashboardController);
+            if (selectedFragment != null) {
+                loadFragment(selectedFragment);
+            }
+        }
+
     }
 
     public void displayUserNameTablet(String name) {
         txtUserName.setText(name);
+    }
+
+    public void loadFragmentExtra(Fragment fragment) {
+        if (checkTablet()) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.dashboardFrameExtra, fragment)
+                    .commit();
+        }
+
     }
 
     private void loadFragment(Fragment fragment) {

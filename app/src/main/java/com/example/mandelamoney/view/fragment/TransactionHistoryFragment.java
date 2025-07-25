@@ -65,7 +65,7 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         new Thread(() -> {
             String currentUserEmail = UserSession.getUser().getUserEmail();
             Context context = requireContext(); // Use requireContext() as it ensures context is not null
-            Log.d(TAG, "Fetching transaction history for user: " + currentUserEmail + " Context: " + context.toString());
+            Log.d(TAG, "Fetching transaction history for user: " + currentUserEmail + " Context: " + context);
             List<TransactionDetails> transactionList = MySQLConnector.getTransactionHistory(currentUserEmail, context);
 
             Log.d(TAG, "Fetched transaction count: " + transactionList.size());
@@ -118,8 +118,11 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
     @Override
     public void displayUserName(String name) {
-        TextView txtUserName = requireView().findViewById(R.id.txt_user_name_transaction_history);
-        txtUserName.setText(name.toUpperCase());
+        if (!checkTablet()) {
+            TextView txtUserName = requireView().findViewById(R.id.txt_user_name_transaction_history);
+            txtUserName.setText(name.toUpperCase());
+        }
+
     }
 
     @Override
@@ -130,5 +133,9 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         Log.d(TAG, "onResume called. Refreshing transactions.");
         // Call loadOrFetchTransactions here to refresh data every time the fragment becomes visible
         loadOrFetchTransactions();
+    }
+
+    public boolean checkTablet() {
+        return getResources().getBoolean(R.bool.is_tablet_landscape);
     }
 }

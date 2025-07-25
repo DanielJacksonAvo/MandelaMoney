@@ -6,9 +6,6 @@ import android.os.Looper;
 import android.os.Handler;
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
@@ -21,7 +18,6 @@ import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
-import com.example.mandelamoney.view.fragment.TransactionHistoryFragment;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -49,6 +45,7 @@ public class DashboardController {
     public void handleHome() {
         currentFragment = 0;
         view.displayHome();
+        view.displayTransactionHistoryScreen();
         manageControllers();
 
     }
@@ -142,9 +139,7 @@ public class DashboardController {
                 if (updatedBalance != previousBalance) {
                     user.setUserBalance(updatedBalance);
                     mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                    UserSession.refreshTransactionHistory(context, () -> {
-                        Log.d("DashboardPolling", "Transactions updated after balance change.");
-                    });
+                    UserSession.refreshTransactionHistory(context, () -> Log.d("DashboardPolling", "Transactions updated after balance change."));
                 }
             }
         }
@@ -182,6 +177,7 @@ public class DashboardController {
             if (pollingHandle != null) {
                 pollingHandle.cancel(true);
                 pollingHandle = null;
+                cleanup();
             }
         }
 
