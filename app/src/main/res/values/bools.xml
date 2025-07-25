@@ -1,0 +1,5 @@
+<!-- res/values/bools.xml -->
+<resources>
+    <bool name="is_tablet_landscape">false</bool>
+</resources>
+    

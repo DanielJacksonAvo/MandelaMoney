@@ -3,6 +3,7 @@ package com.example.mandelamoney.view.activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -14,6 +15,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DashboardController;
+import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.fragment.HomeDashboardFragment;
 import com.example.mandelamoney.view.fragment.ProfileDashboardFragment;
@@ -26,6 +29,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     private DashboardController dashboardController;
     private BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment;
+    private TextView txtUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +45,28 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         });
 
         dashboardController = new DashboardController(this, this);
-        connectToUI();
-        displayHome();
+        if (checkTablet()) {
+            connectToUITablet();
+            displayHome();
+            displayUserName();
+        } else {
+            connectToUI();
+            displayHome();
 
+        }
+
+    }
+
+    private void displayUserName() {
+        if (txtUserName != null) {
+            dashboardController.handleLoadUserToUITablet();
+        }
+    }
+
+    private void connectToUITablet() {
+        txtUserName = findViewById(R.id.txt_user_name_dashboard);
+        bottomNavigationView = findViewById(R.id.dashboardNavView);
+        configureBottomNav();
     }
 
     private void connectToUI() {
@@ -104,12 +127,19 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         if (selectedFragment != null) {
             loadFragment(selectedFragment);
         }
+    }
 
+    public void displayUserNameTablet(String name) {
+        txtUserName.setText(name);
     }
 
     private void loadFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.dashboardFrame, fragment)
                 .commit();
+    }
+
+    public boolean checkTablet() {
+        return getResources().getBoolean(R.bool.is_tablet_landscape);
     }
 }
