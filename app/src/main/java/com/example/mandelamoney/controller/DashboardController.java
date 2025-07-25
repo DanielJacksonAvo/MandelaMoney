@@ -149,11 +149,6 @@ public class DashboardController {
             }
         }
 
-
-//    public void handleLoadTransactionsToUI() {
-//        pullSQLTransaction();
-//    }
-
         public void handleMakePayment() {
             DataShare.send(this);
             stopPolling();
@@ -166,11 +161,6 @@ public class DashboardController {
             Intent intent = new Intent(context, RequestPaymentEnterAmountActivity.class);
             context.startActivity(intent);
         }
-
-//    private void pullSQLTransaction() {
-//        ArrayList<Transaction> transactionList = new ArrayList<>();
-//        // TODO: SQL logic to fill transactionList
-//    }
 
         public void startPolling() {
             if (pollingHandle != null && !pollingHandle.isDone()) {
