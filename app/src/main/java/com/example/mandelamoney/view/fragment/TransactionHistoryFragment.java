@@ -1,9 +1,6 @@
 package com.example.mandelamoney.view.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -21,11 +18,10 @@ import com.example.mandelamoney.R;
 import com.example.mandelamoney.adapter.TransactionAdapter;
 import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.model.TransactionDetails;
-import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 
-import java.util.ArrayList; // Import for ArrayList
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionHistoryFragment extends Fragment implements ITransactionHistoryView {
@@ -37,8 +33,6 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
     public TransactionHistoryFragment(DashboardController controller) {
         this.controller = controller;
-        // It's generally better to set up the controller in onViewCreated or onCreate to ensure the view is ready,
-        // but for now, we'll keep it as is if this is how your architecture expects it.
         controller.createTransactionHistoryController(this);
     }
 
@@ -51,14 +45,13 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        // Load user name into header
         controller.TransactionHistoryController.handleLoadUserToUI();
         setupRecycler(view);
         loadOrFetchTransactions();
     }
 
     private void loadOrFetchTransactions() {
+            controller.TransactionHistoryController.refreshAndDisplayTransactions();
         // Use a Handler to post updates to the main UI thread
         Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -92,28 +85,10 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
             return;
         }
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        // Initialize adapter immediately, potentially with an empty list
-        // and then update it when data is fetched.
         if (adapter == null) {
             adapter = new TransactionAdapter(new ArrayList<>(), UserSession.getUser().getUserEmail());
             recyclerView.setAdapter(adapter);
         }
-
-        // The refreshTransactionHistory in UserSession seems to be a caching mechanism.
-        // If it also fetches, ensure it doesn't conflict with loadOrFetchTransactions.
-        // For now, I'm assuming loadOrFetchTransactions is the primary way to get fresh data.
-        // If UserSession.refreshTransactionHistory also fetches from DB and updates UI,
-        // you might have duplicate fetches or race conditions.
-        // Consider if you need both loadOrFetchTransactions and UserSession.refreshTransactionHistory
-        // to initiate data fetching, or if one should trigger the other.
-        UserSession.refreshTransactionHistory(requireContext(), () -> {
-            // This callback is likely on the main thread
-            List<TransactionDetails> updatedList = UserSession.getCachedTransactionHistory();
-            if (adapter != null) {
-                adapter.updateData(updatedList);
-            }
-        });
     }
 
     @Override
@@ -126,14 +101,22 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     }
 
     @Override
+    public void updateData(List<TransactionDetails> formattedList) {
+        if (adapter != null) {
+            adapter.updateData(formattedList);
+        } else {
+            adapter = new TransactionAdapter(formattedList, UserSession.getUser().getUserEmail());
+            recyclerView.setAdapter(adapter);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume called");
-        super.onResume();
         Log.d(TAG, "onResume called. Refreshing transactions.");
-        // Call loadOrFetchTransactions here to refresh data every time the fragment becomes visible
         loadOrFetchTransactions();
     }
+
 
     public boolean checkTablet() {
         return getResources().getBoolean(R.bool.is_tablet_landscape);

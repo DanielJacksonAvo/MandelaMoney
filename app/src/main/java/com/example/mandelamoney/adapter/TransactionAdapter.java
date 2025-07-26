@@ -1,5 +1,6 @@
 package com.example.mandelamoney.adapter;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,28 +37,33 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         return new TransactionViewHolder(view);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
         TransactionDetails transaction = transactionList.get(position);
         holder.txtDate.setText(transaction.getDate());
         holder.txtTime.setText(transaction.getTime());
 
+        // Display name already formatted in the controller
         String fromUser = transaction.getFromUser();
         String toUser = transaction.getToUser();
         String displayName;
 
-        if (currentUserEmail != null && fromUser != null && fromUser.equals(currentUserEmail)) {
-            // If the current user is the sender, display the receiver's name
+        if (fromUser.equals(currentUserEmail)) {
             displayName = toUser != null ? toUser : "Unknown";
-        } else if (fromUser != null) {
-            // If the current user is the receiver, display the sender's name
-            displayName = fromUser;
         } else {
-            displayName = "Unknown";
+            displayName = fromUser;
         }
 
         holder.txtToFrom.setText(displayName);
-        holder.txtAmount.setText(String.format("R %.2f", transaction.getAmount()));
+        float amount = transaction.getAmount();
+        if (amount > 0) {
+            holder.txtAmount.setText(String.format("R %.2f", amount));
+            holder.txtAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.mandelaYellow));
+        } else {
+            holder.txtAmount.setText(String.format("- R %.2f", Math.abs(amount)));
+            holder.txtAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.white)); // or default
+        }
     }
 
     @Override

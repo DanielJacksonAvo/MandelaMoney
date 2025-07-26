@@ -19,7 +19,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class MySQLConnector {
     private final static String DB_URL = BuildConfig.DB_URL;
@@ -696,5 +699,32 @@ public class MySQLConnector {
 
         return balance;
     }
+    public static Map<String, String> getDisplayNamesForEmails(Set<String> emails, Context context) {
+        Map<String, String> emailToDisplayName = new HashMap<>();
+
+        Connection conn = getConnection(context);
+        if (conn == null) {
+            Log.e("MySQLConnector", "No valid connection for getDisplayNamesForEmails.");
+            return emailToDisplayName;
+        }
+
+        for (String email : emails) {
+            try (CallableStatement stmt = conn.prepareCall("{CALL MandelaMoneyDB.getUserDisplayNameByEmail(?)}")) {
+                stmt.setString(1, email);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        String displayName = rs.getString("displayName");
+                        emailToDisplayName.put(email, displayName);
+                    }
+                }
+            } catch (SQLException e) {
+                Log.e("MySQLConnector", "Error fetching display name for: " + email + " → " + e.getMessage());
+            }
+        }
+
+        return emailToDisplayName;
+    }
+
+
 
 }
