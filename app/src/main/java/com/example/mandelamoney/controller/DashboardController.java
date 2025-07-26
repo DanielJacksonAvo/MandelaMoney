@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
 import android.os.Handler;
+import android.util.Log;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
@@ -47,6 +48,7 @@ public class DashboardController {
     public void handleHome() {
         currentFragment = 0;
         view.displayHome();
+        view.displayTransactionHistoryScreen();
         manageControllers();
 
     }
@@ -141,14 +143,10 @@ public class DashboardController {
                     user.setUserBalance(updatedBalance);
                     mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
                     TransactionHistoryController.refreshAndDisplayTransactions();
+                    UserSession.refreshTransactionHistory(context, () -> Log.d("DashboardPolling", "Transactions updated after balance change."));
                 }
             }
         }
-
-
-//    public void handleLoadTransactionsToUI() {
-//        pullSQLTransaction();
-//    }
 
         public void handleMakePayment() {
             DataShare.send(this);
@@ -183,6 +181,7 @@ public class DashboardController {
             if (pollingHandle != null) {
                 pollingHandle.cancel(true);
                 pollingHandle = null;
+                cleanup();
             }
         }
 
