@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mandelaBlue">
+    android:background="@color/mandelaBlue"
+    android:id="@+id/main">
 
     <eightbitlab.com.blurview.BlurView
         android:id="@+id/blurView_login1"
@@ -41,7 +42,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/btn_cancel_request_payment4"
+                android:id="@+id/btn_cancel_request_payment"
                 style="@style/HyperLinkButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -86,6 +87,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <FrameLayout
+                        android:id="@+id/frameLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -114,15 +116,14 @@
                         android:id="@+id/lbl_error_qr"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
                         android:ems="10"
                         android:text="@string/could_not_generate_qr"
                         android:textColor="@color/mandelaYellow"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/img_request_payment_qr" />
+                        app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </eightbitlab.com.blurview.BlurView>
