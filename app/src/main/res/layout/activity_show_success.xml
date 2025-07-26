@@ -27,7 +27,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/txt_success"
+                android:id="@+id/txt_failed2"
                 style="@style/TitleText"
                 android:layout_marginTop="70dp"
                 android:text="@string/success"
@@ -127,7 +127,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_success"
+                app:layout_constraintTop_toBottomOf="@+id/txt_failed2"
                 app:layout_constraintVertical_bias="0.0" />
 
             <View
@@ -157,7 +157,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_success"
+                app:layout_constraintTop_toBottomOf="@+id/txt_failed2"
                 app:layout_constraintVertical_bias="1.0" />
 
             <View
