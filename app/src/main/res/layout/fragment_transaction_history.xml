@@ -156,9 +156,10 @@
     <eightbitlab.com.blurview.BlurView
         android:id="@+id/blurView_dashboard_transaction_list"
         style="@style/BlurPanel"
-        android:layout_width="355dp"
-        android:layout_height="466dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
         android:padding="10dp"
