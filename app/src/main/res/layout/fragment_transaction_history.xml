@@ -58,30 +58,33 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/filter_bar_container"
-        android:layout_width="348dp"
-        android:layout_height="78dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:paddingHorizontal="8dp"
+        android:minHeight="55dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.22000003">
+        app:layout_constraintVertical_bias="0.19999999">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/search_container"
             android:layout_width="0dp"
-            android:layout_height="43dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="6dp"
             android:background="@drawable/panel_background_shape"
             android:clickable="true"
             android:focusable="true"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_period"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/icon_search"
@@ -89,40 +92,42 @@
                 android:layout_height="27dp"
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/img_search_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/et_search"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="Search by name"
-                android:visibility="gone"
+                android:layout_height="match_parent"
                 android:background="@android:color/transparent"
+                android:fontFamily="@font/dm_sans_medium"
+                android:hint="Search by name"
                 android:inputType="text"
                 android:textColor="@color/white"
                 android:textColorHint="#99FFFFFF"
                 android:textSize="14sp"
-                android:fontFamily="@font/dm_sans_medium"
-                app:layout_constraintStart_toEndOf="@id/icon_search"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintStart_toEndOf="@id/icon_search"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_period"
             style="@style/FilterChip"
             android:layout_width="0dp"
-            android:layout_height="49dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="6dp"
             android:layout_marginEnd="6dp"
+            android:layout_marginBottom="6dp"
             android:text="PERIOD:"
             app:icon="@drawable/img_drop_down_icon"
-            app:iconTint="@null"
             app:iconGravity="textEnd"
             app:iconPadding="8dp"
+            app:iconTint="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_type"
             app:layout_constraintStart_toEndOf="@id/search_container"
@@ -132,7 +137,10 @@
             android:id="@+id/btn_type"
             style="@style/FilterChip"
             android:layout_width="0dp"
-            android:layout_height="49dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
             android:text="TYPE:"
             app:icon="@drawable/img_drop_down_icon"
             app:iconGravity="textEnd"
@@ -142,22 +150,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/btn_period"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     <eightbitlab.com.blurview.BlurView
         android:id="@+id/blurView_dashboard_transaction_list"
         style="@style/BlurPanel"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="355dp"
+        android:layout_height="466dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
         android:padding="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/filter_bar_container"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filter_bar_container"
+        app:layout_constraintVertical_bias="1.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -180,14 +189,14 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:paddingStart="8dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="8dp"
-                android:paddingTop="10dp"
-                app:layout_constraintTop_toBottomOf="@+id/txt_transaction_histoy_dashboard"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_transaction_histoy_dashboard"
                 app:layout_constraintVertical_bias="0.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </eightbitlab.com.blurview.BlurView>
