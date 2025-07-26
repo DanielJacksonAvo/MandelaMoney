@@ -1,6 +1,9 @@
 package com.example.mandelamoney.view.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -18,6 +21,7 @@ import com.example.mandelamoney.R;
 import com.example.mandelamoney.adapter.TransactionAdapter;
 import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 
