@@ -45,53 +45,70 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/scan_mandela_money_qr"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/frameLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.19999999" />
 
             <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/frameLayout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_gravity="center"
                 android:background="@drawable/qr_image_border"
                 android:clipToOutline="true"
                 android:elevation="2dp"
                 android:padding="1dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/guideline6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_scan_qr">
+                app:layout_constraintTop_toTopOf="@+id/guideline5"
+                app:layout_constraintDimensionRatio="1:1">
 
-                <androidx.camera.view.PreviewView
-                    android:id="@+id/img_request_payment_qr"
-                    android:layout_width="162dp"
-                    android:layout_height="162dp"
-                    android:background="@drawable/qr_image_border"
-                    android:clipToOutline="true"
-                    android:outlineProvider="background"
-                    android:scaleType="fitXY" />
+
+
             </FrameLayout>
+
             <TextView
                 android:id="@+id/lbl_error_qr"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
                 android:ems="10"
+                android:lines="1"
                 android:text="@string/could_not_generate_qr"
+                android:textAlignment="center"
                 android:textColor="@color/mandelaYellow"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/img_logo_make_payment"
+                app:layout_constraintTop_toBottomOf="@+id/frameLayout"
                 tools:ignore="NotSibling" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.22" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.82" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
