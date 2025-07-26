@@ -143,7 +143,6 @@ public class DashboardController {
                     user.setUserBalance(updatedBalance);
                     mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
                     TransactionHistoryController.refreshAndDisplayTransactions();
-                    UserSession.refreshTransactionHistory(context, () -> Log.d("DashboardPolling", "Transactions updated after balance change."));
                 }
             }
         }
@@ -174,7 +173,7 @@ public class DashboardController {
                 }
             };
 
-            pollingHandle = scheduler.scheduleWithFixedDelay(statusChecker, 0, 5, TimeUnit.SECONDS);
+            pollingHandle = scheduler.scheduleWithFixedDelay(statusChecker, 0, 3, TimeUnit.SECONDS);
         }
 
         public void stopPolling() {
