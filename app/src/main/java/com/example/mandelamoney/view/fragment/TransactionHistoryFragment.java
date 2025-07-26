@@ -52,6 +52,30 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
     private void loadOrFetchTransactions() {
             controller.TransactionHistoryController.refreshAndDisplayTransactions();
+        // Use a Handler to post updates to the main UI thread
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        new Thread(() -> {
+            String currentUserEmail = UserSession.getUser().getUserEmail();
+            Context context = requireContext(); // Use requireContext() as it ensures context is not null
+            Log.d(TAG, "Fetching transaction history for user: " + currentUserEmail + " Context: " + context);
+            List<TransactionDetails> transactionList = MySQLConnector.getTransactionHistory(currentUserEmail, context);
+
+            Log.d(TAG, "Fetched transaction count: " + transactionList.size());
+
+            // Post UI updates back to the main thread
+            mainHandler.post(() -> {
+                UserSession.setCachedTransactionHistory(transactionList); // Cache the data
+                if (adapter != null) {
+                    adapter.updateData(transactionList); // Update the adapter
+                } else {
+                    // This case should ideally not happen if setupRecycler is called first,
+                    // but as a fallback, initialize and set the adapter.
+                    adapter = new TransactionAdapter(transactionList, UserSession.getUser().getUserEmail());
+                    recyclerView.setAdapter(adapter);
+                }
+            });
+        }).start();
     }
 
     private void setupRecycler(View rootView) {
@@ -69,8 +93,11 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
     @Override
     public void displayUserName(String name) {
-        TextView txtUserName = requireView().findViewById(R.id.txt_user_name_transaction_history);
-        txtUserName.setText(name.toUpperCase());
+        if (!checkTablet()) {
+            TextView txtUserName = requireView().findViewById(R.id.txt_user_name_transaction_history);
+            txtUserName.setText(name.toUpperCase());
+        }
+
     }
 
     @Override
@@ -90,4 +117,8 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         loadOrFetchTransactions();
     }
 
+
+    public boolean checkTablet() {
+        return getResources().getBoolean(R.bool.is_tablet_landscape);
+    }
 }
