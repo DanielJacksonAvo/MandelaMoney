@@ -1,7 +1,6 @@
 package com.example.mandelamoney.view.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,7 +14,14 @@ import android.text.TextWatcher;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.TypefaceSpan;
 import android.transition.TransitionManager;
-import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
@@ -24,20 +30,11 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.adapter.TransactionAdapter;
@@ -47,6 +44,7 @@ import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.google.android.material.button.MaterialButton;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,16 +58,12 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     private ConstraintLayout searchContainer;
     private EditText etSearch;
     private ImageView iconSearch;
-
     private boolean isSearchExpanded = false;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable = null;
-
     private MaterialButton btnPeriod, btnType;
     private String selectedPeriod = null;
     private String selectedType = null;
-
-
 
     public TransactionHistoryFragment(DashboardController controller) {
         this.controller = controller;
@@ -77,8 +71,7 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_transaction_history, container, false);
     }
 
@@ -107,38 +100,30 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     }
 
     private void loadOrFetchTransactions() {
-            controller.TransactionHistoryController.refreshAndDisplayTransactions();
+        controller.TransactionHistoryController.refreshAndDisplayTransactions();
     }
 
     private void setupRecycler(View rootView) {
         recyclerView = rootView.findViewById(R.id.recyclerView_transactionHistory);
-        if (recyclerView == null) {
-            Log.e(TAG, "recyclerView is null. Check your layout XML.");
-            return;
-        }
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         if (adapter == null) {
             adapter = new TransactionAdapter(new ArrayList<>(), UserSession.getUser().getUserEmail());
             recyclerView.setAdapter(adapter);
         }
     }
+
     private void toggleSearchBar() {
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(filterBarContainer);
-
-        // Clear any previous percent width (use weights instead)
         constraintSet.clear(R.id.search_container, ConstraintSet.START);
         constraintSet.clear(R.id.btn_period, ConstraintSet.START);
         constraintSet.clear(R.id.btn_type, ConstraintSet.START);
-
         constraintSet.connect(R.id.search_container, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
         constraintSet.connect(R.id.btn_period, ConstraintSet.START, R.id.search_container, ConstraintSet.END);
         constraintSet.connect(R.id.btn_type, ConstraintSet.START, R.id.btn_period, ConstraintSet.END);
         constraintSet.connect(R.id.btn_type, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END);
-
         constraintSet.connect(R.id.search_container, ConstraintSet.END, R.id.btn_period, ConstraintSet.START);
         constraintSet.connect(R.id.btn_period, ConstraintSet.END, R.id.btn_type, ConstraintSet.START);
-
         constraintSet.setHorizontalChainStyle(R.id.search_container, ConstraintSet.CHAIN_SPREAD);
 
         if (!isSearchExpanded) {
@@ -147,12 +132,16 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
             constraintSet.setHorizontalWeight(R.id.btn_type, 0.225f);
             etSearch.setVisibility(View.VISIBLE);
             etSearch.requestFocus();
+            convertButtonToIcon(btnPeriod, R.drawable.img_calander_filter_icon);
+            convertButtonToIcon(btnType, R.drawable.img_type_filter_icon);
         } else {
             constraintSet.setHorizontalWeight(R.id.search_container, 0.13f);
             constraintSet.setHorizontalWeight(R.id.btn_period, 0.43f);
             constraintSet.setHorizontalWeight(R.id.btn_type, 0.44f);
             etSearch.setText("");
             etSearch.setVisibility(View.GONE);
+            restoreFilterButton(btnPeriod, "PERIOD:");
+            restoreFilterButton(btnType, "TYPE:");
         }
 
         TransitionManager.beginDelayedTransition(filterBarContainer);
@@ -160,6 +149,35 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         isSearchExpanded = !isSearchExpanded;
     }
 
+    private void convertButtonToIcon(MaterialButton button, int iconRes) {
+        button.setText("");
+        button.setIconResource(iconRes);
+        button.setIconGravity(MaterialButton.ICON_GRAVITY_TEXT_START);
+        button.setIconSize(dpToPx(27));
+        button.setIconPadding(0);
+        button.setInsetTop(0);
+        button.setInsetBottom(0);
+        button.setPadding(0, 0, 0, 0);
+        button.setIconTintResource(android.R.color.white);
+        button.setBackgroundTintList(ContextCompat.getColorStateList(requireContext(), R.color.grey10));
+    }
+
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round((float) dp * density);
+    }
+
+    private void restoreFilterButton(MaterialButton button, String label) {
+        button.setText(label);
+        button.setIconResource(R.drawable.img_drop_down_icon);
+        button.setIconGravity(MaterialButton.ICON_GRAVITY_TEXT_END);
+        button.setIconPadding(dpToPx(8));
+        button.setIconTint(null);
+        String selected = label.equals("PERIOD:") ? selectedPeriod : selectedType;
+        if (selected != null) {
+            styleFilterButton(button, label, selected);
+        }
+    }
 
     @Override
     public void displayUserName(String name) {
@@ -180,37 +198,26 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume called. Refreshing transactions.");
         loadOrFetchTransactions();
     }
+
     private void initSearchListener() {
         etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (searchRunnable != null) {
-                    searchHandler.removeCallbacks(searchRunnable);
-                }
-
-                searchRunnable = () -> {
-                    String query = s.toString().trim();
-                    controller.TransactionHistoryController.queryWithFilters(query, null, null); // will update below
-                };
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
+                searchRunnable = () -> controller.TransactionHistoryController.queryWithFilters(s.toString().trim(), selectedPeriod, selectedType);
                 searchHandler.postDelayed(searchRunnable, 400);
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
+            @Override public void afterTextChanged(Editable s) {}
         });
     }
+
     @SuppressLint("RestrictedApi")
     private void setupDropdown(MaterialButton button, @MenuRes int menuRes, String label) {
         MenuBuilder menuBuilder = new MenuBuilder(requireContext());
         MenuInflater inflater = new MenuInflater(requireContext());
         inflater.inflate(menuRes, menuBuilder);
-
         MenuPopupHelper popupHelper = new MenuPopupHelper(requireContext(), menuBuilder, button);
         popupHelper.setForceShowIcon(true);
 
@@ -218,61 +225,43 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
             @Override
             public boolean onMenuItemSelected(@NonNull MenuBuilder menu, @NonNull MenuItem item) {
                 String selected = item.getTitle().toString();
-                styleFilterButton(button, label, selected);
-
-                if ("PERIOD:".equals(label)) {
-                    selectedPeriod = selected;
-                } else if ("TYPE:".equals(label)) {
-                    selectedType = selected;
-                }
-
+                if ("PERIOD:".equals(label)) selectedPeriod = selected;
+                else if ("TYPE:".equals(label)) selectedType = selected;
+                if (!isSearchExpanded) styleFilterButton(button, label, selected);
                 String query = etSearch.getText().toString().trim();
                 controller.TransactionHistoryController.queryWithFilters(query, selectedPeriod, selectedType);
                 return true;
             }
-
-            @Override
-            public void onMenuModeChange(@NonNull MenuBuilder menu) {}
+            @Override public void onMenuModeChange(@NonNull MenuBuilder menu) {}
         });
+
+        try {
+            Method method = menuBuilder.getClass().getDeclaredMethod("setOptionalIconsVisible", boolean.class);
+            method.setAccessible(true);
+            method.invoke(menuBuilder, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         button.setOnClickListener(v -> popupHelper.show());
     }
+
     private void styleFilterButton(MaterialButton button, String label, String value) {
         SpannableString styled = new SpannableString(label + "\n" + value);
-
         Typeface light = ResourcesCompat.getFont(requireContext(), R.font.dm_sans_light);
         Typeface medium = ResourcesCompat.getFont(requireContext(), R.font.dm_sans_medium);
-
         styled.setSpan(new CustomTypefaceSpan(light), 0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new RelativeSizeSpan(0.75f), 0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
         styled.setSpan(new CustomTypefaceSpan(medium), label.length() + 1, styled.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new RelativeSizeSpan(0.85f), label.length() + 1, styled.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
         button.setText(styled);
     }
 
     public class CustomTypefaceSpan extends TypefaceSpan {
         private final Typeface newType;
-
-        public CustomTypefaceSpan(Typeface type) {
-            super("");
-            newType = type;
-        }
-
-        @Override
-        public void updateDrawState(TextPaint ds) {
-            applyCustomTypeFace(ds, newType);
-        }
-
-        @Override
-        public void updateMeasureState(TextPaint paint) {
-            applyCustomTypeFace(paint, newType);
-        }
-
-        private void applyCustomTypeFace(Paint paint, Typeface tf) {
-            paint.setTypeface(tf);
-        }
+        public CustomTypefaceSpan(Typeface type) { super(""); this.newType = type; }
+        @Override public void updateDrawState(TextPaint ds) { applyCustomTypeFace(ds, newType); }
+        @Override public void updateMeasureState(TextPaint paint) { applyCustomTypeFace(paint, newType); }
+        private void applyCustomTypeFace(Paint paint, Typeface tf) { paint.setTypeface(tf); }
     }
-
 }
