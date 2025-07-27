@@ -302,9 +302,11 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         @Override public void updateMeasureState(TextPaint paint) { applyCustomTypeFace(paint, newType); }
         private void applyCustomTypeFace(Paint paint, Typeface tf) { paint.setTypeface(tf); }
     }
-}
 
     public boolean checkTablet() {
         return getResources().getBoolean(R.bool.is_tablet_landscape);
     }
 }
+
+
+
