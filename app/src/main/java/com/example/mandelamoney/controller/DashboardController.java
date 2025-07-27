@@ -234,12 +234,18 @@ public class DashboardController {
         public List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
             String currentUserEmail = UserSession.getUser().getUserEmail();
             Set<String> emailsToLookup = new HashSet<>();
+
             for (TransactionDetails tx : transactionList) {
                 String from = tx.getFromUser();
                 String to = tx.getToUser();
+
+                boolean isSelf = from.equals(currentUserEmail) && to.equals(currentUserEmail);
+                tx.setSelfTransaction(isSelf);
+
                 if (from.equals(currentUserEmail)) {
                     emailsToLookup.add(to);
                 }
+
                 if (to.equals(currentUserEmail)) {
                     emailsToLookup.add(from);
                 }
@@ -251,19 +257,20 @@ public class DashboardController {
                 String from = tx.getFromUser();
                 String to = tx.getToUser();
 
-                if (from.equals(currentUserEmail)) {
-                    tx.setFromUser(emailToDisplayName.getOrDefault(to, to));
+                // Replace display name or fallback to original
+                tx.setFromUser(emailToDisplayName.getOrDefault(from, from));
+                tx.setToUser(emailToDisplayName.getOrDefault(to, to));
 
-                }
-
-                if (to.equals(currentUserEmail)) {
-                    tx.setToUser(emailToDisplayName.getOrDefault(from, from));
-                    tx.setAmount(tx.getAmount()*-1);
+                // Mark negative amount if incoming and not self
+                if (to.equals(currentUserEmail) && !tx.isSelfTransaction()) {
+                    tx.setAmount(tx.getAmount() * -1);
                 }
             }
 
             return transactionList;
         }
+
+
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
                 String email = UserSession.getUser().getUserEmail();
@@ -285,15 +292,16 @@ public class DashboardController {
                 List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(userEmail, period, type, context);
                 List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
                 if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                    String query = searchQuery.toLowerCase();
+                    String query = searchQuery.trim().toLowerCase();
                     formattedList = formattedList.stream()
                             .filter(txn -> {
-                                String fromDisplay = txn.getFromUser() != null ? txn.getFromUser().toLowerCase() : "";
-                                String toDisplay = txn.getToUser() != null ? txn.getToUser().toLowerCase() : "";
-                                return fromDisplay.contains(query) || toDisplay.contains(query);
+                                String from = txn.getFromUser() != null ? txn.getFromUser().toLowerCase() : "";
+                                String to = txn.getToUser() != null ? txn.getToUser().toLowerCase() : "";
+                                return from.contains(query) || to.contains(query);
                             })
                             .collect(Collectors.toList());
                 }
+
                 List<TransactionDetails> finalList = formattedList;
                 mainThreadHandler.post(() -> {
                     if (transactionHistoryView != null) {

@@ -57,13 +57,22 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         holder.txtToFrom.setText(displayName);
         float amount = transaction.getAmount();
-        if (amount > 0) {
-            holder.txtAmount.setText(String.format("R %.2f", amount));
-            holder.txtAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.mandelaYellow));
+        String amountText;
+        int amountColor;
+        if (transaction.isSelfTransaction()) {
+            amountText = String.format("± R %.2f", Math.abs(amount));
+            amountColor = holder.itemView.getContext().getResources().getColor(R.color.white);
+        } else if (amount > 0) {
+            amountText = String.format("+ R %.2f", amount);
+            amountColor = holder.itemView.getContext().getResources().getColor(R.color.mandelaYellow);
         } else {
-            holder.txtAmount.setText(String.format("- R %.2f", Math.abs(amount)));
-            holder.txtAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.white)); // or default
+            amountText = String.format("- R %.2f", Math.abs(amount));
+            amountColor = holder.itemView.getContext().getResources().getColor(R.color.white);
         }
+
+        holder.txtAmount.setText(amountText);
+        holder.txtAmount.setTextColor(amountColor);
+
     }
 
     @Override
