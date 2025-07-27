@@ -10,4 +10,6 @@ public interface IDashboardView {
     void displayProfile();
     void displayTransactionHistoryScreen();
 
+    void displayUserNameTablet(String name);
+
 }

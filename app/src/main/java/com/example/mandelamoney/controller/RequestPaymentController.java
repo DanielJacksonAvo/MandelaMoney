@@ -10,6 +10,7 @@ import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IEnterAmountRequestPaymentView;
+import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.IShowQRCodeRequestPaymentView;
 import com.example.mandelamoney.view.activity.DashboardActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentShowQrActivity;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class RequestPaymentController {
     private Context context;
     private IEnterAmountRequestPaymentView requestPaymentView;
+    private IHomeDashboardView homeDashboardView;
     private int transactionIdNumeric;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -31,14 +33,17 @@ public class RequestPaymentController {
     private ScheduledFuture<?> pollingHandle;
     private Runnable statusChecker;
 
-    public RequestPaymentController(Context context, IEnterAmountRequestPaymentView requestPaymentView) {
+    public RequestPaymentController(Context context, Object obj) {
         this.context = context;
-        this.requestPaymentView = requestPaymentView;
+        if (obj instanceof IEnterAmountRequestPaymentView){
+            requestPaymentView = (IEnterAmountRequestPaymentView) obj;
+        }
+
+        if (obj instanceof IHomeDashboardView) {
+            homeDashboardView = (IHomeDashboardView) obj;
+        }
     }
 
-    public RequestPaymentController(Context context, IShowQRCodeRequestPaymentView showQRCodeRequestPaymentView) {
-        this.context = context;
-    }
 
     public void handleGenerateQR(String amount) {
         if (!isValidInput(amount)) return;
@@ -100,13 +105,23 @@ public class RequestPaymentController {
     }
 
     private boolean isValidInput(String amount) {
-        if (requestPaymentView == null) return false;
-
-        requestPaymentView.hideError();
-        if (ValidateInput.isEmpty(amount) || !ValidateInput.isDouble(amount) || !ValidateInput.isPositive(Double.parseDouble(amount))) {
-            requestPaymentView.showError(context.getString(R.string.enter_a_valid_amount));
-            return false;
+        if (requestPaymentView != null) {
+            requestPaymentView.hideError();
+            if (ValidateInput.isEmpty(amount) || !ValidateInput.isDouble(amount) || !ValidateInput.isPositive(Double.parseDouble(amount))) {
+                requestPaymentView.showError(context.getString(R.string.enter_a_valid_amount));
+                return false;
+            }
+        } else {
+            if (homeDashboardView != null) {
+                if (ValidateInput.isEmpty(amount) || !ValidateInput.isDouble(amount) || !ValidateInput.isPositive(Double.parseDouble(amount))) {
+                    return false;
+                }
+            } else { return false; }
         }
+
+
+
+
         return true;
     }
 
