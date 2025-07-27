@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class DashboardController {
     private final IDashboardView view;
@@ -281,30 +282,29 @@ public class DashboardController {
         public void queryWithFilters(String searchQuery, String period, String type) {
             new Thread(() -> {
                 String userEmail = UserSession.getUser().getUserEmail();
-                List<TransactionDetails> fullList = MySQLConnector.getTransactionHistory(userEmail, context);
-                List<TransactionDetails> filtered = new ArrayList<>();
-
-                for (TransactionDetails txn : fullList) {
-                    boolean matches = true;
-
-                    if (searchQuery != null && !searchQuery.isEmpty()) {
-                        String targetName = txn.getFromUser() + " " + txn.getToUser();
-                        if (!targetName.toLowerCase().contains(searchQuery.toLowerCase())) {
-                            matches = false;
-                        }
-                    }
-
-                    // Add future logic for period/type here
-
-                    if (matches) {
-                        filtered.add(txn);
-                    }
+                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(userEmail, period, type, context);
+                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
+                if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                    String query = searchQuery.toLowerCase();
+                    formattedList = formattedList.stream()
+                            .filter(txn -> {
+                                String fromDisplay = txn.getFromUser() != null ? txn.getFromUser().toLowerCase() : "";
+                                String toDisplay = txn.getToUser() != null ? txn.getToUser().toLowerCase() : "";
+                                return fromDisplay.contains(query) || toDisplay.contains(query);
+                            })
+                            .collect(Collectors.toList());
                 }
-
-                List<TransactionDetails> formatted = formatTransactionHistory(filtered, context);
-                mainThreadHandler.post(() -> transactionHistoryView.updateData(formatted));
+                List<TransactionDetails> finalList = formattedList;
+                mainThreadHandler.post(() -> {
+                    if (transactionHistoryView != null) {
+                        transactionHistoryView.updateData(finalList);
+                    }
+                });
             }).start();
         }
+
+
+
 
 
     }
