@@ -1,0 +1,5 @@
+<!-- res/values-sw600dp-land/bools.xml -->
+<resources>
+    <bool name="is_tablet_landscape">true</bool>
+</resources>
+    

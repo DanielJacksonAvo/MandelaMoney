@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
 import android.os.Handler;
+import android.util.Log;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
@@ -50,6 +51,7 @@ public class DashboardController {
     public void handleHome() {
         currentFragment = 0;
         view.displayHome();
+        view.displayTransactionHistoryScreen();
         manageControllers();
 
     }
@@ -101,8 +103,13 @@ public class DashboardController {
         DashboardHomeController = new DashboardHomeController(view);
     }
 
+
     public void createTransactionHistoryController(ITransactionHistoryView view) {
         TransactionHistoryController = new TransactionHistoryController(view);
+    }
+
+    public void handleLoadUserToUITablet() {
+        view.displayUserNameTablet(DashboardHomeController.getUserName());
     }
 
     public class DashboardHomeController {
@@ -117,13 +124,17 @@ public class DashboardController {
 
         public void handleLoadUserToUI() {
             view.displayBalance(user.getUserBalance());
-            if (user instanceof Student) {
-                String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
-                view.displayUserName(fullname);
-            } else if (user instanceof Business) {
-                view.displayUserName(((Business) user).getBusinessName());
-            }
+            view.displayUserName(getUserName());
             startPolling();
+        }
+
+        public String getUserName() {
+            if (user instanceof Student) {
+                return ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
+            } else if (user instanceof Business) {
+                return ((Business) user).getBusinessName();
+            }
+            return null;
         }
 
         public void handleBalanceRefresh() {
@@ -138,11 +149,6 @@ public class DashboardController {
                 }
             }
         }
-
-
-//    public void handleLoadTransactionsToUI() {
-//        pullSQLTransaction();
-//    }
 
         public void handleMakePayment() {
             DataShare.send(this);
@@ -170,13 +176,14 @@ public class DashboardController {
                 }
             };
 
-            pollingHandle = scheduler.scheduleWithFixedDelay(statusChecker, 0, 5, TimeUnit.SECONDS);
+            pollingHandle = scheduler.scheduleWithFixedDelay(statusChecker, 0, 3, TimeUnit.SECONDS);
         }
 
         public void stopPolling() {
             if (pollingHandle != null) {
                 pollingHandle.cancel(true);
                 pollingHandle = null;
+                cleanup();
             }
         }
 
@@ -196,6 +203,8 @@ public class DashboardController {
             mainThreadHandler.removeCallbacksAndMessages(null);
         }
     }
+
+
 
     private class DashboardLockController {
 
