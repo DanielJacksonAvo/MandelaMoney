@@ -22,6 +22,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
@@ -40,6 +45,7 @@ import com.example.mandelamoney.R;
 import com.example.mandelamoney.adapter.TransactionAdapter;
 import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.google.android.material.button.MaterialButton;
@@ -101,6 +107,30 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
     private void loadOrFetchTransactions() {
         controller.TransactionHistoryController.refreshAndDisplayTransactions();
+        // Use a Handler to post updates to the main UI thread
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        new Thread(() -> {
+            String currentUserEmail = UserSession.getUser().getUserEmail();
+            Context context = requireContext(); // Use requireContext() as it ensures context is not null
+            Log.d(TAG, "Fetching transaction history for user: " + currentUserEmail + " Context: " + context);
+            List<TransactionDetails> transactionList = MySQLConnector.getTransactionHistory(currentUserEmail, context);
+
+            Log.d(TAG, "Fetched transaction count: " + transactionList.size());
+
+            // Post UI updates back to the main thread
+            mainHandler.post(() -> {
+                UserSession.setCachedTransactionHistory(transactionList); // Cache the data
+                if (adapter != null) {
+                    adapter.updateData(transactionList); // Update the adapter
+                } else {
+                    // This case should ideally not happen if setupRecycler is called first,
+                    // but as a fallback, initialize and set the adapter.
+                    adapter = new TransactionAdapter(transactionList, UserSession.getUser().getUserEmail());
+                    recyclerView.setAdapter(adapter);
+                }
+            });
+        }).start();
     }
 
     private void setupRecycler(View rootView) {
@@ -181,8 +211,11 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
     @Override
     public void displayUserName(String name) {
-        TextView txtUserName = requireView().findViewById(R.id.txt_user_name_transaction_history);
-        txtUserName.setText(name.toUpperCase());
+        if (!checkTablet()) {
+            TextView txtUserName = requireView().findViewById(R.id.txt_user_name_transaction_history);
+            txtUserName.setText(name.toUpperCase());
+        }
+
     }
 
     @Override
@@ -248,13 +281,18 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
     private void styleFilterButton(MaterialButton button, String label, String value) {
         SpannableString styled = new SpannableString(label + "\n" + value);
-        Typeface light = ResourcesCompat.getFont(requireContext(), R.font.dm_sans_light);
-        Typeface medium = ResourcesCompat.getFont(requireContext(), R.font.dm_sans_medium);
-        styled.setSpan(new CustomTypefaceSpan(light), 0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.75f), 0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new CustomTypefaceSpan(medium), label.length() + 1, styled.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.85f), label.length() + 1, styled.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        button.setText(styled);
+        try {
+            Typeface light = ResourcesCompat.getFont(requireContext(), R.font.dm_sans_light);
+            Typeface medium = ResourcesCompat.getFont(requireContext(), R.font.dm_sans_medium);
+            styled.setSpan(new CustomTypefaceSpan(light), 0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            styled.setSpan(new RelativeSizeSpan(0.75f), 0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            styled.setSpan(new CustomTypefaceSpan(medium), label.length() + 1, styled.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            styled.setSpan(new RelativeSizeSpan(0.85f), label.length() + 1, styled.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            button.setText(styled);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public class CustomTypefaceSpan extends TypefaceSpan {
@@ -263,5 +301,10 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         @Override public void updateDrawState(TextPaint ds) { applyCustomTypeFace(ds, newType); }
         @Override public void updateMeasureState(TextPaint paint) { applyCustomTypeFace(paint, newType); }
         private void applyCustomTypeFace(Paint paint, Typeface tf) { paint.setTypeface(tf); }
+    }
+}
+
+    public boolean checkTablet() {
+        return getResources().getBoolean(R.bool.is_tablet_landscape);
     }
 }
