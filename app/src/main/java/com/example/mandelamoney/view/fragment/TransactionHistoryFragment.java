@@ -248,13 +248,18 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
     private void styleFilterButton(MaterialButton button, String label, String value) {
         SpannableString styled = new SpannableString(label + "\n" + value);
-        Typeface light = ResourcesCompat.getFont(requireContext(), R.font.dm_sans_light);
-        Typeface medium = ResourcesCompat.getFont(requireContext(), R.font.dm_sans_medium);
-        styled.setSpan(new CustomTypefaceSpan(light), 0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.75f), 0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new CustomTypefaceSpan(medium), label.length() + 1, styled.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.85f), label.length() + 1, styled.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        button.setText(styled);
+        try {
+            Typeface light = ResourcesCompat.getFont(requireContext(), R.font.dm_sans_light);
+            Typeface medium = ResourcesCompat.getFont(requireContext(), R.font.dm_sans_medium);
+            styled.setSpan(new CustomTypefaceSpan(light), 0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            styled.setSpan(new RelativeSizeSpan(0.75f), 0, label.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            styled.setSpan(new CustomTypefaceSpan(medium), label.length() + 1, styled.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            styled.setSpan(new RelativeSizeSpan(0.85f), label.length() + 1, styled.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            button.setText(styled);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public class CustomTypefaceSpan extends TypefaceSpan {
