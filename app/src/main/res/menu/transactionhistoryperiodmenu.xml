@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/th_period_last_week"
+        android:title="@string/last_week" />
+    <item
+        android:id="@+id/th_period_last_month"
+        android:title="@string/last_month" />
+    <item
+        android:id="@+id/th_period_last_year"
+        android:title="@string/last_year" />
+    <item
+        android:id="@+id/th_period_all"
+        android:title="@string/all" />
+</menu>

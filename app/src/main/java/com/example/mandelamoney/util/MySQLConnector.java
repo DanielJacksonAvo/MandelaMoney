@@ -402,6 +402,47 @@ public class MySQLConnector {
 
         return transactionId;
     }
+    public static List<TransactionDetails> getTransactionHistoryWithFilters(String userEmail, String period, String type, Context context) {
+        List<TransactionDetails> transactions = new ArrayList<>();
+        int transactionCount = 0;
+        Connection conn = null;
+
+        try {
+            conn = getConnection(context);
+            if (conn == null) {
+                Log.e("MySQLConnector", "No valid connection for getTransactionHistoryWithFilters.");
+                return transactions;
+            }
+
+            CallableStatement stmt = conn.prepareCall("{call MandelaMoneyDB.getTransactionHistoryWithFilters(?, ?, ?)}");
+            stmt.setString(1, userEmail);
+            stmt.setString(2, period != null ? period : "All");
+            stmt.setString(3, type != null ? type : "All");
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String from = rs.getString("fromUser");
+                String to = rs.getString("toUser");
+                float amount = rs.getFloat("transactionAmount");
+                String date = rs.getString("date");
+                String time = rs.getString("time");
+
+                Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
+                transactions.add(new TransactionDetails(from, to, amount, date, time));
+                transactionCount++;
+            }
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "SQLException in getTransactionHistoryWithFilters: " + e.getMessage(), e);
+        } catch (Exception e) {
+            Log.e("MySQLConnector", "Exception in getTransactionHistoryWithFilters: " + e.getMessage(), e);
+        }
+
+        Log.d("MySQLConnector", "Transaction count: " + transactionCount);
+        return transactions;
+    }
+
     public static List<TransactionDetails> getTransactionHistory(String userEmail, Context context) {
         List<TransactionDetails> transactions = new ArrayList<>();
         int transactionCount = 0;
