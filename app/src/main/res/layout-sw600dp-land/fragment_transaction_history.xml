@@ -15,34 +15,69 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:paddingHorizontal="0dp"
-        android:paddingVertical="0dp"
+        android:minHeight="55dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
-        <ImageView
-            android:id="@+id/btn_search"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_container"
             android:layout_width="0dp"
-            android:layout_height="38dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
             android:layout_marginEnd="6dp"
+            android:layout_marginBottom="6dp"
             android:background="@drawable/panel_background_shape"
-            android:padding="8dp"
-            android:src="@drawable/img_search_icon"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_period"
+            app:layout_constraintEnd_toStartOf="@id/btn_period"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/icon_search"
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/img_search_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/dm_sans_medium"
+                android:hint="Search by name"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="#99FFFFFF"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/icon_search"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_period"
             style="@style/FilterChip"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="6dp"
             android:layout_marginEnd="6dp"
+            android:layout_marginBottom="6dp"
             android:text="PERIOD:"
             app:icon="@drawable/img_drop_down_icon"
             app:iconGravity="textEnd"
@@ -50,14 +85,17 @@
             app:iconTint="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_type"
-            app:layout_constraintStart_toEndOf="@id/btn_search"
+            app:layout_constraintStart_toEndOf="@id/search_container"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_type"
             style="@style/FilterChip"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
             android:text="TYPE:"
             app:icon="@drawable/img_drop_down_icon"
             app:iconGravity="textEnd"
@@ -67,7 +105,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/btn_period"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <eightbitlab.com.blurview.BlurView
@@ -76,14 +113,15 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filter_bar_container">
+        app:layout_constraintTop_toBottomOf="@+id/filter_bar_container"
+        app:layout_constraintVertical_bias="1.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -95,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:fontFamily="@font/dm_sans_medium"
-                android:text="@string/transaction_history"
+                android:text="@string/transaction_history_th"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -104,7 +142,11 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView_transactionHistory"
                 android:layout_width="0dp"
-                android:layout_height="407dp"
+                android:layout_height="0dp"
+                android:paddingStart="8dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
@@ -113,13 +155,4 @@
                 app:layout_constraintVertical_bias="0.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </eightbitlab.com.blurview.BlurView>
-
-    <!-- Vertical Guideline (Optional) -->
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
