@@ -68,12 +68,22 @@
     <string name="scan">SCAN</string>
     <string name="create_account">Create Account</string>
     <string name="student_number">Student Number</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="profile">Profile</string>
     <string name="settings">Settings</string>
     <string name="lock">Lock</string>
     <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="period">PERIOD</string>
+    <string name="type">TYPE</string>
+    <string name="incoming">Incoming</string>
+    <string name="outgoing">Outgoing</string>
+    <string name="deposit">Deposit</string>
+    <string name="withdrawal">Withdrawals</string>
+    <string name="all">All</string>
+    <string name="last_week">Last Week</string>
+    <string name="last_month">Last Month</string>
+    <string name="last_year">Last Year</string>
     <string name="withdraw_wo">Withdraw</string>"
 
 </resources>

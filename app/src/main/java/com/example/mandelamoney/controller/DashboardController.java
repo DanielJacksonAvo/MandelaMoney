@@ -18,6 +18,8 @@ import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class DashboardController {
     private final IDashboardView view;
@@ -284,6 +287,32 @@ public class DashboardController {
                 });
             }).start();
         }
+
+        public void queryWithFilters(String searchQuery, String period, String type) {
+            new Thread(() -> {
+                String userEmail = UserSession.getUser().getUserEmail();
+                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(userEmail, period, type, context);
+                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
+                if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                    String query = searchQuery.toLowerCase();
+                    formattedList = formattedList.stream()
+                            .filter(txn -> {
+                                String fromDisplay = txn.getFromUser() != null ? txn.getFromUser().toLowerCase() : "";
+                                String toDisplay = txn.getToUser() != null ? txn.getToUser().toLowerCase() : "";
+                                return fromDisplay.contains(query) || toDisplay.contains(query);
+                            })
+                            .collect(Collectors.toList());
+                }
+                List<TransactionDetails> finalList = formattedList;
+                mainThreadHandler.post(() -> {
+                    if (transactionHistoryView != null) {
+                        transactionHistoryView.updateData(finalList);
+                    }
+                });
+            }).start();
+        }
+
+
 
 
 

@@ -6,7 +6,6 @@ public class TransactionDetails {
     private float amount;
     private final String date;
     private final String time;
-
     // Constructor
     public TransactionDetails(String toUser, String fromUser, float amount, String date, String time) {
         this.toUser = toUser;
