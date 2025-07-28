@@ -13,5 +13,6 @@
     <color name="white60">#99FFFFFF</color>
     <color name="mandelaYellowLight">#FBE7A0</color>
     <color name="white30">#4DFFFFFF</color>
-
+    <color name="grey10">#1AD9D9D9</color>
+    <color name="transactionCard">#1D2A44</color>
 </resources>
