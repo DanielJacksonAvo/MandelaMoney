@@ -6,6 +6,7 @@ public class TransactionDetails {
     private float amount;
     private final String date;
     private final String time;
+    private boolean selfTransaction;
     // Constructor
     public TransactionDetails(String toUser, String fromUser, float amount, String date, String time) {
         this.toUser = toUser;
@@ -13,6 +14,7 @@ public class TransactionDetails {
         this.amount = amount;
         this.date = date;
         this.time = time;
+        this.selfTransaction = false;
     }
 
     // Getters
@@ -25,7 +27,13 @@ public class TransactionDetails {
     public void setFromUser(String fromUser) {
         this.toUser = fromUser;
     }
+    public boolean isSelfTransaction() {
+        return selfTransaction;
+    }
 
+    public void setSelfTransaction(boolean selfTransaction) {
+        this.selfTransaction = selfTransaction;
+    }
     public void setToUser(String fromUser) {
         this.fromUser = fromUser;
     }
