@@ -8,5 +8,8 @@ public interface IDashboardView {
     void displaySettings();
 
     void displayProfile();
+    void displayTransactionHistoryScreen();
+
+    void displayUserNameTablet(String name);
 
 }

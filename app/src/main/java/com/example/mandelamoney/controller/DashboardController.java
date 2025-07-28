@@ -1,27 +1,34 @@
 package com.example.mandelamoney.controller;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
 import android.os.Handler;
-
+import android.util.Log;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
+import com.example.mandelamoney.model.TransactionDetails;
 import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
+import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class DashboardController {
     private final IDashboardView view;
@@ -31,6 +38,7 @@ public class DashboardController {
     private int currentFragment = -1; //0 - home, 1 - lock, 2 - settings, 3 - profile
 
     public DashboardHomeController DashboardHomeController;
+    public TransactionHistoryController TransactionHistoryController;
 
 
     public DashboardController(Context context, IDashboardView view) {
@@ -39,9 +47,11 @@ public class DashboardController {
         this.user = UserSession.getUser();
     }
 
+
     public void handleHome() {
         currentFragment = 0;
         view.displayHome();
+        view.displayTransactionHistoryScreen();
         manageControllers();
 
     }
@@ -63,6 +73,10 @@ public class DashboardController {
         view.displayProfile();
         manageControllers();
     }
+    public void handleViewTransactionHistory() {
+        view.displayTransactionHistoryScreen();
+        manageControllers();
+    }
 
     private void manageControllers() {
         if (currentFragment == 0) {
@@ -70,7 +84,6 @@ public class DashboardController {
         } else {
             DashboardHomeController.stopPolling();
         }
-
 
     }
 
@@ -90,6 +103,15 @@ public class DashboardController {
         DashboardHomeController = new DashboardHomeController(view);
     }
 
+
+    public void createTransactionHistoryController(ITransactionHistoryView view) {
+        TransactionHistoryController = new TransactionHistoryController(view);
+    }
+
+    public void handleLoadUserToUITablet() {
+        view.displayUserNameTablet(DashboardHomeController.getUserName());
+    }
+
     public class DashboardHomeController {
         private final IHomeDashboardView view;
         private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -102,26 +124,31 @@ public class DashboardController {
 
         public void handleLoadUserToUI() {
             view.displayBalance(user.getUserBalance());
-            if (user instanceof Student) {
-                String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
-                view.displayUserName(fullname);
-            } else if (user instanceof Business) {
-                view.displayUserName(((Business) user).getBusinessName());
-            }
+            view.displayUserName(getUserName());
             startPolling();
+        }
+
+        public String getUserName() {
+            if (user instanceof Student) {
+                return ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
+            } else if (user instanceof Business) {
+                return ((Business) user).getBusinessName();
+            }
+            return null;
         }
 
         public void handleBalanceRefresh() {
             if (user != null) {
+                double previousBalance = user.getUserBalance();
                 double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
-                user.setUserBalance(updatedBalance);
-                mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
+
+                if (updatedBalance != previousBalance) {
+                    user.setUserBalance(updatedBalance);
+                    mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
+                    TransactionHistoryController.refreshAndDisplayTransactions();
+                }
             }
         }
-
-//    public void handleLoadTransactionsToUI() {
-//        pullSQLTransaction();
-//    }
 
         public void handleMakePayment() {
             DataShare.send(this);
@@ -136,11 +163,6 @@ public class DashboardController {
             context.startActivity(intent);
         }
 
-//    private void pullSQLTransaction() {
-//        ArrayList<Transaction> transactionList = new ArrayList<>();
-//        // TODO: SQL logic to fill transactionList
-//    }
-
         public void startPolling() {
             if (pollingHandle != null && !pollingHandle.isDone()) {
                 return;
@@ -154,13 +176,14 @@ public class DashboardController {
                 }
             };
 
-            pollingHandle = scheduler.scheduleWithFixedDelay(statusChecker, 0, 5, TimeUnit.SECONDS);
+            pollingHandle = scheduler.scheduleWithFixedDelay(statusChecker, 0, 3, TimeUnit.SECONDS);
         }
 
         public void stopPolling() {
             if (pollingHandle != null) {
                 pollingHandle.cancel(true);
                 pollingHandle = null;
+                cleanup();
             }
         }
 
@@ -181,6 +204,8 @@ public class DashboardController {
         }
     }
 
+
+
     private class DashboardLockController {
 
     }
@@ -192,4 +217,106 @@ public class DashboardController {
     private class DashboardProfileController {
 
     }
+    public class TransactionHistoryController {
+        private ITransactionHistoryView transactionHistoryView;
+        private final User user;
+        private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+
+
+        public TransactionHistoryController(ITransactionHistoryView transactionHistoryView) {
+            this.user = UserSession.getUser();
+            this.transactionHistoryView = transactionHistoryView;
+        }
+
+
+
+        public void handleLoadUserToUI() {
+            if (user instanceof Student) {
+                String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
+                transactionHistoryView.displayUserName(fullname);
+            } else if (user instanceof Business) {
+                transactionHistoryView.displayUserName(((Business) user).getBusinessName());
+            }
+        }
+
+
+        public List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
+            String currentUserEmail = UserSession.getUser().getUserEmail();
+            Set<String> emailsToLookup = new HashSet<>();
+            for (TransactionDetails tx : transactionList) {
+                String from = tx.getFromUser();
+                String to = tx.getToUser();
+                if (from.equals(currentUserEmail)) {
+                    emailsToLookup.add(to);
+                }
+                if (to.equals(currentUserEmail)) {
+                    emailsToLookup.add(from);
+                }
+            }
+
+            Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup, context);
+
+            for (TransactionDetails tx : transactionList) {
+                String from = tx.getFromUser();
+                String to = tx.getToUser();
+
+                if (from.equals(currentUserEmail)) {
+                    tx.setFromUser(emailToDisplayName.getOrDefault(to, to));
+
+                }
+
+                if (to.equals(currentUserEmail)) {
+                    tx.setToUser(emailToDisplayName.getOrDefault(from, from));
+                    tx.setAmount(tx.getAmount()*-1);
+                }
+            }
+
+            return transactionList;
+        }
+        public void refreshAndDisplayTransactions() {
+            new Thread(() -> {
+                String email = UserSession.getUser().getUserEmail();
+                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistory(email, context);
+                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
+                UserSession.setCachedTransactionHistory(formattedList);
+
+                mainThreadHandler.post(() -> {
+                    if (transactionHistoryView != null) {
+                        transactionHistoryView.updateData(formattedList);
+                    }
+                });
+            }).start();
+        }
+
+        public void queryWithFilters(String searchQuery, String period, String type) {
+            new Thread(() -> {
+                String userEmail = UserSession.getUser().getUserEmail();
+                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(userEmail, period, type, context);
+                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
+                if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                    String query = searchQuery.toLowerCase();
+                    formattedList = formattedList.stream()
+                            .filter(txn -> {
+                                String fromDisplay = txn.getFromUser() != null ? txn.getFromUser().toLowerCase() : "";
+                                String toDisplay = txn.getToUser() != null ? txn.getToUser().toLowerCase() : "";
+                                return fromDisplay.contains(query) || toDisplay.contains(query);
+                            })
+                            .collect(Collectors.toList());
+                }
+                List<TransactionDetails> finalList = formattedList;
+                mainThreadHandler.post(() -> {
+                    if (transactionHistoryView != null) {
+                        transactionHistoryView.updateData(finalList);
+                    }
+                });
+            }).start();
+        }
+
+
+
+
+
+    }
+
+
 }

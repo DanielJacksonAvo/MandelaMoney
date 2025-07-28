@@ -54,7 +54,7 @@
                 app:rippleColor="@color/light_grey" />
 
             <TextView
-                android:id="@+id/txt_available_balance_dashboard"
+                android:id="@+id/txt_make_payment_dashboard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -82,7 +82,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/btn_withdraw"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_available_balance_dashboard"
+                app:layout_constraintTop_toBottomOf="@+id/txt_make_payment_dashboard"
                 app:layout_constraintVertical_bias="1.0"
                 app:autoSizeTextType="uniform"
                 app:autoSizeMinTextSize="12sp"
@@ -118,7 +118,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/txt_transaction_histoy_dashboard"
+                android:id="@+id/txt_transaction_history_dashboard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
