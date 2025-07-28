@@ -45,34 +45,39 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/qr_instruction"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/frameLayout2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.19999999" />
 
             <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/frameLayout2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_gravity="center"
                 android:background="@drawable/qr_image_border"
                 android:clipToOutline="true"
                 android:elevation="2dp"
                 android:padding="1dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/guideline4"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_cancel_request_payment3">
+                app:layout_constraintTop_toTopOf="@+id/guideline3">
 
                 <ImageView
                     android:id="@+id/img_request_payment_qr"
-                    android:layout_width="162dp"
-                    android:layout_height="162dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:background="@drawable/qr_image_border"
                     android:clipToOutline="true"
                     android:outlineProvider="background"
@@ -94,6 +99,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_request_payment_qr" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.22" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.82" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </eightbitlab.com.blurview.BlurView>
