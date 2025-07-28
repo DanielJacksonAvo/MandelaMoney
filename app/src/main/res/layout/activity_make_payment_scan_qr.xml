@@ -69,14 +69,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_scan_qr">
 
-                <androidx.camera.view.PreviewView
-                    android:id="@+id/img_request_payment_qr"
-                    android:layout_width="162dp"
-                    android:layout_height="162dp"
-                    android:background="@drawable/qr_image_border"
-                    android:clipToOutline="true"
-                    android:outlineProvider="background"
-                    android:scaleType="fitXY" />
+
             </FrameLayout>
             <TextView
                 android:id="@+id/lbl_error_qr"
