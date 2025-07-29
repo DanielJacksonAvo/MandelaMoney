@@ -49,6 +49,7 @@ public class MakePaymentController {
     private final IScanQRView scanQrView;
     private PreviewView previewView;
     private final ExecutorService cameraExecutor;
+    private final ExecutorService paymentExecutor; // Executor for payment and QR scan processing
 
     private int transactionId;
     private float transactionAmount;
@@ -60,6 +61,7 @@ public class MakePaymentController {
         this.context = context;
         this.scanQrView = scanQrView;
         this.cameraExecutor = Executors.newSingleThreadExecutor();
+        this.paymentExecutor = Executors.newSingleThreadExecutor(); // Reusing for "Scan Now" button logic
     }
 
     public void setPreviewView(PreviewView previewView) {
@@ -167,36 +169,55 @@ public class MakePaymentController {
         User user = UserSession.getUser();
         if (user == null) {
             Log.e("DEBUG", "User session is null");
-            Toast.makeText(context, "User session expired", Toast.LENGTH_SHORT).show();
+            ContextCompat.getMainExecutor(context).execute(() ->
+                    Toast.makeText(context, "User session expired", Toast.LENGTH_SHORT).show()
+            );
             return;
         }
 
         if (transactionId == 0) {
             Log.e("DEBUG", "transactionId = 0, no valid QR code detected yet.");
-            Toast.makeText(context, "No QR code detected yet. Try again.", Toast.LENGTH_SHORT).show();
+            ContextCompat.getMainExecutor(context).execute(() ->
+                    Toast.makeText(context, "No QR code detected yet. Try again.", Toast.LENGTH_SHORT).show()
+            );
             return;
         }
 
-        Log.d("DEBUG", "Checking if transaction exists: " + transactionId);
-        if (Boolean.TRUE.equals(MySQLConnector.transactionExists(context, transactionId))) {
-            Log.i("TRANSACTION EXISTS", String.valueOf(transactionId));
-            String email = user.getUserEmail();
-            Log.i("FROM USER EMAIL", email);
-            MySQLConnector.updateTransactionFromUser(context, transactionId, email);
-            Log.i("MAKE PAYMENT CONTROLLER", "Attempt to updateTransactionFromUser complete");
+        // Execute the scanning and data fetching logic on a separate thread
+        paymentExecutor.execute(() -> {
+            Log.d("DEBUG", "Checking if transaction exists: " + transactionId);
+            try {
+                if (Boolean.TRUE.equals(MySQLConnector.transactionExists(context, transactionId))) {
+                    Log.i("TRANSACTION EXISTS", String.valueOf(transactionId));
+                    String email = user.getUserEmail();
+                    Log.i("FROM USER EMAIL", email);
+                    MySQLConnector.updateTransactionFromUser(context, transactionId, email);
+                    Log.i("MAKE PAYMENT CONTROLLER", "Attempt to updateTransactionFromUser complete");
 
-            TransactionDetails tx = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, context);
-            this.transactionAmount = tx.getAmount();
-            this.toUserDetails = MySQLConnector.getUserDetailsByEmail(tx.getToUser(), context);
-            this.fromUserDetails = MySQLConnector.getUserDetailsByEmail(email, context);
-            Log.i("TRANSACTION DETAILS CAPTURED", "Amount: " + transactionAmount + ", To: " + toUserDetails.getEmail());
+                    TransactionDetails tx = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, context);
+                    this.transactionAmount = tx.getAmount();
+                    this.toUserDetails = MySQLConnector.getUserDetailsByEmail(tx.getToUser(), context);
+                    this.fromUserDetails = MySQLConnector.getUserDetailsByEmail(email, context);
+                    Log.i("TRANSACTION DETAILS CAPTURED", "Amount: " + transactionAmount + ", To: " + toUserDetails.getEmail());
 
-            DataShare.send(this);
-            context.startActivity(new Intent(context, ConfirmPaymentActivity.class));
-        } else {
-            Log.i("TRANSACTION ID", "TransactionId is not valid");
-            Toast.makeText(context, "Invalid Transaction ID", Toast.LENGTH_SHORT).show();
-        }
+                    // Switch back to the main thread to update UI (start activity)
+                    ContextCompat.getMainExecutor(context).execute(() -> {
+                        DataShare.send(this);
+                        context.startActivity(new Intent(context, ConfirmPaymentActivity.class));
+                    });
+                } else {
+                    Log.i("TRANSACTION ID", "TransactionId is not valid");
+                    ContextCompat.getMainExecutor(context).execute(() ->
+                            Toast.makeText(context, "Invalid Transaction ID", Toast.LENGTH_SHORT).show()
+                    );
+                }
+            } catch (Exception e) {
+                Log.e("handleScanQR", "Error during QR scan processing: " + e.getMessage(), e);
+                ContextCompat.getMainExecutor(context).execute(() ->
+                        Toast.makeText(context, "Error processing QR code. Please try again.", Toast.LENGTH_SHORT).show()
+                );
+            }
+        });
     }
 
     public void handleCancel() {
@@ -206,49 +227,61 @@ public class MakePaymentController {
     }
 
     public void handleConfirmPayment() {
-        boolean transactionSuccess;
-        boolean sufficientFunds;
+        // Execute the payment logic on a separate thread
+        paymentExecutor.execute(() -> {
+            boolean transactionSuccess = false;
+            boolean sufficientFunds = false;
+            String errorReason = "";
 
-        try {
-            sufficientFunds = MySQLConnector.hasSufficientFunds(fromUserDetails.getEmail(), transactionId, context);
+            try {
+                sufficientFunds = MySQLConnector.hasSufficientFunds(fromUserDetails.getEmail(), transactionId, context);
 
-            if (sufficientFunds) {
-                try {
-                    transactionSuccess = MySQLConnector.confirmTransaction(fromUserDetails.getEmail(), transactionId, context);
+                if (sufficientFunds) {
+                    try {
+                        transactionSuccess = MySQLConnector.confirmTransaction(fromUserDetails.getEmail(), transactionId, context);
 
-                    if (transactionSuccess) {
-                        showSuccessScreen();
-                    } else {
-                        Log.e("MakePaymentController", "Transaction confirmed but failed in procedure.");
-                        showFailScreen(true);
+                        if (transactionSuccess) {
+                            // On success, post to main thread to show success screen
+                            ContextCompat.getMainExecutor(context).execute(this::showSuccessScreen);
+                        } else {
+                            Log.e("MakePaymentController", "Transaction confirmed but failed in procedure.");
+                            errorReason = "Transaction Failed or Reversed";
+                            // On failure, post to main thread to show fail screen
+                            final String finalErrorReason = errorReason;
+                            ContextCompat.getMainExecutor(context).execute(() -> showFailScreen(true, finalErrorReason));
+                        }
+                    } catch (Exception e) {
+                        Log.e("MakePaymentController", "Error confirming transaction: " + e.getMessage());
+                        errorReason = "Transaction Failed or Reversed";
+                        final String finalErrorReason = errorReason;
+                        ContextCompat.getMainExecutor(context).execute(() -> showFailScreen(true, finalErrorReason));
                     }
-                } catch (Exception e) {
-                    Log.e("MakePaymentController", "Error confirming transaction: " + e.getMessage());
-                    showFailScreen(true);
+                } else {
+                    Log.w("MakePaymentController", "Insufficient funds for transaction " + transactionId);
+                    MySQLConnector.updateTransactionStatus(transactionId, "failed", context);
+                    errorReason = "Insufficient Funds";
+                    final String finalErrorReason = errorReason;
+                    ContextCompat.getMainExecutor(context).execute(() -> showFailScreen(false, finalErrorReason));
                 }
-            } else {
-                Log.w("MakePaymentController", "Insufficient funds for transaction " + transactionId);
-                MySQLConnector.updateTransactionStatus(transactionId, "failed", context);
-                showFailScreen(false);
-            }
 
-        } catch (Exception e) {
-            Log.e("MakePaymentController", "Error checking sufficient funds: " + e.getMessage());
-            showFailScreen(false);
-        }
+            } catch (Exception e) {
+                Log.e("MakePaymentController", "Error checking sufficient funds: " + e.getMessage());
+                errorReason = "An unexpected error occurred.";
+                final String finalErrorReason = errorReason;
+                ContextCompat.getMainExecutor(context).execute(() -> showFailScreen(false, finalErrorReason));
+            }
+        });
     }
 
-    public void showFailScreen(boolean transactionFailed) {
+    public void showFailScreen(boolean transactionFailed, String errorReason) {
         Intent intent = new Intent(context, ShowFailedActivity.class);
         intent.putExtra("TRANSACTION_ID", transactionId);
-        if (!transactionFailed) {
-            intent.putExtra("ERROR_REASON", "Insufficient Funds");
-        } else {
-            intent.putExtra("ERROR_REASON", "Transaction Failed or Reversed");
-        }
-        Log.d("MakePaymentController", "Navigating to ShowFailedActivity with reason: " + intent.getStringExtra("ERROR_REASON"));
+        intent.putExtra("ERROR_REASON", errorReason);
+        Log.d("MakePaymentController", "Navigating to ShowFailedActivity with reason: " + errorReason);
         context.startActivity(intent);
-        confirmPaymentView.finishActivity();
+        if (confirmPaymentView != null) { // Null check for safety
+            confirmPaymentView.finishActivity();
+        }
     }
 
     public void showSuccessScreen() {
@@ -256,11 +289,14 @@ public class MakePaymentController {
         intent.putExtra("TRANSACTION_ID", transactionId);
         Log.d("MakePaymentController", "Navigating to ShowSuccessActivity with ID: " + transactionId);
         context.startActivity(intent);
-        confirmPaymentView.finishActivity();
+        if (confirmPaymentView != null) { // Null check for safety
+            confirmPaymentView.finishActivity();
+        }
     }
 
     public void shutdown() {
         cameraExecutor.shutdown();
+        paymentExecutor.shutdown(); // Shutdown the payment executor as well
     }
 
     public int getTransactionId() {
