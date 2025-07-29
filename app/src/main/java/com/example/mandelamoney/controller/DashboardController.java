@@ -123,11 +123,15 @@ public class DashboardController {
         }
 
         public void handleLoadUserToUI() {
-            view.displayBalance(user.getUserBalance());
-            view.displayUserName(getUserName());
-            startPolling();
-            // Initial load of transactions for the Dashboard Home
-            refreshAndDisplayTransactions(); // Add this line for initial load
+            try {
+                view.displayBalance(user.getUserBalance());
+                view.displayUserName(getUserName());
+                startPolling();
+                refreshAndDisplayTransactions();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
         }
 
         public String getUserName() {
@@ -140,19 +144,24 @@ public class DashboardController {
         }
 
         public void handleBalanceRefresh() {
-            if (user != null) {
-                double previousBalance = user.getUserBalance();
-                double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
+            try {
+                if (user != null) {
+                    double previousBalance = user.getUserBalance();
+                    double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
 
-                if (updatedBalance != previousBalance) {
-                    user.setUserBalance(updatedBalance);
-                    mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                    if (TransactionHistoryController != null) {
-                        TransactionHistoryController.refreshAndDisplayTransactions();
+                    if (updatedBalance != previousBalance) {
+                        user.setUserBalance(updatedBalance);
+                        mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
+                        if (TransactionHistoryController != null) {
+                            TransactionHistoryController.refreshAndDisplayTransactions();
+                        }
+                        refreshAndDisplayTransactions();
                     }
-                    refreshAndDisplayTransactions(); // Call its own method to update Dashboard Home's list
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+
         }
 
         public void handleMakePayment() {
