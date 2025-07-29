@@ -14,10 +14,9 @@ public class TransactionDetails {
         this.amount = amount;
         this.date = date;
         this.time = time;
-        this.selfTransaction = false;
+
     }
 
-    // Getters
     public String getToUser() { return toUser; }
     public String getFromUser() { return fromUser; }
     public float getAmount() { return amount; }
