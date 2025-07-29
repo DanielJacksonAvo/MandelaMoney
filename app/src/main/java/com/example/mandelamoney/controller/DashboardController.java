@@ -145,7 +145,10 @@ public class DashboardController {
                 if (updatedBalance != previousBalance) {
                     user.setUserBalance(updatedBalance);
                     mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                    TransactionHistoryController.refreshAndDisplayTransactions();
+                    // Ensure TransactionHistoryController is initialized before calling its method
+                    if (TransactionHistoryController != null) {
+                        TransactionHistoryController.refreshAndDisplayTransactions();
+                    }
                 }
             }
         }
@@ -231,11 +234,9 @@ public class DashboardController {
                 String from = tx.getFromUser();
                 String to = tx.getToUser();
 
-                // Replace display name or fallback to original
                 tx.setFromUser(emailToDisplayName.getOrDefault(from, from));
                 tx.setToUser(emailToDisplayName.getOrDefault(to, to));
 
-                // Mark negative amount if incoming and not self
                 if (to.equals(currentUserEmail) && !tx.isSelfTransaction()) {
                     tx.setAmount(tx.getAmount() * -1);
                 }
@@ -247,7 +248,8 @@ public class DashboardController {
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
                 String email = UserSession.getUser().getUserEmail();
-                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistory(email, context);
+                // Changed to get transactions for 'Last Week'
+                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(email, "Last Week", "All", context);
                 List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
                 UserSession.setCachedTransactionHistory(formattedList);
 
