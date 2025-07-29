@@ -126,12 +126,15 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
 
     @Override
     public void displayTransactions(List<TransactionDetails> transactionDetails) {
-        if (adapter != null) {
-            adapter.updateData(transactionDetails);
-        } else {
-            adapter = new TransactionAdapter(transactionDetails, UserSession.getUser().getUserEmail());
-            recyclerView.setAdapter(adapter);
+        if (recyclerView != null && !checkTablet()) {
+            if (adapter != null) {
+                adapter.updateData(transactionDetails);
+            } else {
+                adapter = new TransactionAdapter(transactionDetails, UserSession.getUser().getUserEmail());
+                recyclerView.setAdapter(adapter);
+            }
         }
+
     }
 
 

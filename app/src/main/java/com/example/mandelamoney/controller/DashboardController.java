@@ -126,6 +126,8 @@ public class DashboardController {
             view.displayBalance(user.getUserBalance());
             view.displayUserName(getUserName());
             startPolling();
+            // Initial load of transactions for the Dashboard Home
+            refreshAndDisplayTransactions(); // Add this line for initial load
         }
 
         public String getUserName() {
@@ -145,10 +147,10 @@ public class DashboardController {
                 if (updatedBalance != previousBalance) {
                     user.setUserBalance(updatedBalance);
                     mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                    // Ensure TransactionHistoryController is initialized before calling its method
                     if (TransactionHistoryController != null) {
                         TransactionHistoryController.refreshAndDisplayTransactions();
                     }
+                    refreshAndDisplayTransactions(); // Call its own method to update Dashboard Home's list
                 }
             }
         }
@@ -206,8 +208,7 @@ public class DashboardController {
             mainThreadHandler.removeCallbacksAndMessages(null);
         }
 
-
-
+        // This method is specifically for formatting and displaying transactions on the Dashboard Home view
         public List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
             String currentUserEmail = UserSession.getUser().getUserEmail();
             Set<String> emailsToLookup = new HashSet<>();
@@ -245,6 +246,7 @@ public class DashboardController {
             return transactionList;
         }
 
+        // This method fetches and displays transactions for the Dashboard Home view
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
                 String email = UserSession.getUser().getUserEmail();
@@ -377,12 +379,5 @@ public class DashboardController {
                 });
             }).start();
         }
-
-
-
-
-
     }
-
-
 }
