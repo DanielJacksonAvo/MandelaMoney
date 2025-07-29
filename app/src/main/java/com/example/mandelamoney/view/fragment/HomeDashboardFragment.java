@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,21 +19,26 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.adapter.TransactionAdapter;
 import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.controller.MakePaymentController;
 import com.example.mandelamoney.controller.RequestPaymentController;
+import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class HomeDashboardFragment extends Fragment implements IHomeDashboardView {
 
     DashboardController controller;
-    DashboardController.TransactionHistoryController transactionController;
     private TextView txtBalance, txtUserName;
     private EditText tbxRequestPayAmount;
+    private TransactionAdapter adapter;
+    private RecyclerView recyclerView;
 
-    // ... other class members
 
     public HomeDashboardFragment(DashboardController controller) {
         this.controller = controller;
@@ -70,12 +77,23 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
         configureTransactionHistoryButton(btnTransactionHistory);
         Button btnPayNow = rootView.findViewById(R.id.btn_pay_now);
         configurePayNowButton(btnPayNow);
+        recyclerView = rootView.findViewById(R.id.recyclerView_dashboard_transactionHistory);
+        setupRecycler();
     }
 
     private void configureTransactionHistoryButton(TextView btnTransactionHistory) {
         btnTransactionHistory.setOnClickListener((view) -> {
             controller.handleViewTransactionHistory();
         });
+    }
+
+    private void setupRecycler() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        if (adapter == null) {
+            adapter = new TransactionAdapter(new ArrayList<>(), UserSession.getUser().getUserEmail());
+            recyclerView.setAdapter(adapter);
+            controller.DashboardHomeController.refreshAndDisplayTransactions();
+        }
     }
 
     private void connectToUITablet(View rootView) {
@@ -103,6 +121,16 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     public void displayUserName(String name) {
         if (txtUserName != null && !checkTablet()) {
             txtUserName.setText(toUpperCase(name));
+        }
+    }
+
+    @Override
+    public void displayTransactions(List<TransactionDetails> transactionDetails) {
+        if (adapter != null) {
+            adapter.updateData(transactionDetails);
+        } else {
+            adapter = new TransactionAdapter(transactionDetails, UserSession.getUser().getUserEmail());
+            recyclerView.setAdapter(adapter);
         }
     }
 
