@@ -23,9 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.MenuRes;
@@ -107,25 +104,20 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
     private void loadOrFetchTransactions() {
         controller.TransactionHistoryController.refreshAndDisplayTransactions();
-        // Use a Handler to post updates to the main UI thread
         Handler mainHandler = new Handler(Looper.getMainLooper());
 
         new Thread(() -> {
             String currentUserEmail = UserSession.getUser().getUserEmail();
-            Context context = requireContext(); // Use requireContext() as it ensures context is not null
+            Context context = requireContext();
             Log.d(TAG, "Fetching transaction history for user: " + currentUserEmail + " Context: " + context);
             List<TransactionDetails> transactionList = MySQLConnector.getTransactionHistory(currentUserEmail, context);
 
             Log.d(TAG, "Fetched transaction count: " + transactionList.size());
-
-            // Post UI updates back to the main thread
             mainHandler.post(() -> {
-                UserSession.setCachedTransactionHistory(transactionList); // Cache the data
+                UserSession.setCachedTransactionHistory(transactionList);
                 if (adapter != null) {
-                    adapter.updateData(transactionList); // Update the adapter
+                    adapter.updateData(transactionList);
                 } else {
-                    // This case should ideally not happen if setupRecycler is called first,
-                    // but as a fallback, initialize and set the adapter.
                     adapter = new TransactionAdapter(transactionList, UserSession.getUser().getUserEmail());
                     recyclerView.setAdapter(adapter);
                 }
