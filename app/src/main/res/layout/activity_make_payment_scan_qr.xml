@@ -74,6 +74,15 @@
                 app:layout_constraintTop_toTopOf="@+id/guideline5"
                 app:layout_constraintDimensionRatio="1:1">
 
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/img_request_payment_qr"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/qr_image_border"
+                    android:clipToOutline="true"
+                    android:outlineProvider="background"
+                    android:scaleType="fitXY" />
+
 
             </FrameLayout>
 
