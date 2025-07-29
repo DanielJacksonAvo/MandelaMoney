@@ -35,7 +35,7 @@ public class DashboardController {
     private final Context context;
     private final User user;
 
-    private int currentFragment = -1; //0 - home, 1 - lock, 2 - settings, 3 - profile
+    private int currentFragment = 0; //0 - home, 1 - lock, 2 - settings, 3 - profile
 
     public DashboardHomeController DashboardHomeController;
     public TransactionHistoryController TransactionHistoryController;
