@@ -78,6 +78,10 @@ public class DashboardController {
         manageControllers();
     }
 
+    public void handleLoadUserToUITablet() {
+        view.displayUserNameTablet(DashboardHomeController.getUserName());
+    }
+
     private void manageControllers() {
         if (currentFragment == 0) {
             DashboardHomeController.startPolling();
@@ -108,9 +112,6 @@ public class DashboardController {
         TransactionHistoryController = new TransactionHistoryController(view);
     }
 
-    public void handleLoadUserToUITablet() {
-        view.displayUserNameTablet(DashboardHomeController.getUserName());
-    }
 
     public class DashboardHomeController {
         private final IHomeDashboardView view;
