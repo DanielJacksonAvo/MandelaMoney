@@ -110,6 +110,7 @@ public class CreateAccountController {
         }
 
         Toast.makeText(context, "Account Successfully Created!\nPlease login.", Toast.LENGTH_LONG).show();
+        handleCreateStudentAccountCancel();
     }
 
     public void handleCreateBusinessUser(String userEmail, String userBusinessName, String userBusinessVAT, String userBusinessPhone, String userPassword, String userPasswordReenter) {
@@ -174,6 +175,7 @@ public class CreateAccountController {
         }
 
         Toast.makeText(context, "Account Successfully Created!\nPlease login.", Toast.LENGTH_LONG).show();
+        handleCreateBusinessAccountCancel();
 
     }
 
