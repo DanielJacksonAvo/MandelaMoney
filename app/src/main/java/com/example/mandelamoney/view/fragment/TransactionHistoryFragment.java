@@ -103,7 +103,7 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     }
 
     private void loadOrFetchTransactions() {
-        controller.TransactionHistoryController.refreshAndDisplayTransactions();
+        controller.TransactionHistoryController.loadTransactions(null,null,null);
         Handler mainHandler = new Handler(Looper.getMainLooper());
 
         new Thread(() -> {
@@ -231,7 +231,7 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
-                searchRunnable = () -> controller.TransactionHistoryController.queryWithFilters(s.toString().trim(), selectedPeriod, selectedType);
+                searchRunnable = () -> controller.TransactionHistoryController.loadTransactions(s.toString().trim(), selectedPeriod, selectedType);
                 searchHandler.postDelayed(searchRunnable, 400);
             }
             @Override public void afterTextChanged(Editable s) {}
@@ -254,7 +254,7 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
                 else if ("TYPE:".equals(label)) selectedType = selected;
                 if (!isSearchExpanded) styleFilterButton(button, label, selected);
                 String query = etSearch.getText().toString().trim();
-                controller.TransactionHistoryController.queryWithFilters(query, selectedPeriod, selectedType);
+                controller.TransactionHistoryController.loadTransactions(query, selectedPeriod, selectedType);
                 return true;
             }
             @Override public void onMenuModeChange(@NonNull MenuBuilder menu) {}
