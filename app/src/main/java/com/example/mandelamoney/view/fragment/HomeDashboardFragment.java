@@ -2,6 +2,7 @@ package com.example.mandelamoney.view.fragment;
 
 import static android.icu.lang.UCharacter.toUpperCase;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -39,15 +40,22 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     private TransactionAdapter adapter;
     private RecyclerView recyclerView;
 
+    private boolean isTabletLandscape = false;
+
 
     public HomeDashboardFragment(DashboardController controller) {
         this.controller = controller;
         controller.createDashboardHomeController(this);
+    }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isTabletLandscape = getResources().getBoolean(R.bool.is_tablet_landscape);
     }
 
     public boolean checkTablet() {
-        return getResources().getBoolean(R.bool.is_tablet_landscape);
+        return isTabletLandscape;
     }
 
 
@@ -166,7 +174,6 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     @Override
     public void onResume() {
         super.onResume();
-        controller.DashboardHomeController.handleLoadUserToUI(); // rebinding + balance refresh
+        controller.DashboardHomeController.handleLoadUserToUI();
     }
-
 }
