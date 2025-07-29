@@ -16,6 +16,14 @@ public class TransactionDetails {
         this.time = time;
 
     }
+    public TransactionDetails(String toUser, String fromUser, float amount, String date, String time, Boolean selfTransaction){
+        this.toUser = toUser;
+        this.fromUser = fromUser;
+        this.amount = amount;
+        this.date = date;
+        this.time = time;
+        this.selfTransaction = selfTransaction;
+    }
 
     public String getToUser() { return toUser; }
     public String getFromUser() { return fromUser; }

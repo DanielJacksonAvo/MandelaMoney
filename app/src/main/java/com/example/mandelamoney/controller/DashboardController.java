@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Looper;
 import android.os.Handler;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
+
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
@@ -145,7 +148,7 @@ public class DashboardController {
                 if (updatedBalance != previousBalance) {
                     user.setUserBalance(updatedBalance);
                     mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                    TransactionHistoryController.refreshAndDisplayTransactions();
+                    TransactionHistoryController.loadTransactions(null, null, null);
                 }
             }
         }
@@ -218,19 +221,18 @@ public class DashboardController {
 
     }
     public class TransactionHistoryController {
-        private ITransactionHistoryView transactionHistoryView;
-        private final User user;
+
+        private final ITransactionHistoryView transactionHistoryView;
         private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
-
-        public TransactionHistoryController(ITransactionHistoryView transactionHistoryView) {
-            this.user = UserSession.getUser();
+        public TransactionHistoryController(
+                ITransactionHistoryView transactionHistoryView
+        ) {
             this.transactionHistoryView = transactionHistoryView;
         }
 
-
-
         public void handleLoadUserToUI() {
+            User user = UserSession.getUser();
             if (user instanceof Student) {
                 String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
                 transactionHistoryView.displayUserName(fullname);
@@ -238,9 +240,56 @@ public class DashboardController {
                 transactionHistoryView.displayUserName(((Business) user).getBusinessName());
             }
         }
+        public void loadTransactions(@Nullable String searchQuery,
+                                     @Nullable String period,
+                                     @Nullable String type) {
+            new Thread(() -> {
+                String userEmail = UserSession.getUser().getUserEmail();
+                boolean periodAll = isAll(period);
+                boolean typeAll   = isAll(type);
+                List<TransactionDetails> rawList;
+
+                if (periodAll && typeAll) {
+                    rawList = MySQLConnector.getTransactionHistory(userEmail, context);
+                } else {
+                    String periodArg = periodAll ? null : period;
+                    String typeArg   = typeAll   ? null : type;
+
+                    rawList = MySQLConnector.getTransactionHistoryWithFilters(
+                            userEmail, periodArg, typeArg, context
+                    );
+                }
+
+                List<TransactionDetails> formattedList = formatTransactionHistory(rawList);
+
+                if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                    String query = searchQuery.trim().toLowerCase();
+                    formattedList = formattedList.stream()
+                            .filter(txn -> {
+                                String from = txn.getFromUser() != null ? txn.getFromUser().toLowerCase() : "";
+                                String to   = txn.getToUser()   != null ? txn.getToUser().toLowerCase()   : "";
+                                return from.contains(query) || to.contains(query);
+                            })
+                            .collect(Collectors.toList());
+                }
+
+                UserSession.setCachedTransactionHistory(formattedList);
+                List<TransactionDetails> finalFormattedList = formattedList;
+                mainThreadHandler.post(() -> {
+                    if (transactionHistoryView != null) {
+                        transactionHistoryView.updateData(finalFormattedList);
+                    }
+                });
+            }).start();
+        }
+        private boolean isAll(String s) {
+            return s == null || s.trim().isEmpty() ||
+                    s.equalsIgnoreCase("all") ||
+                    s.equalsIgnoreCase("any");
+        }
 
 
-        public List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
+        private List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList) {
             String currentUserEmail = UserSession.getUser().getUserEmail();
             Set<String> emailsToLookup = new HashSet<>();
 
@@ -248,83 +297,46 @@ public class DashboardController {
                 String from = tx.getFromUser();
                 String to = tx.getToUser();
 
-                boolean isSelf = from.equals(currentUserEmail) && to.equals(currentUserEmail);
-                tx.setSelfTransaction(isSelf);
-
-                if (from.equals(currentUserEmail)) {
+                if (from.equals(currentUserEmail) && to.equals(currentUserEmail)) {
+                    setSelfTransactionName(tx);
+                } else if (from.equals(currentUserEmail)) {
                     emailsToLookup.add(to);
-                }
-
-                if (to.equals(currentUserEmail)) {
+                } else if (to.equals(currentUserEmail)) {
                     emailsToLookup.add(from);
                 }
             }
 
-            Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup, context);
+            Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup,context);
 
+            // Apply display names & negative amounts for incoming
             for (TransactionDetails tx : transactionList) {
-                String from = tx.getFromUser();
-                String to = tx.getToUser();
+                if (!tx.isSelfTransaction()) {
+                    tx.setFromUser(emailToDisplayName.getOrDefault(tx.getFromUser(), tx.getFromUser()));
+                    tx.setToUser(emailToDisplayName.getOrDefault(tx.getToUser(), tx.getToUser()));
 
-                // Replace display name or fallback to original
-                tx.setFromUser(emailToDisplayName.getOrDefault(from, from));
-                tx.setToUser(emailToDisplayName.getOrDefault(to, to));
-
-                // Mark negative amount if incoming and not self
-                if (to.equals(currentUserEmail) && !tx.isSelfTransaction()) {
-                    tx.setAmount(tx.getAmount() * -1);
+                    if (tx.getToUser().equalsIgnoreCase(currentUserEmail)) {
+                        tx.setAmount(tx.getAmount() * -1);
+                    }
                 }
             }
-
             return transactionList;
         }
 
-
-        public void refreshAndDisplayTransactions() {
-            new Thread(() -> {
-                String email = UserSession.getUser().getUserEmail();
-                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistory(email, context);
-                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
-                UserSession.setCachedTransactionHistory(formattedList);
-
-                mainThreadHandler.post(() -> {
-                    if (transactionHistoryView != null) {
-                        transactionHistoryView.updateData(formattedList);
-                    }
-                });
-            }).start();
+        private void setSelfTransactionName(TransactionDetails tx) {
+            User user = UserSession.getUser();
+            if (user instanceof Student) {
+                String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
+                tx.setToUser(fullname);
+                tx.setFromUser(fullname);
+            } else if (user instanceof Business) {
+                String name = ((Business) user).getBusinessName();
+                tx.setToUser(name);
+                tx.setFromUser(name);
+            }
+            tx.setSelfTransaction(true);
         }
-
-        public void queryWithFilters(String searchQuery, String period, String type) {
-            new Thread(() -> {
-                String userEmail = UserSession.getUser().getUserEmail();
-                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(userEmail, period, type, context);
-                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
-                if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                    String query = searchQuery.trim().toLowerCase();
-                    formattedList = formattedList.stream()
-                            .filter(txn -> {
-                                String from = txn.getFromUser() != null ? txn.getFromUser().toLowerCase() : "";
-                                String to = txn.getToUser() != null ? txn.getToUser().toLowerCase() : "";
-                                return from.contains(query) || to.contains(query);
-                            })
-                            .collect(Collectors.toList());
-                }
-
-                List<TransactionDetails> finalList = formattedList;
-                mainThreadHandler.post(() -> {
-                    if (transactionHistoryView != null) {
-                        transactionHistoryView.updateData(finalList);
-                    }
-                });
-            }).start();
-        }
-
-
-
-
-
     }
+
 
 
 }
