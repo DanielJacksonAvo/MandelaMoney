@@ -111,7 +111,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:autofillHints="@string/password"
-                    android:hint="@string/confirm"
+                    android:hint="@string/confirm_CAPS"
                     android:inputType="textPassword"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
