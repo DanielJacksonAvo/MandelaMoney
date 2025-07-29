@@ -54,7 +54,6 @@ public class DashboardController {
     public void handleHome() {
         currentFragment = 0;
         view.displayHome();
-        view.displayTransactionHistoryScreen();
         manageControllers();
 
     }
