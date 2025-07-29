@@ -37,7 +37,6 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     private Fragment selectedFragment;
     private Fragment selectedFragmentExtra;
     private TextView txtUserName;
-    private TransactionAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +56,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
             connectToUITablet();
             displayHome();
             displayUserName();
-            displayTransactionHistoryScreen();
+            displayTabletTransactionHistoryScreen();
         } else {
             connectToPhoneUI();
             displayHome();
@@ -75,8 +74,6 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     private void connectToUITablet() {
         txtUserName = findViewById(R.id.txt_user_name_dashboard);
         bottomNavigationView = findViewById(R.id.dashboardNavView);
-        RecyclerView recyclerView = findViewById(R.id.recyclerView_dashboard_transactionHistory);
-        setupRecycler(recyclerView);
         configureBottomNav();
     }
 
@@ -131,7 +128,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     }
 
     @Override
-    public void displayTransactionHistoryScreen() {
+    public void displayTabletTransactionHistoryScreen() {
         if (checkTablet()) {
             selectedFragmentExtra = new TransactionHistoryFragment(dashboardController);
             if (selectedFragmentExtra != null) {
@@ -170,11 +167,4 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         return getResources().getBoolean(R.bool.is_tablet_landscape);
     }
 
-    private void setupRecycler(RecyclerView recyclerView) {
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        if (adapter == null) {
-            adapter = new TransactionAdapter(new ArrayList<>(), UserSession.getUser().getUserEmail());
-            recyclerView.setAdapter(adapter);
-        }
-    }
 }
