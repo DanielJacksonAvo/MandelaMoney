@@ -51,7 +51,6 @@ public class DashboardController {
     public void handleHome() {
         currentFragment = 0;
         view.displayHome();
-        view.displayTabletTransactionHistoryScreen();
         manageControllers();
 
     }
@@ -76,6 +75,10 @@ public class DashboardController {
     public void handleViewTransactionHistory() {
         view.displayTabletTransactionHistoryScreen();
         manageControllers();
+    }
+
+    public void handleLoadUserToUITablet() {
+        view.displayUserNameTablet(DashboardHomeController.getUserName());
     }
 
     private void manageControllers() {
@@ -108,9 +111,6 @@ public class DashboardController {
         TransactionHistoryController = new TransactionHistoryController(view);
     }
 
-    public void handleLoadUserToUITablet() {
-        view.displayUserNameTablet(DashboardHomeController.getUserName());
-    }
 
     public class DashboardHomeController {
         private final IHomeDashboardView view;
