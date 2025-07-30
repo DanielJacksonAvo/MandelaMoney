@@ -64,6 +64,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
 //        }
 
         hideLoadingSpinner();
+        hideErrorMessage();
 
     }
     public void setupPhoneUI() {
