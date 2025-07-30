@@ -30,7 +30,7 @@ public class UnlockController {
                 () -> {
                     view.showLoadingSpinner();
                     Toast.makeText(context, "Authenticated successfully!", Toast.LENGTH_SHORT).show();
-                    loadUserSession();
+                    UserSession.loadSession(context);
                     User user = UserSession.getUser();
                     if (user == null) {
                         handleLogout();
@@ -80,9 +80,6 @@ public class UnlockController {
         );
     }
 
-    private void loadUserSession() {
-        UserSession.loadSession(context);
-    }
 
     private void onSuccess() {
         view.hideLoadingSpinner();

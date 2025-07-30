@@ -100,7 +100,7 @@ public class CreateAccountEnterBusinessDetailsActivity extends AppCompatActivity
 
     @Override
     public void finishActivity() {
-
+        finish();
     }
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
