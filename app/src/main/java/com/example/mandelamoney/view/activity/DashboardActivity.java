@@ -1,7 +1,7 @@
 package com.example.mandelamoney.view.activity;
 
+import android.content.Intent;
 import static java.security.AccessController.getContext;
-
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -106,6 +106,10 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
 
     @Override
     public void displayLock() {
+        UserSession.saveSession(this);
+        UserSession.clearSession();
+        Intent intent = new Intent(this, UnlockActivity.class);
+        startActivity(intent);
 
     }
 

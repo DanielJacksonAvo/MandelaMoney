@@ -231,12 +231,6 @@ public class DashboardController {
         }
     }
 
-
-
-    private class DashboardLockController {
-
-    }
-
     private class DashboardSettingsController {
 
     }
