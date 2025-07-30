@@ -6,4 +6,8 @@ public interface ILoginView {
     void hideErrorMessage();
 
     void finishActivity();
+
+    void hideLoadingSpinner();
+
+    void showLoadingSpinner();
 }

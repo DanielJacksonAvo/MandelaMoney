@@ -31,17 +31,17 @@ public class UserSession {
     }
 
     public static void deleteSession(Context context) {
-        //used for logout only
         currentUser = null;
         cachedTransactionHistory = null;
 
         try {
             SharedPreferences prefs = getSecurePrefs(context);
-            prefs.edit().clear().apply();
+            prefs.edit().remove(KEY_USER).apply();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     public static void clearSession() {
         currentUser = null;
@@ -81,6 +81,16 @@ public class UserSession {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean isSessionExists(Context context) {
+        try {
+            SharedPreferences prefs = getSecurePrefs(context);
+            return prefs.contains(KEY_USER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private static SharedPreferences getSecurePrefs(Context context)

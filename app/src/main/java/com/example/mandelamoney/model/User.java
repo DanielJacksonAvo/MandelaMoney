@@ -3,7 +3,7 @@ package com.example.mandelamoney.model;
 import static java.lang.Math.abs;
 import java.io.Serializable;
 
-public abstract class User implements Serializable {
+public class User implements Serializable {
     private final String userEmail;
     private String userPassword;
     private double userBalance;

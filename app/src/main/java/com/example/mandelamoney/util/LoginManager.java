@@ -36,6 +36,7 @@ public class LoginManager {
             }
             User user = (User) result[0];
             UserSession.setUser(user);
+            UserSession.saveSession(context);
             /// make load transactions
             runOnMainThread(context, onSuccess);
         }).start();

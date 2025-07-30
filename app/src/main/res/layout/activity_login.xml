@@ -200,12 +200,7 @@
         android:visibility="gone">
 
         <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="#8D000000"
-            android:clickable="true"
-            android:focusable="true"
-            android:elevation="999dp"
+            style="@style/DimLoadingScreen"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -3,6 +3,7 @@ package com.example.mandelamoney.view.activity;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -36,6 +38,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
     private EditText tbxUserPassword;
     private ImageView imgPasswordIcon;
     private TextView btnLogOut;
+    private ConstraintLayout loadingSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +46,11 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_unlock_account);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
 
         unlockController = new UnlockController(this, this);
         setupPhoneUI();
@@ -60,6 +63,8 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
 //            setupPhoneUI();
 //        }
 
+        hideLoadingSpinner();
+
     }
     public void setupPhoneUI() {
         btnUnlock = findViewById(R.id.btn_unlock);
@@ -68,6 +73,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
         imgPasswordIcon = findViewById(R.id.img_password_unlock);
         btnBiometrics = findViewById(R.id.btn_biometrics_unlock);
         btnLogOut = findViewById(R.id.btn_logout_unlock);
+        loadingSpinner = findViewById(R.id.unlock_loading_spinner);
 
         if (btnUnlock != null && tbxUserPassword != null) {
             configureUnlockButton(btnUnlock, tbxUserPassword);
@@ -152,10 +158,12 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
                 String userPassword = String.valueOf(tbxUserPassword.getText());
                 unlockController.handleUnlock(userPassword);
             });
-        }else {
+        } else {
             Log.e("UnlockActivity", "Unlock button is null in configureUnlockButton.");
         }
     }
+
+
 
     @Override
     public void showErrorMessage() {
@@ -174,5 +182,15 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
     @Override
     public void finishActivity() {
         finish();
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        loadingSpinner.setVisibility(GONE);
+    }
+
+    @Override
+    public void showLoadingSpinner() {
+        loadingSpinner.setVisibility(VISIBLE);
     }
 }
