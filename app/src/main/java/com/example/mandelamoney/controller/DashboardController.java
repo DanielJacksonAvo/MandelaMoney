@@ -22,6 +22,7 @@ import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
+import com.example.mandelamoney.view.activity.UnlockActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +64,12 @@ public class DashboardController {
 
     public void handleLock() {
         currentFragment = 1;
-        view.displayLock();
+        if (UserSession.getUser() != null) {
+            UserSession.saveSession(context);
+        }
+        UserSession.clearSession();
+        Intent intent = new Intent(context, UnlockActivity.class);
+        context.startActivity(intent);
         manageControllers();
     }
 
@@ -130,14 +136,18 @@ public class DashboardController {
 
         public void handleLoadUserToUI() {
             try {
+                User user = UserSession.getUser();
+                if (user == null) {
+                    Log.e("DashboardHomeController", "User is null! Cannot load user data.");
+                    return;
+                }
                 view.displayBalance(user.getUserBalance());
                 view.displayUserName(getUserName());
                 startPolling();
                 refreshAndDisplayTransactions();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                Log.e("DashboardHomeController", "Error in handleLoadUserToUI", e);
             }
-
         }
 
         public String getUserName() {
@@ -150,16 +160,16 @@ public class DashboardController {
         }
 
         public void handleBalanceRefresh() {
-              if (user != null) {
-                  double previousBalance = user.getUserBalance();
-                  double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
-                  if (updatedBalance != previousBalance) {
-                      user.setUserBalance(updatedBalance);
-                      mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                      refreshAndDisplayTransactions();
-                      TransactionHistoryController.loadTransactions(null, null, null);}
-
-              }
+            if (user != null) {
+                double previousBalance = user.getUserBalance();
+                double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
+                if (updatedBalance != previousBalance) {
+                    user.setUserBalance(updatedBalance);
+                    mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
+                    refreshAndDisplayTransactions();
+                    TransactionHistoryController.loadTransactions(null, null, null);
+                }
+            }
         }
 
         public void handleMakePayment() {
@@ -215,10 +225,16 @@ public class DashboardController {
             mainThreadHandler.removeCallbacksAndMessages(null);
         }
 
-
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
-                String email = UserSession.getUser().getUserEmail();
+                User user = UserSession.getUser();
+
+                if (user == null) {
+                    Log.e("DashboardHomeController", "User is null, cannot refresh and display transactions.");
+                    return;
+                }
+
+                String email = user.getUserEmail();
                 List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(email, "Last Week", "All", context);
                 List<TransactionDetails> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
                 UserSession.setCachedTransactionHistory(formattedList);
@@ -230,7 +246,9 @@ public class DashboardController {
                 });
             }).start();
         }
+
     }
+
 
     private class DashboardSettingsController {
 
