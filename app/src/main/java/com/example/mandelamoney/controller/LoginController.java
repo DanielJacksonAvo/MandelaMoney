@@ -3,6 +3,8 @@ package com.example.mandelamoney.controller;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
@@ -27,41 +29,16 @@ public class LoginController {
 
     }
 
-    public void handleLogin(String userEmail, String userPassword) throws SQLException {
+    public void handleLogin(String userEmail, String userPassword) {
         if ((userEmail.length() < 5) || (userPassword.length() < 5))
         {
             view.showErrorMessage();
             return;
         }
 
-        Object[] objs = callSQLLogin(userEmail, userPassword);
-
-        if(objs == null || !((boolean) objs[1])) {
-            return;
-        }
-
-        User user = (User) objs[0];
-
-        if (user == null) {
-            view.showErrorMessage();
-            return;
-        }
-
-        view.hideErrorMessage();
-        UserSession.setUser(user);
-        SharedPreferences prefs = context.getSharedPreferences("user_session", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("userEmail", user.getUserEmail());
-        if (user instanceof Student) {
-            editor.putString("userType", "student");
-        } else if (user instanceof Business) {
-            editor.putString("userType", "business");
-        }
-        editor.apply();
-        Intent intent = new Intent(context, DashboardActivity.class);
-        context.startActivity(intent);
-        view.finishActivity();
+        new LoginTask().execute(userEmail, userPassword);
     }
+
     public void handleForgotPassword(){
         Intent intent = new Intent(context, ForgotPasswordActivity.class);
         context.startActivity(intent);
@@ -75,7 +52,43 @@ public class LoginController {
 
     }
 
-    private Object[] callSQLLogin(String userEmail, String userPassword) {
-        return MySQLConnector.validateEmailPassword(userEmail, userPassword, context);
+    private class LoginTask extends AsyncTask<String, Void, Object[]> {
+
+        @Override
+        protected Object[] doInBackground(String... params) {
+            String userEmail = params[0];
+            String userPassword = params[1];
+            return MySQLConnector.validateEmailPassword(userEmail, userPassword, context);
+        }
+
+        @Override
+        protected void onPostExecute(Object[] objs) {
+            if(objs == null || !((boolean) objs[1])) {
+                view.showErrorMessage();
+                return;
+            }
+
+            User user = (User) objs[0];
+
+            if (user == null) {
+                view.showErrorMessage();
+                return;
+            }
+
+            view.hideErrorMessage();
+            UserSession.setUser(user);
+            SharedPreferences prefs = context.getSharedPreferences("user_session", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("userEmail", user.getUserEmail());
+            if (user instanceof Student) {
+                editor.putString("userType", "student");
+            } else if (user instanceof Business) {
+                editor.putString("userType", "business");
+            }
+            editor.apply();
+            Intent intent = new Intent(context, DashboardActivity.class);
+            context.startActivity(intent);
+            view.finishActivity();
+        }
     }
 }
