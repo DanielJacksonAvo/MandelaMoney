@@ -569,8 +569,8 @@ public class MySQLConnector {
                 try (ResultSet rs = stmt.getResultSet()) {
                     if (rs.next()) {
                         details = new TransactionDetails(
-                                rs.getString("toUser"),
                                 rs.getString("fromUser"),
+                                rs.getString("toUser"),
                                 rs.getFloat("transactionAmount"),
                                 rs.getString("formattedDate"),
                                 rs.getString("formattedTime")
