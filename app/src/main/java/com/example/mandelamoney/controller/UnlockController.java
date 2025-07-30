@@ -33,6 +33,7 @@ public class UnlockController {
                     UserSession.loadSession(context);
                     User user = UserSession.getUser();
                     if (user == null) {
+                        Toast.makeText(context, "Session Expired", Toast.LENGTH_LONG).show();
                         handleLogout();
                         return;
                     }
