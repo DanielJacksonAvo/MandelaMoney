@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.BiometricsManager;
+import com.example.mandelamoney.util.LoginManager;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IUnlockView;
+import com.example.mandelamoney.view.activity.DashboardActivity;
 import com.example.mandelamoney.view.activity.LoginActivity;
 import com.example.mandelamoney.view.activity.UnlockActivity;
 
@@ -25,8 +28,18 @@ public class UnlockController {
         BiometricsManager.authenticate(
                 (UnlockActivity)context,
                 () -> {
-                    // Auth success
+                    view.showLoadingSpinner();
                     Toast.makeText(context, "Authenticated successfully!", Toast.LENGTH_SHORT).show();
+                    loadUserSession();
+                    User user = UserSession.getUser();
+                    if (user == null) {
+                        handleLogout();
+                        return;
+                    }
+                    LoginManager.login(context, user.getUserEmail(), user.getUserPassword(),
+                            this::onSuccess,
+                            this::onFailure
+                    );
                 },
                 () -> {
                     // Auth failure
@@ -36,8 +49,7 @@ public class UnlockController {
     }
 
     public void handleLogout() {
-        UserSession.saveSession(context);
-        UserSession.clearSession();
+        UserSession.deleteSession(context);
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
         view.finishActivity();
@@ -49,6 +61,17 @@ public class UnlockController {
 
     private void loadUserSession() {
         UserSession.loadSession(context);
+    }
+
+    private void onSuccess() {
+        view.hideLoadingSpinner();
+        Intent intent = new Intent(context, DashboardActivity.class);
+        context.startActivity(intent);
+        view.finishActivity();
+    }
+
+    private void onFailure() {
+        view.hideLoadingSpinner();
     }
 
 

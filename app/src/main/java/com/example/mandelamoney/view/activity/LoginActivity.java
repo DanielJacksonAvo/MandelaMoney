@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     private ImageView imgPasswordIcon;
     private TextView btnForgotPassword;
     private TextView btnSignup;
+    private ConstraintLayout loadingSpinner;
 
 
     @Override
@@ -63,6 +65,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             Log.d("LoginActivity", "Phone layout (default layout) loaded.");
             setupPhoneUI();
         }
+        hideLoadingSpinner();
     }
 
     private void setupPhoneUI() {
@@ -73,6 +76,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         imgPasswordIcon = findViewById(R.id.img_password_login);
         btnForgotPassword = findViewById(R.id.btn_forgotPassword_login);
         btnSignup = findViewById(R.id.btn_signup_login);
+        loadingSpinner = findViewById(R.id.login_loading_spinner);
 
         if (btnLogin != null && tbxUserEmail != null && tbxUserPassword != null) {
             configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
@@ -156,6 +160,16 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     @Override
     public void finishActivity() {
         finish();
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        loadingSpinner.setVisibility(GONE);
+    }
+
+    @Override
+    public void showLoadingSpinner() {
+        loadingSpinner.setVisibility(VISIBLE);
     }
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
