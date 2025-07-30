@@ -97,5 +97,5 @@ dependencies {
     implementation(libs.security.crypto.v100)
     implementation(libs.gson)
     implementation(libs.biometric)
-
+    implementation(libs.lifecycle.process)
 }
