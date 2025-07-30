@@ -26,7 +26,7 @@ public class BiometricsManager {
         BiometricManager biometricManager = BiometricManager.from(activity);
 
         int canAuthenticate = biometricManager.canAuthenticate(
-                BiometricManager.Authenticators.BIOMETRIC_STRONG
+                BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL
         );
 
         if (canAuthenticate != BiometricManager.BIOMETRIC_SUCCESS) {
@@ -62,9 +62,8 @@ public class BiometricsManager {
 
         BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Biometric Authentication")
-                .setSubtitle("Use your fingerprint, face, or iris to authenticate")
-                .setNegativeButtonText("Cancel")
-                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                .setSubtitle("Use your fingerprint, face, or screen lock to authenticate")
+                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
                 .build();
 
         biometricPrompt.authenticate(promptInfo);

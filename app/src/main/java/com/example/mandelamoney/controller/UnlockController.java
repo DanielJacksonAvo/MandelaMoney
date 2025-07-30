@@ -22,17 +22,6 @@ public class UnlockController {
 
     public void handleBiometrics() {
 
-    }
-
-    public void handleLogout() {
-        UserSession.saveSession(context);
-        UserSession.clearSession();
-        Intent intent = new Intent(context, LoginActivity.class);
-        context.startActivity(intent);
-        view.finishActivity();
-    }
-
-    public void handleUnlock(String userPassword) {
         BiometricsManager.authenticate(
                 (UnlockActivity)context,
                 () -> {
@@ -44,6 +33,18 @@ public class UnlockController {
                     Toast.makeText(context, "Authentication failed or cancelled.", Toast.LENGTH_SHORT).show();
                 }
         );
+    }
+
+    public void handleLogout() {
+        UserSession.saveSession(context);
+        UserSession.clearSession();
+        Intent intent = new Intent(context, LoginActivity.class);
+        context.startActivity(intent);
+        view.finishActivity();
+    }
+
+    public void handleUnlock(String userPassword) {
+
     }
 
     private void loadUserSession() {
