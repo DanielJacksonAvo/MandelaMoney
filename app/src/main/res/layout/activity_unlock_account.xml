@@ -28,15 +28,16 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout_unlock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/txt_or"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.333">
+                app:layout_constraintVertical_bias="0.85">
 
                 <ImageView
                     android:id="@+id/img_biometrics_icon_unlock"
@@ -45,45 +46,43 @@
                     android:layout_marginStart="10dp"
                     android:contentDescription="@string/todo"
                     android:elevation="4dp"
-                    android:src="@drawable/img_fingerprint_icon"
+                    android:src="@drawable/img_biometrics_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_biometrics_unlock"
                     style="@style/PrimaryButton"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="0dp"
                     android:paddingHorizontal="40dp"
                     android:text="@string/biometrics"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout_password_unlock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.666">
+                app:layout_constraintTop_toBottomOf="@+id/txt_or"
+                app:layout_constraintVertical_bias="0.15">
 
                 <EditText
                     android:id="@+id/tbx_password_unlock"
                     style="@style/TextBox"
-                    android:layout_width="275dp"
-                    android:layout_height="39dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:autofillHints="@string/password"
                     android:hint="@string/password"
                     android:inputType="textPassword"
@@ -112,7 +111,7 @@
                 android:id="@+id/txt_error_unlock_application"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/email_password_invalid"
+                android:text="@string/invalid_password"
                 android:textColor="@color/mandelaYellow"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -139,16 +138,15 @@
                 android:id="@+id/txt_or"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="29dp"
-                android:layout_marginBottom="33dp"
+                android:fontFamily="@font/dm_sans_medium"
                 android:text="@string/or"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:fontFamily="@font/dm_sans_medium"
-                app:layout_constraintBottom_toTopOf="@+id/constraintLayout_password_unlock"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_unlock" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.55" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -171,9 +169,11 @@
         style="@style/TertiaryButton"
         android:layout_width="167dp"
         android:layout_height="43dp"
-        android:layout_marginTop="-21.5dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:text="@string/unlock"
         android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/blurView_unlock_account"
         app:layout_constraintEnd_toEndOf="@+id/blurView_unlock_account"
         app:layout_constraintStart_toStartOf="@+id/blurView_unlock_account"
         app:layout_constraintTop_toBottomOf="@id/blurView_unlock_account" />
@@ -182,11 +182,11 @@
         android:id="@+id/imageView3_unlock"
         android:layout_width="130dp"
         android:layout_height="105dp"
-        android:layout_marginBottom="-55dp"
         android:contentDescription="@string/mandela_money_logo"
         app:layout_constraintBottom_toTopOf="@+id/blurView_unlock_account"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/blurView_unlock_account"
         app:srcCompat="@drawable/img_mandelamoneylogo" />
 
     <TextView
@@ -201,7 +201,7 @@
         app:layout_constraintEnd_toEndOf="@+id/blurView_unlock_account"
         app:layout_constraintStart_toStartOf="@+id/blurView_unlock_account"
         app:layout_constraintTop_toBottomOf="@+id/btn_unlock"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.19999999" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/unlock_loading_spinner"

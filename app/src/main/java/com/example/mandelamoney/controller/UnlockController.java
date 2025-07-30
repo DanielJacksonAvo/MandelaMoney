@@ -56,7 +56,29 @@ public class UnlockController {
     }
 
     public void handleUnlock(String userPassword) {
+        view.showLoadingSpinner();
+        view.hideErrorMessage();
+        UserSession.loadSession(context);
+        User user = UserSession.getUser();
+        if (user == null) {
+            handleLogout();
+            return;
+        }
+        LoginManager.login(context, user.getUserEmail(), userPassword,
+                () -> {
+                    if (!userPassword.equals(user.getUserPassword())) {
+                        Toast.makeText(context, "Session Expired", Toast.LENGTH_LONG).show();
+                        handleLogout();
+                    } else {
+                        onSuccess();
+                    }
 
+                },
+                () -> {
+                    onFailure();
+                    view.showErrorMessage();
+                }
+        );
     }
 
     private void loadUserSession() {
@@ -65,6 +87,7 @@ public class UnlockController {
 
     private void onSuccess() {
         view.hideLoadingSpinner();
+        view.hideErrorMessage();
         Intent intent = new Intent(context, DashboardActivity.class);
         context.startActivity(intent);
         view.finishActivity();

@@ -92,5 +92,6 @@
     <string name="unlock_app">UNLOCK APP\n</string>
     <string name="or">OR</string>"
     <string name="today">Today</string>"
+    <string name="invalid_password">Invalid Password</string>
 
 </resources>
