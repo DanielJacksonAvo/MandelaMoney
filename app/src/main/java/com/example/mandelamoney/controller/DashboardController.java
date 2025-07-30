@@ -156,7 +156,7 @@ public class DashboardController {
                       user.setUserBalance(updatedBalance);
                       mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
                       refreshAndDisplayTransactions();
-                      TransactionHistoryController.loadTransactions(null, "today", null);}
+                      TransactionHistoryController.loadTransactions(null, null, null);}
 
               }
         }
