@@ -65,6 +65,21 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
 
     }
 
+    protected void onPause() {
+        super.onPause();
+        if (dashboardController != null && dashboardController.DashboardHomeController != null) {
+            dashboardController.DashboardHomeController.stopPolling();
+        }
+    }
+
+    protected void onResume() {
+        super.onResume();
+        if (dashboardController != null && dashboardController.DashboardHomeController != null) {
+            dashboardController.DashboardHomeController.startPolling();
+        }
+
+    }
+
 
     private void displayUserName() {
         if (txtUserName != null) {

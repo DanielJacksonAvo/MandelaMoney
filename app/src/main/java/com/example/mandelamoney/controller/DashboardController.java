@@ -42,7 +42,7 @@ public class DashboardController {
     private final Context context;
     private final User user;
 
-    private int currentFragment = 0; //0 - home, 1 - lock, 2 - settings, 3 - profile
+    private int currentFragment = 0;
 
     public DashboardHomeController DashboardHomeController;
     public TransactionHistoryController TransactionHistoryController;
@@ -95,12 +95,13 @@ public class DashboardController {
     }
 
     private void manageControllers() {
-        if (currentFragment == 0) {
-            DashboardHomeController.startPolling();
-        } else {
-            DashboardHomeController.stopPolling();
+        if (DashboardHomeController != null) {
+            if (currentFragment == 0) {
+                DashboardHomeController.startPolling();
+            } else {
+                DashboardHomeController.stopPolling();
+            }
         }
-
     }
 
     public void handleSelection(int itemId) {
@@ -127,7 +128,7 @@ public class DashboardController {
 
     public class DashboardHomeController {
         private final IHomeDashboardView view;
-        private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        private ScheduledExecutorService scheduler;
         private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
         private ScheduledFuture<?> pollingHandle;
 
@@ -144,7 +145,6 @@ public class DashboardController {
                 }
                 view.displayBalance(user.getUserBalance());
                 view.displayUserName(getUserName());
-                startPolling();
                 refreshAndDisplayTransactions();
             } catch (Exception e) {
                 Log.e("DashboardHomeController", "Error in handleLoadUserToUI", e);
@@ -162,14 +162,20 @@ public class DashboardController {
 
         public void handleBalanceRefresh() {
             if (user != null) {
-                double previousBalance = user.getUserBalance();
-                double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
-                if (updatedBalance != previousBalance) {
-                    user.setUserBalance(updatedBalance);
-                    mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                    refreshAndDisplayTransactions();
-                    TransactionHistoryController.loadTransactions(null, null, null);
-                }
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    double previousBalance = user.getUserBalance();
+                    double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
+                    if (updatedBalance != previousBalance) {
+                        user.setUserBalance(updatedBalance);
+                        mainThreadHandler.post(() -> {
+                            view.displayBalance(updatedBalance);
+                            refreshAndDisplayTransactions();
+                            if (TransactionHistoryController != null) {
+                                TransactionHistoryController.loadTransactions(null, null, null);
+                            }
+                        });
+                    }
+                });
             }
         }
 
@@ -187,15 +193,22 @@ public class DashboardController {
         }
 
         public void startPolling() {
-            if (pollingHandle != null && !pollingHandle.isDone()) {
+            if (scheduler == null || scheduler.isShutdown() || scheduler.isTerminated()) {
+                Log.d("DashboardHomeController", "Initializing new ScheduledExecutorService for polling.");
+                scheduler = Executors.newSingleThreadScheduledExecutor();
+            }
+
+            if (pollingHandle != null && !pollingHandle.isDone() && !pollingHandle.isCancelled()) {
+                Log.d("DashboardHomeController", "Polling already running. Skipping start.");
                 return;
             }
 
+            Log.d("DashboardHomeController", "Starting polling...");
             Runnable statusChecker = () -> {
                 try {
                     handleBalanceRefresh();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("DashboardHomeController", "Error in polling task", e);
                 }
             };
 
@@ -203,28 +216,13 @@ public class DashboardController {
         }
 
         public void stopPolling() {
+            Log.d("DashboardHomeController", "Stopping polling...");
             if (pollingHandle != null) {
                 pollingHandle.cancel(true);
                 pollingHandle = null;
-                cleanup();
             }
         }
 
-        public void cleanup() {
-            stopPolling();
-            if (scheduler != null && !scheduler.isShutdown()) {
-                scheduler.shutdown();
-                try {
-                    if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
-                        scheduler.shutdownNow();
-                    }
-                } catch (InterruptedException ie) {
-                    scheduler.shutdownNow();
-                    Thread.currentThread().interrupt();
-                }
-            }
-            mainThreadHandler.removeCallbacksAndMessages(null);
-        }
 
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
@@ -282,7 +280,12 @@ public class DashboardController {
                                      @Nullable String period,
                                      @Nullable String type) {
             new Thread(() -> {
-                String userEmail = UserSession.getUser().getUserEmail();
+                User currentUser = UserSession.getUser();
+                if (currentUser == null) {
+                    Log.e("THController", "User is null, cannot load transactions.");
+                    return;
+                }
+                String userEmail = currentUser.getUserEmail();
                 Log.d("THController", "loadTransactions() called. Query=" + searchQuery + " Period=" + period + " Type=" + type + " User=" + userEmail);
 
                 boolean periodAll = isAll(period);
@@ -302,13 +305,10 @@ public class DashboardController {
                     Log.d("THController", "Fetched " + rawList.size() + " transactions using getTransactionHistoryWithFilters()");
                 }
 
-                // Format
                 Log.d("THController", "Formatting transactions...");
                 List<TransactionDetails> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
                 Log.d("THController", "Formatting complete. Total: " + formattedList.size());
 
-                // Apply search
-                // Apply search by displayName
                 if (searchQuery != null && !searchQuery.trim().isEmpty()) {
                     Log.d("THController", "Applying search: " + searchQuery);
                     String query = searchQuery.trim().toLowerCase();
@@ -327,7 +327,6 @@ public class DashboardController {
                     Log.d("THController", "Search filter done. Remaining: " + formattedList.size());
                 }
 
-                // Cache
                 UserSession.setCachedTransactionHistory(formattedList);
                 List<TransactionDetails> finalFormattedList = formattedList;
                 mainThreadHandler.post(() -> {
@@ -347,8 +346,4 @@ public class DashboardController {
                     s.equalsIgnoreCase("any");
         }
     }
-
-
-
 }
-
