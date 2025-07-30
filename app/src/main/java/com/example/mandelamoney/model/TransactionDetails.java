@@ -6,15 +6,25 @@ public class TransactionDetails {
     private float amount;
     private final String date;
     private final String time;
+    private String displayName;
     private boolean selfTransaction;
     // Constructor
-    public TransactionDetails(String toUser, String fromUser, float amount, String date, String time) {
+    public TransactionDetails(String fromUser, String toUser, float amount, String date, String time) {
         this.toUser = toUser;
         this.fromUser = fromUser;
         this.amount = amount;
         this.date = date;
         this.time = time;
+        this.displayName ="";
 
+    }
+    public TransactionDetails(String fromUser, String toUser, float amount, String date, String time, Boolean selfTransaction){
+        this.toUser = toUser;
+        this.fromUser = fromUser;
+        this.amount = amount;
+        this.date = date;
+        this.time = time;
+        this.selfTransaction = selfTransaction;
     }
 
     public String getToUser() { return toUser; }
@@ -40,4 +50,11 @@ public class TransactionDetails {
         this.amount = amount;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 }

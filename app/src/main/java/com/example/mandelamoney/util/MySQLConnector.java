@@ -429,7 +429,10 @@ public class MySQLConnector {
                 String time = rs.getString("time");
 
                 Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
-                transactions.add(new TransactionDetails(from, to, amount, date, time));
+                if(from.equals(userEmail)&&to.equals(userEmail)){
+                    transactions.add(new TransactionDetails(from, to, amount, date, time, true));
+                }else{
+                transactions.add(new TransactionDetails(from, to, amount, date, time,false));}
                 transactionCount++;
             }
 
@@ -465,7 +468,11 @@ public class MySQLConnector {
                 String date = rs.getString("date");
                 String time = rs.getString("time");
                 Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
-                transactions.add(new TransactionDetails(from, to, amount, date, time));
+                if(from.equals(userEmail)&&to.equals(userEmail)){
+                    transactions.add(new TransactionDetails(from, to, amount, date, time, true));
+                }else {
+                    transactions.add(new TransactionDetails(from, to, amount, date, time, false));
+                }
                 transactionCount++;
             }
 

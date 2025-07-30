@@ -47,13 +47,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         String toUser = transaction.getToUser();
         String displayName;
 
-        if (fromUser.equals(currentUserEmail)) {
-            displayName = toUser != null ? toUser : "Unknown";
-        } else {
-            displayName = fromUser;
-        }
+        holder.txtToFrom.setText(transaction.getDisplayName());
 
-        holder.txtToFrom.setText(displayName);
         float amount = transaction.getAmount();
         String amountText;
         int amountColor;
