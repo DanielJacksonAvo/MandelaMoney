@@ -86,6 +86,12 @@
     <string name="last_month">Last Month</string>
     <string name="last_year">Last Year</string>
     <string name="withdraw_wo">Withdraw</string>
+    <string name="unlock">UNLOCK</string>
+    <string name="logout">LOG OUT</string>
+    <string name="biometrics">Biometrics</string>
+    <string name="unlock_app">UNLOCK APP\n</string>
+    <string name="or">OR</string>"
     <string name="today">Today</string>"
+    <string name="invalid_password">Invalid Password</string>
 
 </resources>

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.controller.MakePaymentController;
 import com.example.mandelamoney.controller.RequestPaymentController;
 import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 
@@ -42,10 +44,15 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
 
     private boolean isTabletLandscape = false;
 
+    public HomeDashboardFragment() {
 
-    public HomeDashboardFragment(DashboardController controller) {
+    }
+
+    public void setController(DashboardController controller) {
         this.controller = controller;
-        controller.createDashboardHomeController(this);
+        if (this.controller != null) {
+            this.controller.createDashboardHomeController(this);
+        }
     }
 
     @Override
@@ -96,13 +103,23 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     }
 
     private void setupRecycler() {
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        if (adapter == null) {
-            adapter = new TransactionAdapter(new ArrayList<>(), UserSession.getUser().getUserEmail());
-            recyclerView.setAdapter(adapter);
-            controller.DashboardHomeController.refreshAndDisplayTransactions();
+        if (recyclerView != null) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            User user = UserSession.getUser();
+
+            if (user == null) {
+                Log.e("HomeDashboardFragment", "User is null in setupRecycler()");
+                return;
+            }
+
+            if (adapter == null) {
+                adapter = new TransactionAdapter(new ArrayList<>(), user.getUserEmail());
+                recyclerView.setAdapter(adapter);
+                controller.DashboardHomeController.refreshAndDisplayTransactions();
+            }
         }
     }
+
 
     private void connectToUITablet(View rootView) {
         txtBalance = rootView.findViewById(R.id.txt_user_account_balance);
