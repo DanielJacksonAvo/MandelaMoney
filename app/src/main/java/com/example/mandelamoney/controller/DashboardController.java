@@ -70,6 +70,7 @@ public class DashboardController {
         UserSession.clearSession();
         Intent intent = new Intent(context, UnlockActivity.class);
         context.startActivity(intent);
+        view.finishActivity();
         manageControllers();
     }
 
