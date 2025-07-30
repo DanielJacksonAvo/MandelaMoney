@@ -65,6 +65,12 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dashboardController.handleLock();
+    }
+
     private void displayUserName() {
         if (txtUserName != null) {
             dashboardController.handleLoadUserToUITablet();
