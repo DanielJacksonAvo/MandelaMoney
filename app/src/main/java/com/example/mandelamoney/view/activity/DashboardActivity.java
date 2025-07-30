@@ -1,5 +1,6 @@
 package com.example.mandelamoney.view.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DashboardController;
+import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.fragment.HomeDashboardFragment;
 import com.example.mandelamoney.view.fragment.ProfileDashboardFragment;
@@ -98,6 +100,10 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
 
     @Override
     public void displayLock() {
+        UserSession.saveSession(this);
+        UserSession.clearSession();
+        Intent intent = new Intent(this, UnlockActivity.class);
+        startActivity(intent);
 
     }
 

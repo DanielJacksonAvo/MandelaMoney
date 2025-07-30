@@ -94,4 +94,8 @@ dependencies {
     implementation (libs.camera.lifecycle)
     implementation (libs.camera.view)
     implementation(libs.zxing.android.embedded)
+    implementation(libs.security.crypto.v100)
+    implementation(libs.gson)
+    implementation(libs.biometric)
+
 }
