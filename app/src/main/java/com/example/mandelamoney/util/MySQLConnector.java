@@ -125,9 +125,9 @@ public class MySQLConnector {
         return false;
     }
 
-    public static void AppStartUpConnection(Context context) {
+    public static Boolean AppStartUpConnection(Context context) {
         initializeUiHandler(context.getApplicationContext());
-        connectToDB(context);
+        return connectToDB(context);
     }
 
     private static synchronized Connection getConnection(Context context) {
@@ -429,7 +429,10 @@ public class MySQLConnector {
                 String time = rs.getString("time");
 
                 Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
-                transactions.add(new TransactionDetails(from, to, amount, date, time));
+                if(from.equals(userEmail)&&to.equals(userEmail)){
+                    transactions.add(new TransactionDetails(from, to, amount, date, time, true));
+                }else{
+                transactions.add(new TransactionDetails(from, to, amount, date, time,false));}
                 transactionCount++;
             }
 
@@ -465,7 +468,11 @@ public class MySQLConnector {
                 String date = rs.getString("date");
                 String time = rs.getString("time");
                 Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
-                transactions.add(new TransactionDetails(from, to, amount, date, time));
+                if(from.equals(userEmail)&&to.equals(userEmail)){
+                    transactions.add(new TransactionDetails(from, to, amount, date, time, true));
+                }else {
+                    transactions.add(new TransactionDetails(from, to, amount, date, time, false));
+                }
                 transactionCount++;
             }
 
@@ -562,8 +569,8 @@ public class MySQLConnector {
                 try (ResultSet rs = stmt.getResultSet()) {
                     if (rs.next()) {
                         details = new TransactionDetails(
-                                rs.getString("toUser"),
                                 rs.getString("fromUser"),
+                                rs.getString("toUser"),
                                 rs.getFloat("transactionAmount"),
                                 rs.getString("formattedDate"),
                                 rs.getString("formattedTime")

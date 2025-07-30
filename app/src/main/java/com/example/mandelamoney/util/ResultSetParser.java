@@ -33,7 +33,7 @@ public class ResultSetParser {
             } else {
                 if (userType == 1) {
                     user = new Student(userEmail, userPassword, userBalance, col3, col4, col5);
-                } else if (userType == 0) {
+                } else if (userType == 2) {
                     user = new Business(userEmail, userPassword, userBalance, col3, col4, col5);
                 }
             }

@@ -39,14 +39,12 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
             return insets;
         });
 
-        // Get controller
         if (DataShare.receive() instanceof MakePaymentController) {
             MakePaymentController makePaymentController = (MakePaymentController) DataShare.receive();
         } else if (DataShare.receive() instanceof RequestPaymentController) {
             RequestPaymentController requestPaymentController = (RequestPaymentController) DataShare.receive();
         }
 
-        // Extract Intent data
         transactionId = getIntent().getIntExtra("TRANSACTION_ID", 0);
         String errorReason = getIntent().getStringExtra("ERROR_REASON");
 
@@ -57,24 +55,30 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
         Button btn_close = findViewById(R.id.btn_generate_qr_failed);
         configureCloseButton(btn_close);
         if (transactionId != 0) {
-            fetchDataAndPopulateUI();
+            new Thread(this::fetchDataAndPopulateUI).start();
         } else {
             Toast.makeText(this, "Transaction ID missing. Cannot load transaction details.", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void fetchDataAndPopulateUI() {
+        final TransactionDetails txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
 
-        TransactionDetails txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
         if (txnDetails != null) {
-            UserDetails fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);
-            UserDetails toUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getToUser(), this);
+            final UserDetails fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);
+            final UserDetails toUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getToUser(), this);
 
-            displayAmount(txnDetails.getAmount());
-            displayFromUserName(fromUser.getFirstName() + " " + fromUser.getLastName());
-            displayFromUserNumber(fromUser.getNumber());
-            displayToUserName(toUser.getFirstName() + " " + toUser.getLastName());
-            displayToUserNumber(toUser.getNumber());
+            runOnUiThread(() -> {
+                displayAmount(txnDetails.getAmount());
+                if (fromUser != null) {
+                    displayFromUserName(fromUser.getFirstName() + " " + fromUser.getLastName());
+                    displayFromUserNumber(fromUser.getNumber());
+                }
+                if (toUser != null) {
+                    displayToUserName(toUser.getFirstName() + " " + toUser.getLastName());
+                    displayToUserNumber(toUser.getNumber());
+                }
+            });
         }
     }
 
@@ -117,7 +121,7 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
     }
 
     public void displayErrorMessage(String reason) {
-        TextView tbx = findViewById(R.id.txt_errormessage_failed); // Ensure this ID matches XML
+        TextView tbx = findViewById(R.id.txt_errormessage_failed);
         tbx.setText(reason);
     }
 }

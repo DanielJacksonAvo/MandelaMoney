@@ -43,19 +43,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         TransactionDetails transaction = transactionList.get(position);
         holder.txtDate.setText(transaction.getDate());
         holder.txtTime.setText(transaction.getTime());
-
-        // Display name already formatted in the controller
         String fromUser = transaction.getFromUser();
         String toUser = transaction.getToUser();
         String displayName;
 
-        if (fromUser.equals(currentUserEmail)) {
-            displayName = toUser != null ? toUser : "Unknown";
-        } else {
-            displayName = fromUser;
-        }
+        holder.txtToFrom.setText(transaction.getDisplayName());
 
-        holder.txtToFrom.setText(displayName);
         float amount = transaction.getAmount();
         String amountText;
         int amountColor;

@@ -54,9 +54,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         });
 
         loginController = new LoginController(this, this);
-
-        // This is the crucial part: determine which layout was loaded
-        // by checking for a view that is unique to the tablet layout.
         View tabletSpecificViewCheck = findViewById(R.id.blurView_login1);
 
         if (tabletSpecificViewCheck != null) {
@@ -92,14 +89,12 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     }
 
     private void setupTabletUI() {
-        // Note the ID for the login button is different in the tablet layout
         btnLogin = findViewById(R.id.btn_login3);
         tbxUserEmail = findViewById(R.id.tbx_email_login);
         tbxUserPassword = findViewById(R.id.tbx_password_login);
         txtError = findViewById(R.id.txt_error_login);
         imgPasswordIcon = findViewById(R.id.img_password_login);
         btnForgotPassword = findViewById(R.id.btn_forgotPassword_login);
-        // Note the ID for the signup button is different in the tablet layout
         btnSignup = findViewById(R.id.btn_signup_login2);
 
         if (btnLogin != null && tbxUserEmail != null && tbxUserPassword != null) {
@@ -121,12 +116,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             btnLogin.setOnClickListener((view) -> {
                 String userEmail = toLowerCase(String.valueOf(tbxUserEmail.getText()));
                 String userPassword = String.valueOf(tbxUserPassword.getText());
-                try {
-                    loginController.handleLogin(userEmail, userPassword);
-                } catch (SQLException e) {
-                    Log.e("LoginActivity", "SQL Exception during login: " + e.getMessage());
-                    throw new RuntimeException(e);
-                }
+                loginController.handleLogin(userEmail, userPassword);
             });
         } else {
             Log.e("LoginActivity", "Login button is null in configureLoginButton.");
