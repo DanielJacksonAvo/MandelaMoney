@@ -84,6 +84,8 @@ public class MakePaymentScanQrActivity extends AppCompatActivity implements ISca
 
     @Override public void showErrorMessage() {}
     @Override public void hideErrorMessage() {}
-    @Override public void finishActivity() {}
+    @Override public void finishActivity() {
+        runOnUiThread(this::finish);
+    }
 }
 
