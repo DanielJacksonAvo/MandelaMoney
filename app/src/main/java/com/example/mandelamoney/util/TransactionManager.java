@@ -17,7 +17,12 @@ public class TransactionManager {
     public static List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
         Log.d("THController", "formatTransactionHistory(): received " + transactionList.size() + " transactions");
 
-        String currentUserEmail = UserSession.getUser().getUserEmail();
+        User user = UserSession.getUser();
+        if (user == null) {
+            Log.e("THController", "User is null in formatTransactionHistory()");
+            return transactionList;  // Return as-is to avoid crash, or you can handle this scenario as needed
+        }
+        String currentUserEmail = user.getUserEmail();
         Set<String> emailsToLookup = new HashSet<>();
 
         // Collect emails to lookup
