@@ -189,6 +189,7 @@
         app:layout_constraintVertical_bias="0.2" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/login_loading_spinner"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:elevation="999dp"
@@ -199,7 +200,6 @@
         android:visibility="gone">
 
         <View
-            android:id="@+id/dimOverlay"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="#8D000000"
@@ -213,7 +213,6 @@
 
 
         <ProgressBar
-            android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
