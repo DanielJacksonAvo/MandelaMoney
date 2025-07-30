@@ -50,6 +50,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
         });
 
         unlockController = new UnlockController(this, this);
+        setupPhoneUI();
        // View tabletSpecificViewCheck = findViewById(R.id.blurView_unlock_account);
 //        if (tabletSpecificViewCheck != null) {
 //            Log.d("LoginActivity", "Tablet layout (layout-sw600dp) loaded.");
