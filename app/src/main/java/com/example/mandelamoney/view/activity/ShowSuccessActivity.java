@@ -47,7 +47,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
         transactionId = getIntent().getIntExtra("TRANSACTION_ID", 0);
 
         if (transactionId != 0) {
-            fetchDataAndPopulateUI();
+            new Thread(this::fetchDataAndPopulateUI).start();
         }
 
         Button btnClose = findViewById(R.id.btn_generate_qr_success);
@@ -58,17 +58,23 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
     }
 
     private void fetchDataAndPopulateUI() {
-        TransactionDetails txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
+        final TransactionDetails txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
 
         if (txnDetails != null) {
-            UserDetails fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);
-            UserDetails toUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getToUser(), this);
+            final UserDetails fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);
+            final UserDetails toUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getToUser(), this);
 
-            displayAmount(txnDetails.getAmount());
-            displayFromUserName(fromUser.getFirstName() + " " + fromUser.getLastName());
-            displayFromUserNumber(fromUser.getNumber());
-            displayToUserName(toUser.getFirstName() + " " + toUser.getLastName());
-            displayToUserNumber(toUser.getNumber());
+            runOnUiThread(() -> {
+                displayAmount(txnDetails.getAmount());
+                if (fromUser != null) {
+                    displayFromUserName(fromUser.getFirstName() + " " + fromUser.getLastName());
+                    displayFromUserNumber(fromUser.getNumber());
+                }
+                if (toUser != null) {
+                    displayToUserName(toUser.getFirstName() + " " + toUser.getLastName());
+                    displayToUserNumber(toUser.getNumber());
+                }
+            });
         }
     }
 
