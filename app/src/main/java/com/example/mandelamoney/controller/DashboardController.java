@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -148,21 +149,15 @@ public class DashboardController {
         }
 
         public void handleBalanceRefresh() {
-          try{
               if (user != null) {
-                double previousBalance = user.getUserBalance();
-                double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
-
-                if (updatedBalance != previousBalance) {
-                    user.setUserBalance(updatedBalance);
-                    mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                    TransactionHistoryController.loadTransactions(null, "today", null);}
-               } catch (Exception e) {
-                throw new RuntimeException(e);}
-          }
-
-             
-     
+                  double previousBalance = user.getUserBalance();
+                  double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
+                  if (updatedBalance != previousBalance) {
+                      user.setUserBalance(updatedBalance);
+                      mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
+                      refreshAndDisplayTransactions();
+                  }
+              }
         }
 
         public void handleMakePayment() {
@@ -218,51 +213,12 @@ public class DashboardController {
             mainThreadHandler.removeCallbacksAndMessages(null);
         }
 
-        // This method is specifically for formatting and displaying transactions on the Dashboard Home view
-        public List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
-            String currentUserEmail = UserSession.getUser().getUserEmail();
-            Set<String> emailsToLookup = new HashSet<>();
 
-            for (TransactionDetails tx : transactionList) {
-                String from = tx.getFromUser();
-                String to = tx.getToUser();
-
-                boolean isSelf = from.equals(currentUserEmail) && to.equals(currentUserEmail);
-                tx.setSelfTransaction(isSelf);
-
-                if (from.equals(currentUserEmail)) {
-                    emailsToLookup.add(to);
-                }
-
-                if (to.equals(currentUserEmail)) {
-                    emailsToLookup.add(from);
-                }
-            }
-
-            Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup, context);
-
-            for (TransactionDetails tx : transactionList) {
-                String from = tx.getFromUser();
-                String to = tx.getToUser();
-
-                tx.setFromUser(emailToDisplayName.getOrDefault(from, from));
-                tx.setToUser(emailToDisplayName.getOrDefault(to, to));
-
-                if (to.equals(currentUserEmail) && !tx.isSelfTransaction()) {
-                    tx.setAmount(tx.getAmount() * -1);
-                }
-            }
-
-            return transactionList;
-        }
-
-        // This method fetches and displays transactions for the Dashboard Home view
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
                 String email = UserSession.getUser().getUserEmail();
-                // Changed to get transactions for 'Last Week'
                 List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(email, "Last Week", "All", context);
-                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
+                List<TransactionDetails> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
                 UserSession.setCachedTransactionHistory(formattedList);
 
                 mainThreadHandler.post(() -> {
@@ -333,7 +289,7 @@ public class DashboardController {
 
                 // Format
                 Log.d("THController", "Formatting transactions...");
-                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
+                List<TransactionDetails> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
                 Log.d("THController", "Formatting complete. Total: " + formattedList.size());
 
                 // Apply search
@@ -377,7 +333,15 @@ public class DashboardController {
         }
 
 
-        public List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
+
+
+
+
+
+    }
+
+    private static class TransactionManager {
+        public static List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
             Log.d("THController", "formatTransactionHistory(): received " + transactionList.size() + " transactions");
 
             String currentUserEmail = UserSession.getUser().getUserEmail();
@@ -428,9 +392,7 @@ public class DashboardController {
             return transactionList;
         }
 
-
-
-        private void setSelfTransactionName(TransactionDetails tx) {
+        private static void setSelfTransactionName(TransactionDetails tx) {
             User user = UserSession.getUser();
             if (user instanceof Student) {
                 String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
@@ -442,6 +404,8 @@ public class DashboardController {
             tx.setSelfTransaction(true);
             Log.d("THController", "Setting self-transaction name with from user: "+tx.getFromUser() + "to user: "+tx.getToUser());
         }
+
+
     }
 
 
