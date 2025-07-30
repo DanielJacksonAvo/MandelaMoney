@@ -19,6 +19,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp.Light">
+        <activity
+            android:name="com.example.mandelamoney.view.activity.UnlockActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity android:name="com.example.mandelamoney.view.activity.ResetPasswordActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
@@ -82,13 +86,11 @@
         <activity
             android:name="com.example.mandelamoney.view.activity.LoginActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.example.mandelamoney.view.activity.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
-            >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

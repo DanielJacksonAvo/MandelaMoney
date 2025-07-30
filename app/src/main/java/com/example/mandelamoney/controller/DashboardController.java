@@ -13,6 +13,7 @@ import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.TransactionDetails;
 import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.TransactionManager;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.MySQLConnector;
@@ -21,6 +22,7 @@ import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
+import com.example.mandelamoney.view.activity.UnlockActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +64,12 @@ public class DashboardController {
 
     public void handleLock() {
         currentFragment = 1;
-        view.displayLock();
+        if (UserSession.getUser() != null) {
+            UserSession.saveSession(context);
+        }
+        UserSession.clearSession();
+        Intent intent = new Intent(context, UnlockActivity.class);
+        context.startActivity(intent);
         manageControllers();
     }
 
@@ -129,14 +136,18 @@ public class DashboardController {
 
         public void handleLoadUserToUI() {
             try {
+                User user = UserSession.getUser();
+                if (user == null) {
+                    Log.e("DashboardHomeController", "User is null! Cannot load user data.");
+                    return;
+                }
                 view.displayBalance(user.getUserBalance());
                 view.displayUserName(getUserName());
                 startPolling();
                 refreshAndDisplayTransactions();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                Log.e("DashboardHomeController", "Error in handleLoadUserToUI", e);
             }
-
         }
 
         public String getUserName() {
@@ -149,16 +160,16 @@ public class DashboardController {
         }
 
         public void handleBalanceRefresh() {
-              if (user != null) {
-                  double previousBalance = user.getUserBalance();
-                  double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
-                  if (updatedBalance != previousBalance) {
-                      user.setUserBalance(updatedBalance);
-                      mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                      refreshAndDisplayTransactions();
-                      TransactionHistoryController.loadTransactions(null, null, null);}
-
-              }
+            if (user != null) {
+                double previousBalance = user.getUserBalance();
+                double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
+                if (updatedBalance != previousBalance) {
+                    user.setUserBalance(updatedBalance);
+                    mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
+                    refreshAndDisplayTransactions();
+                    TransactionHistoryController.loadTransactions(null, null, null);
+                }
+            }
         }
 
         public void handleMakePayment() {
@@ -214,10 +225,16 @@ public class DashboardController {
             mainThreadHandler.removeCallbacksAndMessages(null);
         }
 
-
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
-                String email = UserSession.getUser().getUserEmail();
+                User user = UserSession.getUser();
+
+                if (user == null) {
+                    Log.e("DashboardHomeController", "User is null, cannot refresh and display transactions.");
+                    return;
+                }
+
+                String email = user.getUserEmail();
                 List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(email, "Last Week", "All", context);
                 List<TransactionDetails> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
                 UserSession.setCachedTransactionHistory(formattedList);
@@ -229,13 +246,9 @@ public class DashboardController {
                 });
             }).start();
         }
-    }
-
-
-
-    private class DashboardLockController {
 
     }
+
 
     private class DashboardSettingsController {
 
@@ -332,74 +345,6 @@ public class DashboardController {
                     s.equalsIgnoreCase("all") ||
                     s.equalsIgnoreCase("any");
         }
-    }
-
-    private static class TransactionManager {
-        public static List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
-            Log.d("THController", "formatTransactionHistory(): received " + transactionList.size() + " transactions");
-
-            String currentUserEmail = UserSession.getUser().getUserEmail();
-            Set<String> emailsToLookup = new HashSet<>();
-
-            // Collect emails to lookup
-            for (TransactionDetails tx : transactionList) {
-                Log.d("THController", "Before format: " + tx.toString());
-
-                if (tx.isSelfTransaction()) {
-                    Log.d("THController", "Self transaction detected for " + currentUserEmail + ", fromUser=" + tx.getFromUser() + ", toUser=" + tx.getToUser());
-                } else {
-                    if (tx.getFromUser().equals(currentUserEmail)) {
-                        emailsToLookup.add(tx.getToUser());
-                        Log.d("THController","Adding toUser " + tx.getToUser() + " to lookup (fromUser is current user)");
-                    }
-                    if (tx.getToUser().equals(currentUserEmail)) {
-                        emailsToLookup.add(tx.getFromUser());
-                        Log.d("THController","Adding fromUser " + tx.getFromUser() + " to lookup (toUser is current user)");
-                    }
-                }
-            }
-
-            Log.d("THController", "Emails to lookup: " + emailsToLookup);
-
-            // Get display names for other users
-            Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup, context);
-
-            // Format each transaction
-            for (TransactionDetails tx : transactionList) {
-                if (tx.isSelfTransaction()) {
-                    setSelfTransactionName(tx);
-                } else {
-                    if (tx.getFromUser().equals(currentUserEmail)) {
-                        String displayName = emailToDisplayName.getOrDefault(tx.getToUser(), tx.getToUser());
-                        Log.d("THController", "Outgoing: replacing " + tx.getToUser() + " with " + displayName);
-                        tx.setDisplayName(displayName);
-                        tx.setAmount(tx.getAmount() * -1);
-                    } else if (tx.getToUser().equals(currentUserEmail)) {
-                        String displayName = emailToDisplayName.getOrDefault(tx.getFromUser(), tx.getFromUser());
-                        Log.d("THController", "Incoming: replacing " + tx.getFromUser() + " with " + displayName);
-                        tx.setDisplayName(displayName);
-
-                    }
-
-                }
-            }
-            return transactionList;
-        }
-
-        private static void setSelfTransactionName(TransactionDetails tx) {
-            User user = UserSession.getUser();
-            if (user instanceof Student) {
-                String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
-                tx.setDisplayName(fullname);
-            } else if (user instanceof Business) {
-                String name = ((Business) user).getBusinessName();
-                tx.setDisplayName(name);
-            }
-            tx.setSelfTransaction(true);
-            Log.d("THController", "Setting self-transaction name with from user: "+tx.getFromUser() + "to user: "+tx.getToUser());
-        }
-
-
     }
 
 

@@ -1,7 +1,7 @@
 package com.example.mandelamoney.view.activity;
 
+import android.content.Intent;
 import static java.security.AccessController.getContext;
-
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -97,17 +97,14 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
 
     @Override
     public void displayHome() {
-        selectedFragment = new HomeDashboardFragment(dashboardController);
+        selectedFragment = new HomeDashboardFragment();
+        ((HomeDashboardFragment)selectedFragment).setController(dashboardController);
         if (selectedFragment != null) {
             loadFragment(selectedFragment);
         }
 
     }
 
-    @Override
-    public void displayLock() {
-
-    }
 
     @Override
     public void displaySettings() {
@@ -149,7 +146,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     }
 
     public void loadFragmentExtra(Fragment fragment) {
-        if (checkTablet()) {
+        if (checkTablet() && findViewById(R.id.dashboardFrameExtra) != null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.dashboardFrameExtra, fragment)
                     .commit();
@@ -158,9 +155,12 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     }
 
     private void loadFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.dashboardFrame, fragment)
-                .commit();
+        if (findViewById(R.id.dashboardFrame) != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.dashboardFrame, fragment)
+                    .commit();
+        }
+
     }
 
     public boolean checkTablet() {

@@ -9,12 +9,14 @@ import android.util.Log;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.LoginManager;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.ILoginView;
 import com.example.mandelamoney.view.activity.CreateAccountSelectUserTypeActivity;
 import com.example.mandelamoney.view.activity.DashboardActivity;
 import com.example.mandelamoney.view.activity.ForgotPasswordActivity;
+import com.example.mandelamoney.view.activity.UnlockActivity;
 
 import java.sql.SQLException;
 
@@ -26,17 +28,22 @@ public class LoginController {
     public LoginController(Context context, ILoginView view) {
         this.context = context;
         this.view = view;
+        checkForExistingSession();
 
     }
 
     public void handleLogin(String userEmail, String userPassword) {
+        view.showLoadingSpinner();
         if ((userEmail.length() < 5) || (userPassword.length() < 5))
         {
             view.showErrorMessage();
             return;
         }
 
-        new LoginTask().execute(userEmail, userPassword);
+        LoginManager.login(context, userEmail, userPassword,
+                this::onSuccess
+                ,this::onFailure
+        );
     }
 
     public void handleForgotPassword(){
@@ -52,43 +59,26 @@ public class LoginController {
 
     }
 
-    private class LoginTask extends AsyncTask<String, Void, Object[]> {
+    private void onSuccess() {
+        view.hideLoadingSpinner();
+        Intent intent = new Intent(context, DashboardActivity.class);
+        context.startActivity(intent);
+        view.finishActivity();
+    }
 
-        @Override
-        protected Object[] doInBackground(String... params) {
-            String userEmail = params[0];
-            String userPassword = params[1];
-            return MySQLConnector.validateEmailPassword(userEmail, userPassword, context);
-        }
+    private void onFailure() {
+        view.hideLoadingSpinner();
+        view.showErrorMessage();
+    }
 
-        @Override
-        protected void onPostExecute(Object[] objs) {
-            if(objs == null || !((boolean) objs[1])) {
-                view.showErrorMessage();
-                return;
-            }
-
-            User user = (User) objs[0];
-
-            if (user == null) {
-                view.showErrorMessage();
-                return;
-            }
-
-            view.hideErrorMessage();
-            UserSession.setUser(user);
-            SharedPreferences prefs = context.getSharedPreferences("user_session", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("userEmail", user.getUserEmail());
-            if (user instanceof Student) {
-                editor.putString("userType", "student");
-            } else if (user instanceof Business) {
-                editor.putString("userType", "business");
-            }
-            editor.apply();
-            Intent intent = new Intent(context, DashboardActivity.class);
+    private void checkForExistingSession() {
+        if (UserSession.isSessionExists(context)) {
+            Intent intent = new Intent(context, UnlockActivity.class);
             context.startActivity(intent);
             view.finishActivity();
         }
+
     }
+
+
 }
