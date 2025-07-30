@@ -432,7 +432,7 @@ public class MySQLConnector {
                 if(from.equals(userEmail)&&to.equals(userEmail)){
                     transactions.add(new TransactionDetails(from, to, amount, date, time, true));
                 }else{
-                transactions.add(new TransactionDetails(from, to, amount, date, time));}
+                transactions.add(new TransactionDetails(from, to, amount, date, time,false));}
                 transactionCount++;
             }
 
