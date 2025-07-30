@@ -84,13 +84,13 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
 
     private void configureBiometricsButton(Button btnBiometrics) {
         if(btnBiometrics != null){
-           // btnBiometrics.setOnClickListener((view)-> unlockController.handleBiometrics());
+            btnBiometrics.setOnClickListener((view)-> unlockController.handleBiometrics());
         }
     }
 
     private void configureLogoutButton(TextView btnLogOut) {
         if(btnLogOut != null){
-          //  btnLogOut.setOnClickListener((view)-> unlockController.handleLogout());
+           btnLogOut.setOnClickListener((view)-> unlockController.handleLogout());
         }
     }
 
@@ -149,7 +149,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
         if (btnUnlock != null) {
             btnUnlock.setOnClickListener((view) -> {
                 String userPassword = String.valueOf(tbxUserPassword.getText());
-                // unlockController.handleUnlock(userPassword);
+                unlockController.handleUnlock(userPassword);
             });
         }else {
             Log.e("UnlockActivity", "Unlock button is null in configureUnlockButton.");
