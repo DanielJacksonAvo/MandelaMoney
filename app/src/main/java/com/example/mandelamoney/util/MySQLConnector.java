@@ -125,9 +125,9 @@ public class MySQLConnector {
         return false;
     }
 
-    public static void AppStartUpConnection(Context context) {
+    public static Boolean AppStartUpConnection(Context context) {
         initializeUiHandler(context.getApplicationContext());
-        connectToDB(context);
+        return connectToDB(context);
     }
 
     private static synchronized Connection getConnection(Context context) {

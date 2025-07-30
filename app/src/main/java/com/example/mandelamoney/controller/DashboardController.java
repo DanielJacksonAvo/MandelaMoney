@@ -39,7 +39,7 @@ public class DashboardController {
     private final Context context;
     private final User user;
 
-    private int currentFragment = -1; //0 - home, 1 - lock, 2 - settings, 3 - profile
+    private int currentFragment = 0; //0 - home, 1 - lock, 2 - settings, 3 - profile
 
     public DashboardHomeController DashboardHomeController;
     public TransactionHistoryController TransactionHistoryController;
@@ -77,8 +77,12 @@ public class DashboardController {
         manageControllers();
     }
     public void handleViewTransactionHistory() {
-        view.displayTransactionHistoryScreen();
+        view.displayTabletTransactionHistoryScreen();
         manageControllers();
+    }
+
+    public void handleLoadUserToUITablet() {
+        view.displayUserNameTablet(DashboardHomeController.getUserName());
     }
 
     private void manageControllers() {
@@ -111,9 +115,6 @@ public class DashboardController {
         TransactionHistoryController = new TransactionHistoryController(view);
     }
 
-    public void handleLoadUserToUITablet() {
-        view.displayUserNameTablet(DashboardHomeController.getUserName());
-    }
 
     public class DashboardHomeController {
         private final IHomeDashboardView view;
@@ -126,9 +127,15 @@ public class DashboardController {
         }
 
         public void handleLoadUserToUI() {
-            view.displayBalance(user.getUserBalance());
-            view.displayUserName(getUserName());
-            startPolling();
+            try {
+                view.displayBalance(user.getUserBalance());
+                view.displayUserName(getUserName());
+                startPolling();
+                refreshAndDisplayTransactions();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
         }
 
         public String getUserName() {
@@ -141,16 +148,21 @@ public class DashboardController {
         }
 
         public void handleBalanceRefresh() {
-            if (user != null) {
+          try{
+              if (user != null) {
                 double previousBalance = user.getUserBalance();
                 double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
 
                 if (updatedBalance != previousBalance) {
                     user.setUserBalance(updatedBalance);
                     mainThreadHandler.post(() -> view.displayBalance(updatedBalance));
-                    TransactionHistoryController.loadTransactions(null, "today", null);
-                }
-            }
+                    TransactionHistoryController.loadTransactions(null, "today", null);}
+               } catch (Exception e) {
+                throw new RuntimeException(e);}
+          }
+
+             
+     
         }
 
         public void handleMakePayment() {
@@ -204,6 +216,61 @@ public class DashboardController {
                 }
             }
             mainThreadHandler.removeCallbacksAndMessages(null);
+        }
+
+        // This method is specifically for formatting and displaying transactions on the Dashboard Home view
+        public List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
+            String currentUserEmail = UserSession.getUser().getUserEmail();
+            Set<String> emailsToLookup = new HashSet<>();
+
+            for (TransactionDetails tx : transactionList) {
+                String from = tx.getFromUser();
+                String to = tx.getToUser();
+
+                boolean isSelf = from.equals(currentUserEmail) && to.equals(currentUserEmail);
+                tx.setSelfTransaction(isSelf);
+
+                if (from.equals(currentUserEmail)) {
+                    emailsToLookup.add(to);
+                }
+
+                if (to.equals(currentUserEmail)) {
+                    emailsToLookup.add(from);
+                }
+            }
+
+            Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup, context);
+
+            for (TransactionDetails tx : transactionList) {
+                String from = tx.getFromUser();
+                String to = tx.getToUser();
+
+                tx.setFromUser(emailToDisplayName.getOrDefault(from, from));
+                tx.setToUser(emailToDisplayName.getOrDefault(to, to));
+
+                if (to.equals(currentUserEmail) && !tx.isSelfTransaction()) {
+                    tx.setAmount(tx.getAmount() * -1);
+                }
+            }
+
+            return transactionList;
+        }
+
+        // This method fetches and displays transactions for the Dashboard Home view
+        public void refreshAndDisplayTransactions() {
+            new Thread(() -> {
+                String email = UserSession.getUser().getUserEmail();
+                // Changed to get transactions for 'Last Week'
+                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(email, "Last Week", "All", context);
+                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
+                UserSession.setCachedTransactionHistory(formattedList);
+
+                mainThreadHandler.post(() -> {
+                    if (view != null) {
+                        view.displayTransactions(formattedList);
+                    }
+                });
+            }).start();
         }
     }
 
@@ -380,3 +447,4 @@ public class DashboardController {
 
 
 }
+

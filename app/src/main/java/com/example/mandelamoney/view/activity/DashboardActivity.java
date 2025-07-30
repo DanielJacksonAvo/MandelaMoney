@@ -1,7 +1,10 @@
 package com.example.mandelamoney.view.activity;
 
+import static java.security.AccessController.getContext;
+
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -11,15 +14,21 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.adapter.TransactionAdapter;
 import com.example.mandelamoney.controller.DashboardController;
+import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.fragment.HomeDashboardFragment;
 import com.example.mandelamoney.view.fragment.ProfileDashboardFragment;
 import com.example.mandelamoney.view.fragment.SettingsDashboardFragment;
 import com.example.mandelamoney.view.fragment.TransactionHistoryFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity implements IDashboardView {
 
@@ -47,9 +56,9 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
             connectToUITablet();
             displayHome();
             displayUserName();
-            displayTransactionHistoryScreen();
+            displayTabletTransactionHistoryScreen();
         } else {
-            connectToUI();
+            connectToPhoneUI();
             displayHome();
 
         }
@@ -65,11 +74,10 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     private void connectToUITablet() {
         txtUserName = findViewById(R.id.txt_user_name_dashboard);
         bottomNavigationView = findViewById(R.id.dashboardNavView);
-
         configureBottomNav();
     }
 
-    private void connectToUI() {
+    private void connectToPhoneUI() {
         bottomNavigationView = findViewById(R.id.dashboardNavView);
         configureBottomNav();
 
@@ -120,7 +128,7 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     }
 
     @Override
-    public void displayTransactionHistoryScreen() {
+    public void displayTabletTransactionHistoryScreen() {
         if (checkTablet()) {
             selectedFragmentExtra = new TransactionHistoryFragment(dashboardController);
             if (selectedFragmentExtra != null) {
@@ -158,4 +166,5 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     public boolean checkTablet() {
         return getResources().getBoolean(R.bool.is_tablet_landscape);
     }
+
 }
