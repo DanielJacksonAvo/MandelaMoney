@@ -9,5 +9,6 @@ public interface IDashboardView {
     void displayTabletTransactionHistoryScreen();
 
     void displayUserNameTablet(String name);
+    void finishActivity();
 
 }

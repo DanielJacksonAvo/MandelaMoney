@@ -151,6 +151,11 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         txtUserName.setText(name);
     }
 
+    @Override
+    public void finishActivity() {
+        finish();
+    }
+
     public void loadFragmentExtra(Fragment fragment) {
         if (checkTablet() && findViewById(R.id.dashboardFrameExtra) != null) {
             getSupportFragmentManager().beginTransaction()
