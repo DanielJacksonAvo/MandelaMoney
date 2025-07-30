@@ -38,13 +38,11 @@ public class CreateAccountController {
         this.viewSelectUserType = viewSelectUserType;
     }
 
-    // Overloaded constructor for student account creation view
     public CreateAccountController(Context context, ICreateStudentAccountView viewCreateStudentAccount) {
         this.context = context;
         this.viewCreateStudentAccount = viewCreateStudentAccount;
     }
 
-    // Overloaded constructor for business account creation view
     public CreateAccountController(Context context, ICreateBusinessAccountView viewCreateBusinessAccount) {
         this.context = context;
         this.viewCreateBusinessAccount = viewCreateBusinessAccount;

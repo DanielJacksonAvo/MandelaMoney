@@ -332,13 +332,6 @@ public class DashboardController {
                     s.equalsIgnoreCase("all") ||
                     s.equalsIgnoreCase("any");
         }
-
-
-
-
-
-
-
     }
 
     private static class TransactionManager {
