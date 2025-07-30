@@ -14,6 +14,7 @@ import android.text.TextWatcher;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.TypefaceSpan;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,8 +23,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
@@ -42,7 +41,6 @@ import com.example.mandelamoney.R;
 import com.example.mandelamoney.adapter.TransactionAdapter;
 import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.model.TransactionDetails;
-import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.google.android.material.button.MaterialButton;
@@ -56,17 +54,19 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     private RecyclerView recyclerView;
     private TransactionAdapter adapter;
     private final DashboardController controller;
-    private static final String TAG = "TransactionHistoryDebug";
+
     private ConstraintLayout filterBarContainer;
     private ConstraintLayout searchContainer;
     private EditText etSearch;
     private ImageView iconSearch;
     private boolean isSearchExpanded = false;
+
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable = null;
+
     private MaterialButton btnPeriod, btnType;
-    private String selectedPeriod = null;
-    private String selectedType = null;
+    private String selectedPeriod = null; // "All" / "Today" / "Last Week" / "Last Month" / "Last Year"
+    private String selectedType = null;   // "All" / "Incoming" / "Outgoing" / "Deposit" / "Withdrawal"
 
     public TransactionHistoryFragment(DashboardController controller) {
         this.controller = controller;
@@ -82,47 +82,36 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         controller.TransactionHistoryController.handleLoadUserToUI();
+
         setupRecycler(view);
         loadOrFetchTransactions();
+
         filterBarContainer = view.findViewById(R.id.filter_bar_container);
         searchContainer = view.findViewById(R.id.search_container);
         etSearch = view.findViewById(R.id.et_search);
         iconSearch = view.findViewById(R.id.icon_search);
+
         searchContainer.setOnClickListener(v -> toggleSearchBar());
         initSearchListener();
+
         btnPeriod = view.findViewById(R.id.btn_period);
         btnType = view.findViewById(R.id.btn_type);
+
+        // Initial weights (collapsed search)
         ConstraintSet initial = new ConstraintSet();
         initial.clone(filterBarContainer);
         initial.setHorizontalWeight(R.id.search_container, 0.13f);
         initial.setHorizontalWeight(R.id.btn_period, 0.43f);
         initial.setHorizontalWeight(R.id.btn_type, 0.44f);
         initial.applyTo(filterBarContainer);
+
         setupDropdown(btnPeriod, R.menu.transactionhistoryperiodmenu, "PERIOD:");
         setupDropdown(btnType, R.menu.transactionhistorytypemenu, "TYPE:");
     }
 
     private void loadOrFetchTransactions() {
-        controller.TransactionHistoryController.loadTransactions(null,null,null);
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-
-        new Thread(() -> {
-            String currentUserEmail = UserSession.getUser().getUserEmail();
-            Context context = requireContext();
-            Log.d(TAG, "Fetching transaction history for user: " + currentUserEmail + " Context: " + context);
-            List<TransactionDetails> transactionList = MySQLConnector.getTransactionHistory(currentUserEmail, context);
-
-            Log.d(TAG, "Fetched transaction count: " + transactionList.size());
-            mainHandler.post(() -> {
-                UserSession.setCachedTransactionHistory(transactionList);
-                if (adapter != null) {
-                    adapter.updateData(transactionList);
-                } else {
-                    adapter = new TransactionAdapter(transactionList, UserSession.getUser().getUserEmail());
-                    recyclerView.setAdapter(adapter);
-                }
-            });
-        }).start();
+        // Default first load: no search, all filters (controller will call the “All/All” SP)
+        controller.TransactionHistoryController.loadTransactions(null, null, null);
     }
 
     private void setupRecycler(View rootView) {
@@ -207,11 +196,15 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
             TextView txtUserName = requireView().findViewById(R.id.txt_user_name_transaction_history);
             txtUserName.setText(name.toUpperCase());
         }
-
     }
 
     @Override
     public void updateData(List<TransactionDetails> formattedList) {
+        Log.d("THFragment", "updateData() called. Items: " + formattedList.size());
+        for (TransactionDetails tx : formattedList) {
+            Log.d("THFragment", "UI item: " + tx.toString());
+        }
+
         if (adapter != null) {
             adapter.updateData(formattedList);
         } else {
@@ -220,10 +213,22 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
-        loadOrFetchTransactions();
+        // Reload with the current UI state (query + filters), not just nulls
+        String query = etSearch != null ? etSearch.getText().toString().trim() : null;
+        controller.TransactionHistoryController.loadTransactions(query, selectedPeriod, selectedType);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (searchRunnable != null) {
+            searchHandler.removeCallbacks(searchRunnable);
+            searchRunnable = null;
+        }
     }
 
     private void initSearchListener() {
@@ -231,7 +236,8 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
-                searchRunnable = () -> controller.TransactionHistoryController.loadTransactions(s.toString().trim(), selectedPeriod, selectedType);
+                searchRunnable = () -> controller.TransactionHistoryController
+                        .loadTransactions(s.toString().trim(), selectedPeriod, selectedType);
                 searchHandler.postDelayed(searchRunnable, 400);
             }
             @Override public void afterTextChanged(Editable s) {}
@@ -250,9 +256,12 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
             @Override
             public boolean onMenuItemSelected(@NonNull MenuBuilder menu, @NonNull MenuItem item) {
                 String selected = item.getTitle().toString();
+
                 if ("PERIOD:".equals(label)) selectedPeriod = selected;
                 else if ("TYPE:".equals(label)) selectedType = selected;
+
                 if (!isSearchExpanded) styleFilterButton(button, label, selected);
+
                 String query = etSearch.getText().toString().trim();
                 controller.TransactionHistoryController.loadTransactions(query, selectedPeriod, selectedType);
                 return true;
@@ -284,10 +293,9 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
-    public class CustomTypefaceSpan extends TypefaceSpan {
+    public static class CustomTypefaceSpan extends TypefaceSpan {
         private final Typeface newType;
         public CustomTypefaceSpan(Typeface type) { super(""); this.newType = type; }
         @Override public void updateDrawState(TextPaint ds) { applyCustomTypeFace(ds, newType); }
@@ -299,6 +307,3 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         return getResources().getBoolean(R.bool.is_tablet_landscape);
     }
 }
-
-
-

@@ -8,7 +8,7 @@ public class TransactionDetails {
     private final String time;
     private boolean selfTransaction;
     // Constructor
-    public TransactionDetails(String toUser, String fromUser, float amount, String date, String time) {
+    public TransactionDetails(String fromUser, String toUser, float amount, String date, String time) {
         this.toUser = toUser;
         this.fromUser = fromUser;
         this.amount = amount;
@@ -16,7 +16,7 @@ public class TransactionDetails {
         this.time = time;
 
     }
-    public TransactionDetails(String toUser, String fromUser, float amount, String date, String time, Boolean selfTransaction){
+    public TransactionDetails(String fromUser, String toUser, float amount, String date, String time, Boolean selfTransaction){
         this.toUser = toUser;
         this.fromUser = fromUser;
         this.amount = amount;

@@ -23,6 +23,7 @@ import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -244,12 +245,15 @@ public class DashboardController {
                                      @Nullable String type) {
             new Thread(() -> {
                 String userEmail = UserSession.getUser().getUserEmail();
+                Log.d("THController", "loadTransactions() called. Query=" + searchQuery + " Period=" + period + " Type=" + type + " User=" + userEmail);
+
                 boolean periodAll = isAll(period);
                 boolean typeAll   = isAll(type);
-                List<TransactionDetails> rawList;
 
+                List<TransactionDetails> rawList;
                 if (periodAll && typeAll) {
                     rawList = MySQLConnector.getTransactionHistory(userEmail, context);
+                    Log.d("THController", "Fetched " + rawList.size() + " transactions using getTransactionHistory()");
                 } else {
                     String periodArg = periodAll ? null : period;
                     String typeArg   = typeAll   ? null : type;
@@ -257,30 +261,46 @@ public class DashboardController {
                     rawList = MySQLConnector.getTransactionHistoryWithFilters(
                             userEmail, periodArg, typeArg, context
                     );
+                    Log.d("THController", "Fetched " + rawList.size() + " transactions using getTransactionHistoryWithFilters()");
                 }
 
-                List<TransactionDetails> formattedList = formatTransactionHistory(rawList);
+                // Format
+                Log.d("THController", "Formatting transactions...");
+                List<TransactionDetails> formattedList = formatTransactionHistory(rawList, context);
+                Log.d("THController", "Formatting complete. Total: " + formattedList.size());
 
+                // Apply search
                 if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                    Log.d("THController", "Applying search: " + searchQuery);
                     String query = searchQuery.trim().toLowerCase();
                     formattedList = formattedList.stream()
                             .filter(txn -> {
                                 String from = txn.getFromUser() != null ? txn.getFromUser().toLowerCase() : "";
-                                String to   = txn.getToUser()   != null ? txn.getToUser().toLowerCase()   : "";
-                                return from.contains(query) || to.contains(query);
+                                String to   = txn.getToUser()   != null ? txn.getToUser().toLowerCase() : "";
+                                boolean match = from.contains(query) || to.contains(query);
+                                if (match) {
+                                    Log.d("THController", "Search match: " + txn);
+                                }
+                                return match;
                             })
                             .collect(Collectors.toList());
+                    Log.d("THController", "Search filter done. Remaining: " + formattedList.size());
                 }
 
+                // Cache
                 UserSession.setCachedTransactionHistory(formattedList);
                 List<TransactionDetails> finalFormattedList = formattedList;
                 mainThreadHandler.post(() -> {
                     if (transactionHistoryView != null) {
+                        Log.d("THController", "Updating UI with " + finalFormattedList.size() + " transactions");
                         transactionHistoryView.updateData(finalFormattedList);
+                    } else {
+                        Log.e("THController", "transactionHistoryView is null. Cannot update UI");
                     }
                 });
             }).start();
         }
+
         private boolean isAll(String s) {
             return s == null || s.trim().isEmpty() ||
                     s.equalsIgnoreCase("all") ||
@@ -288,38 +308,50 @@ public class DashboardController {
         }
 
 
-        private List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList) {
+        public List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
+            Log.d("THController", "formatTransactionHistory(): received " + transactionList.size() + " transactions");
+
             String currentUserEmail = UserSession.getUser().getUserEmail();
             Set<String> emailsToLookup = new HashSet<>();
 
             for (TransactionDetails tx : transactionList) {
-                String from = tx.getFromUser();
-                String to = tx.getToUser();
+                Log.d("THController", "Before format: " + tx.toString());
 
-                if (from.equals(currentUserEmail) && to.equals(currentUserEmail)) {
-                    setSelfTransactionName(tx);
-                } else if (from.equals(currentUserEmail)) {
-                    emailsToLookup.add(to);
-                } else if (to.equals(currentUserEmail)) {
-                    emailsToLookup.add(from);
+                if (tx.isSelfTransaction()) {
+                    Log.d("THController", "Self transaction detected for " + currentUserEmail+", fromUser=" + tx.getFromUser() + ", toUser=" + tx.getToUser());
+                } else {
+                    // Collect lookup emails
+                    if (tx.getFromUser().equals(currentUserEmail)) {
+                        emailsToLookup.add(tx.getToUser());
+                        Log.d("THController","Adding toUser  " + tx.getToUser() + " to lookup and from User is : "+tx.getFromUser());
+                    } else if (tx.getToUser().equals(currentUserEmail)) {
+                        emailsToLookup.add(tx.getFromUser());
+                        Log.d("THController","Adding fromUser "+ tx.getFromUser() + "to lookup and to User is: "+ tx.getToUser());
+                    }
                 }
             }
 
-            Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup,context);
+            Log.d("THController", "Emails to lookup: " + emailsToLookup);
 
-            // Apply display names & negative amounts for incoming
+            Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup, context);
+
             for (TransactionDetails tx : transactionList) {
                 if (!tx.isSelfTransaction()) {
                     tx.setFromUser(emailToDisplayName.getOrDefault(tx.getFromUser(), tx.getFromUser()));
                     tx.setToUser(emailToDisplayName.getOrDefault(tx.getToUser(), tx.getToUser()));
 
-                    if (tx.getToUser().equalsIgnoreCase(currentUserEmail)) {
+                    // Adjust sign for incoming transactions
+                    if (tx.getToUser().equals(currentUserEmail)) {
+                        Log.d("THController", "Incoming txn for " + currentUserEmail + ": " + tx.getAmount() + " => negative");
                         tx.setAmount(tx.getAmount() * -1);
                     }
                 }
+                Log.d("THController", "After format: " + tx.toString());
             }
+
             return transactionList;
         }
+
 
         private void setSelfTransactionName(TransactionDetails tx) {
             User user = UserSession.getUser();
