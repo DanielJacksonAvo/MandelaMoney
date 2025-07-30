@@ -42,7 +42,6 @@ public class UnlockController {
                     );
                 },
                 () -> {
-                    // Auth failure
                     Toast.makeText(context, "Authentication failed or cancelled.", Toast.LENGTH_SHORT).show();
                 }
         );
