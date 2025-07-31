@@ -2,12 +2,10 @@ package com.example.mandelamoney.view.fragment;
 
 import static android.icu.lang.UCharacter.toUpperCase;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,9 +21,8 @@ import android.widget.TextView;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.adapter.TransactionAdapter;
 import com.example.mandelamoney.controller.DashboardController;
-import com.example.mandelamoney.controller.MakePaymentController;
 import com.example.mandelamoney.controller.RequestPaymentController;
-import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
@@ -97,9 +94,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     }
 
     private void configureTransactionHistoryButton(TextView btnTransactionHistory) {
-        btnTransactionHistory.setOnClickListener((view) -> {
-            controller.handleViewTransactionHistory();
-        });
+        btnTransactionHistory.setOnClickListener((view) -> controller.handleViewTransactionHistory());
     }
 
     private void setupRecycler() {
@@ -150,7 +145,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     }
 
     @Override
-    public void displayTransactions(List<TransactionDetails> transactionDetails) {
+    public void displayTransactions(List<Transaction> transactionDetails) {
         if (recyclerView != null && !checkTablet()) {
             if (adapter != null) {
                 adapter.updateData(transactionDetails);

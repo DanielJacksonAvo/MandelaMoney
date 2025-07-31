@@ -32,9 +32,19 @@ public class ResultSetParser {
                 return null;
             } else {
                 if (userType == 1) {
-                    user = new Student(userEmail, userPassword, userBalance, col3, col4, col5);
+                    user = new Student(userEmail);
+                    user.setUserPassword(userPassword);
+                    user.setUserBalance(userBalance);
+                    ((Student) user).setStudentFirstName(col3);
+                    ((Student) user).setStudentLastName(col4);
+                    ((Student) user).setStudentNumber(col5);
                 } else if (userType == 2) {
-                    user = new Business(userEmail, userPassword, userBalance, col3, col4, col5);
+                    user = new Business(userEmail);
+                    user.setUserPassword(userPassword);
+                    user.setUserBalance(userBalance);
+                    ((Business) user).setBusinessName(col3);
+                    ((Business) user).setBusinessPhoneNumber(col4);
+                    ((Business) user).setBusinessVAT(col5);
                 }
             }
         }

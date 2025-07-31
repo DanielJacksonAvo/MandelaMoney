@@ -4,11 +4,9 @@ import java.io.Serializable;
 
 public class Student extends User implements Serializable {
     private String studentFirstName, studentLastName, studentNumber;
-    public Student(String userEmail, String userPassword, double userBalance, String studentFirstName, String studentLastName, String studentNumber) {
-        super(userEmail, userPassword, userBalance);
-        this.studentFirstName = studentFirstName;
-        this.studentLastName = studentLastName;
-        this.studentNumber = studentNumber;
+
+    public Student(String userEmail) {
+        super(userEmail);
     }
 
     public String getStudentFirstName() {
@@ -33,5 +31,9 @@ public class Student extends User implements Serializable {
 
     public void setStudentNumber(String studentNumber) {
         this.studentNumber = studentNumber;
+    }
+
+    public String getStudentFullName() {
+        return studentFirstName + " " + studentLastName;
     }
 }
