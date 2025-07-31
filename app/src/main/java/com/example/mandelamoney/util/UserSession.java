@@ -12,7 +12,11 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserSession {
 
@@ -48,13 +52,67 @@ public class UserSession {
         cachedTransactionHistory = null;
     }
 
-    public static void setCachedTransactionHistory(List<Transaction> transactions) {
-        cachedTransactionHistory = transactions;
+    public static void updateTransactions(Context context) {
+        List<Transaction> rawTransactionHistory = MySQLConnector.getTransactionHistory(currentUser.getUserEmail(), context);
+        cachedTransactionHistory = TransactionManager.formatTransactionHistory(rawTransactionHistory, context);
     }
 
-    public static List<Transaction> getCachedTransactionHistory() {
+    public static List<Transaction> getLastWeekTransactionHistory() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+        LocalDate today = LocalDate.now();
+        LocalDate oneWeekAgo = today.minusWeeks(1);
+        return cachedTransactionHistory.stream()
+                .filter(transaction -> {
+                    try {
+                        LocalDate transactionDate = LocalDate.parse(transaction.getDate(), formatter);
+
+                        return !transactionDate.isBefore(oneWeekAgo) && !transactionDate.isAfter(today);
+                    } catch (DateTimeParseException e) {
+                        System.err.println("Error parsing date for transaction: " + transaction.getDate() + " - " + e.getMessage());
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+    public static List<Transaction> getLastMonthTransactionHistory() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+        LocalDate today = LocalDate.now();
+        LocalDate oneMonthAgo = today.minusMonths(1);
+        return cachedTransactionHistory.stream()
+                .filter(transaction -> {
+                    try {
+                        LocalDate transactionDate = LocalDate.parse(transaction.getDate(), formatter);
+                        return !transactionDate.isBefore(oneMonthAgo) && !transactionDate.isAfter(today);
+                    } catch (DateTimeParseException e) {
+                        System.err.println("Error parsing date for transaction: " + transaction.getDate() + " - " + e.getMessage());
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    public static List<Transaction> getLastYearTransactionHistory() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+        LocalDate today = LocalDate.now();
+        LocalDate oneYearAgo = today.minusYears(1);
+        return cachedTransactionHistory.stream()
+                .filter(transaction -> {
+                    try {
+                        LocalDate transactionDate = LocalDate.parse(transaction.getDate(), formatter);
+
+                        return !transactionDate.isBefore(oneYearAgo) && !transactionDate.isAfter(today);
+                    } catch (DateTimeParseException e) {
+                        System.err.println("Error parsing date for transaction: " + transaction.getDate() + " - " + e.getMessage());
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    public static List<Transaction> getTransactionHistory() {
         return cachedTransactionHistory;
     }
+
 
     public static void saveSession(Context context) {
         if (currentUser == null) return;
