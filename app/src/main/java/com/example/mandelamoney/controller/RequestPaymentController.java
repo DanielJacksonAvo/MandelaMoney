@@ -57,15 +57,15 @@ public class RequestPaymentController {
             return;
         }
 
-        // Execute the QR generation logic on a separate thread
         requestExecutor.execute(() -> {
             float transactionAmount = Float.parseFloat(amount);
+            transactionAmount = (float) Math.ceil(transactionAmount * 100) / 100;
+
             String toUserEmail = UserSession.getUser().getUserEmail().trim();
 
             Log.d("RequestPaymentController", "Attempting to create transaction for amount: " + transactionAmount);
             Integer transactionID = MySQLConnector.createTransaction(toUserEmail, transactionAmount, context);
 
-            // Switch back to the main thread to update UI
             ContextCompat.getMainExecutor(context).execute(() -> {
                 if (transactionID == null) {
                     Log.e("RequestPaymentController", "Failed to create transaction: transactionID is null.");
@@ -83,7 +83,6 @@ public class RequestPaymentController {
             });
         });
     }
-
     public void startPollingStatus(int txnId) {
         if (pollingHandle != null && !pollingHandle.isDone()) {
             Log.d("RequestPaymentController", "Polling already active or pending.");

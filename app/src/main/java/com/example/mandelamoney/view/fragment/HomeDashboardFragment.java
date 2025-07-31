@@ -110,7 +110,6 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
             if (adapter == null) {
                 adapter = new TransactionAdapter(new ArrayList<>(), user.getUserEmail());
                 recyclerView.setAdapter(adapter);
-                controller.DashboardHomeController.refreshAndDisplayTransactions();
             }
         }
     }
