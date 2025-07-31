@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
-import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
 import com.google.gson.Gson;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class UserSession {
 
     private static User currentUser;
-    private static List<TransactionDetails> cachedTransactionHistory;
+    private static List<Transaction> cachedTransactionHistory;
 
     private static final String PREF_NAME = "secure_user_prefs";
     private static final String KEY_USER = "user_data";
@@ -48,11 +48,11 @@ public class UserSession {
         cachedTransactionHistory = null;
     }
 
-    public static void setCachedTransactionHistory(List<TransactionDetails> transactions) {
+    public static void setCachedTransactionHistory(List<Transaction> transactions) {
         cachedTransactionHistory = transactions;
     }
 
-    public static List<TransactionDetails> getCachedTransactionHistory() {
+    public static List<Transaction> getCachedTransactionHistory() {
         return cachedTransactionHistory;
     }
 

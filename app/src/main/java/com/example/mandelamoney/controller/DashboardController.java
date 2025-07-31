@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
-import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.TransactionManager;
 import com.example.mandelamoney.util.UserSession;
@@ -24,13 +24,7 @@ import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
 import com.example.mandelamoney.view.activity.UnlockActivity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -234,8 +228,8 @@ public class DashboardController {
                 }
 
                 String email = user.getUserEmail();
-                List<TransactionDetails> rawList = MySQLConnector.getTransactionHistoryWithFilters(email, "Last Week", "All", context);
-                List<TransactionDetails> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
+                List<Transaction> rawList = MySQLConnector.getTransactionHistoryWithFilters(email, "Last Week", "All", context);
+                List<Transaction> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
                 UserSession.setCachedTransactionHistory(formattedList);
 
                 mainThreadHandler.post(() -> {
@@ -291,7 +285,7 @@ public class DashboardController {
                 boolean periodAll = isAll(period);
                 boolean typeAll   = isAll(type);
 
-                List<TransactionDetails> rawList;
+                List<Transaction> rawList;
                 if (periodAll && typeAll) {
                     rawList = MySQLConnector.getTransactionHistory(userEmail, context);
                     Log.d("THController", "Fetched " + rawList.size() + " transactions using getTransactionHistory()");
@@ -306,7 +300,7 @@ public class DashboardController {
                 }
 
                 Log.d("THController", "Formatting transactions...");
-                List<TransactionDetails> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
+                List<Transaction> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
                 Log.d("THController", "Formatting complete. Total: " + formattedList.size());
 
                 if (searchQuery != null && !searchQuery.trim().isEmpty()) {
@@ -328,7 +322,7 @@ public class DashboardController {
                 }
 
                 UserSession.setCachedTransactionHistory(formattedList);
-                List<TransactionDetails> finalFormattedList = formattedList;
+                List<Transaction> finalFormattedList = formattedList;
                 mainThreadHandler.post(() -> {
                     if (transactionHistoryView != null) {
                         Log.d("THController", "Updating UI with " + finalFormattedList.size() + " transactions");

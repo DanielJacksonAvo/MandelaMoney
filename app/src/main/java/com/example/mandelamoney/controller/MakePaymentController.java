@@ -19,7 +19,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
-import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.ImageUtils;
@@ -195,7 +195,7 @@ public class MakePaymentController {
                     MySQLConnector.updateTransactionFromUser(context, transactionId, email);
                     Log.i("MAKE PAYMENT CONTROLLER", "Attempt to updateTransactionFromUser complete");
 
-                    TransactionDetails tx = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, context);
+                    Transaction tx = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, context);
                     assert tx != null;
                     this.transactionAmount = tx.getAmount();
                     this.toUserDetails = MySQLConnector.getUserDetailsByEmail(tx.getToUser(), context);
