@@ -139,7 +139,7 @@ public class DashboardController {
                 }
                 view.displayBalance(user.getUserBalance());
                 view.displayUserName(getUserName());
-                refreshAndDisplayTransactions();
+                displayTransactions(UserSession.getLastWeekTransactionHistory());
             } catch (Exception e) {
                 Log.e("DashboardHomeController", "Error in handleLoadUserToUI", e);
             }
@@ -147,7 +147,7 @@ public class DashboardController {
 
         public String getUserName() {
             if (user instanceof Student) {
-                return ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
+                return ((Student) user).getStudentFullName();
             } else if (user instanceof Business) {
                 return ((Business) user).getBusinessName();
             }
@@ -220,26 +220,23 @@ public class DashboardController {
 
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
-                User user = UserSession.getUser();
-
-                if (user == null) {
-                    Log.e("DashboardHomeController", "User is null, cannot refresh and display transactions.");
-                    return;
-                }
-
-                String email = user.getUserEmail();
-                List<Transaction> rawList = MySQLConnector.getTransactionHistoryWithFilters(email, "Last Week", "All", context);
-                List<Transaction> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
-
-                mainThreadHandler.post(() -> {
-                    if (view != null) {
-                        view.displayTransactions(formattedList);
-                    }
-                });
+                UserSession.updateTransactions(context);
+                List<Transaction> txList = UserSession.getLastWeekTransactionHistory();
+                displayTransactions(txList);
             }).start();
         }
 
+        private void displayTransactions(List<Transaction> transactions) {
+                mainThreadHandler.post(() -> {
+                    if (view != null) {
+                        view.displayTransactions(transactions);
+                    }
+                });
+        }
+
     }
+
+
 
 
     private class DashboardSettingsController {
