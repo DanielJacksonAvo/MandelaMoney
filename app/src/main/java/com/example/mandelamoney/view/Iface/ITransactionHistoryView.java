@@ -8,5 +8,6 @@ public interface ITransactionHistoryView {
     void displayUserName(String name);
 
     void updateData(List<Transaction> formattedList);
+    String[] getFilters();
 }
 
