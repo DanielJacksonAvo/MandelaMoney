@@ -199,16 +199,12 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     }
 
     @Override
-    public void updateData(List<Transaction> formattedList) {
-        Log.d("THFragment", "updateData() called. Items: " + formattedList.size());
-        for (Transaction tx : formattedList) {
-            Log.d("THFragment", "UI item: " + tx.toString());
-        }
-
+    public void updateData(List<Transaction> txList) {
+        Log.d("THFragment", "updateData() called. Items: " + txList.size());
         if (adapter != null) {
-            adapter.updateData(formattedList);
+            adapter.updateData(txList);
         } else {
-            adapter = new TransactionAdapter(formattedList, UserSession.getUser().getUserEmail());
+            adapter = new TransactionAdapter(txList, UserSession.getUser().getUserEmail());
             recyclerView.setAdapter(adapter);
         }
     }
@@ -217,7 +213,6 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     @Override
     public void onResume() {
         super.onResume();
-        // Reload with the current UI state (query + filters), not just nulls
         String query = etSearch != null ? etSearch.getText().toString().trim() : null;
         controller.TransactionHistoryController.loadTransactions(query, selectedPeriod, selectedType);
     }

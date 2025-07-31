@@ -139,7 +139,7 @@ public class DashboardController {
                 }
                 view.displayBalance(user.getUserBalance());
                 view.displayUserName(getUserName());
-                refreshAndDisplayTransactions();
+                displayTransactions(UserSession.getLastWeekTransactionHistory());
             } catch (Exception e) {
                 Log.e("DashboardHomeController", "Error in handleLoadUserToUI", e);
             }
@@ -147,7 +147,7 @@ public class DashboardController {
 
         public String getUserName() {
             if (user instanceof Student) {
-                return ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
+                return ((Student) user).getStudentFullName();
             } else if (user instanceof Business) {
                 return ((Business) user).getBusinessName();
             }
@@ -220,27 +220,23 @@ public class DashboardController {
 
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
-                User user = UserSession.getUser();
-
-                if (user == null) {
-                    Log.e("DashboardHomeController", "User is null, cannot refresh and display transactions.");
-                    return;
-                }
-
-                String email = user.getUserEmail();
-                List<Transaction> rawList = MySQLConnector.getTransactionHistoryWithFilters(email, "Last Week", "All", context);
-                List<Transaction> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
-                UserSession.setCachedTransactionHistory(formattedList);
-
-                mainThreadHandler.post(() -> {
-                    if (view != null) {
-                        view.displayTransactions(formattedList);
-                    }
-                });
+                UserSession.updateTransactions(context);
+                List<Transaction> txList = UserSession.getLastWeekTransactionHistory();
+                displayTransactions(txList);
             }).start();
         }
 
+        private void displayTransactions(List<Transaction> transactions) {
+                mainThreadHandler.post(() -> {
+                    if (view != null) {
+                        view.displayTransactions(transactions);
+                    }
+                });
+        }
+
     }
+
+
 
 
     private class DashboardSettingsController {
@@ -270,68 +266,80 @@ public class DashboardController {
                 transactionHistoryView.displayUserName(((Business) user).getBusinessName());
             }
         }
+
         public void loadTransactions(@Nullable String searchQuery,
                                      @Nullable String period,
                                      @Nullable String type) {
-            new Thread(() -> {
-                User currentUser = UserSession.getUser();
-                if (currentUser == null) {
-                    Log.e("THController", "User is null, cannot load transactions.");
-                    return;
-                }
-                String userEmail = currentUser.getUserEmail();
-                Log.d("THController", "loadTransactions() called. Query=" + searchQuery + " Period=" + period + " Type=" + type + " User=" + userEmail);
-
-                boolean periodAll = isAll(period);
-                boolean typeAll   = isAll(type);
-
-                List<Transaction> rawList;
-                if (periodAll && typeAll) {
-                    rawList = MySQLConnector.getTransactionHistory(userEmail, context);
-                    Log.d("THController", "Fetched " + rawList.size() + " transactions using getTransactionHistory()");
-                } else {
-                    String periodArg = periodAll ? null : period;
-                    String typeArg   = typeAll   ? null : type;
-
-                    rawList = MySQLConnector.getTransactionHistoryWithFilters(
-                            userEmail, periodArg, typeArg, context
-                    );
-                    Log.d("THController", "Fetched " + rawList.size() + " transactions using getTransactionHistoryWithFilters()");
-                }
-
-                Log.d("THController", "Formatting transactions...");
-                List<Transaction> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
-                Log.d("THController", "Formatting complete. Total: " + formattedList.size());
-
-                if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                    Log.d("THController", "Applying search: " + searchQuery);
-                    String query = searchQuery.trim().toLowerCase();
-
-                    formattedList = formattedList.stream()
-                            .filter(txn -> {
-                                String display = txn.getDisplayName() != null ? txn.getDisplayName().toLowerCase() : "";
-                                boolean match = display.contains(query);
-                                if (match) {
-                                    Log.d("THController", "Search match: " + txn);
-                                }
-                                return match;
-                            })
-                            .collect(Collectors.toList());
-
-                    Log.d("THController", "Search filter done. Remaining: " + formattedList.size());
-                }
-
-                UserSession.setCachedTransactionHistory(formattedList);
-                List<Transaction> finalFormattedList = formattedList;
+            if (searchQuery == null && period == null && type == null) {
                 mainThreadHandler.post(() -> {
                     if (transactionHistoryView != null) {
-                        Log.d("THController", "Updating UI with " + finalFormattedList.size() + " transactions");
-                        transactionHistoryView.updateData(finalFormattedList);
+                        Log.d("THController", "Updating UI with cache");
+                        transactionHistoryView.updateData(UserSession.getTransactionHistory());
                     } else {
                         Log.e("THController", "transactionHistoryView is null. Cannot update UI");
                     }
                 });
-            }).start();
+            } else {
+                new Thread(() -> {
+                    User currentUser = UserSession.getUser();
+                    if (currentUser == null) {
+                        Log.e("THController", "User is null, cannot load transactions.");
+                        return;
+                    }
+                    String userEmail = currentUser.getUserEmail();
+                    Log.d("THController", "loadTransactions() called. Query=" + searchQuery + " Period=" + period + " Type=" + type + " User=" + userEmail);
+
+                    boolean periodAll = isAll(period);
+                    boolean typeAll   = isAll(type);
+
+                    List<Transaction> rawList;
+                    if (periodAll && typeAll) {
+                        rawList = MySQLConnector.getTransactionHistory(userEmail, context);
+                        Log.d("THController", "Fetched " + rawList.size() + " transactions using getTransactionHistory()");
+                    } else {
+                        String periodArg = periodAll ? null : period;
+                        String typeArg   = typeAll   ? null : type;
+
+                        rawList = MySQLConnector.getTransactionHistoryWithFilters(
+                                userEmail, periodArg, typeArg, context
+                        );
+                        Log.d("THController", "Fetched " + rawList.size() + " transactions using getTransactionHistoryWithFilters()");
+                    }
+
+                    Log.d("THController", "Formatting transactions...");
+                    List<Transaction> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
+                    Log.d("THController", "Formatting complete. Total: " + formattedList.size());
+
+                    if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                        Log.d("THController", "Applying search: " + searchQuery);
+                        String query = searchQuery.trim().toLowerCase();
+
+                        formattedList = formattedList.stream()
+                                .filter(txn -> {
+                                    String display = txn.getDisplayName() != null ? txn.getDisplayName().toLowerCase() : "";
+                                    boolean match = display.contains(query);
+                                    if (match) {
+                                        Log.d("THController", "Search match: " + txn);
+                                    }
+                                    return match;
+                                })
+                                .collect(Collectors.toList());
+
+                        Log.d("THController", "Search filter done. Remaining: " + formattedList.size());
+                    }
+
+                    List<Transaction> finalFormattedList = formattedList;
+                    mainThreadHandler.post(() -> {
+                        if (transactionHistoryView != null) {
+                            Log.d("THController", "Updating UI with " + finalFormattedList.size() + " transactions");
+                            transactionHistoryView.updateData(finalFormattedList);
+                        } else {
+                            Log.e("THController", "transactionHistoryView is null. Cannot update UI");
+                        }
+                    });
+                }).start();
+            }
+
         }
 
         private boolean isAll(String s) {
