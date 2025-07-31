@@ -48,9 +48,10 @@ public class UserSession {
         cachedTransactionHistory = null;
     }
 
-    public static void setCachedTransactionHistory(List<Transaction> transactions) {
-        cachedTransactionHistory = transactions;
+    public static void updateTransactions(Context context) {
+        cachedTransactionHistory = MySQLConnector.getTransactionHistory(currentUser.getUserEmail(), context);
     }
+
 
     public static List<Transaction> getCachedTransactionHistory() {
         return cachedTransactionHistory;

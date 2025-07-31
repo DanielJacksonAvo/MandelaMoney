@@ -230,7 +230,6 @@ public class DashboardController {
                 String email = user.getUserEmail();
                 List<Transaction> rawList = MySQLConnector.getTransactionHistoryWithFilters(email, "Last Week", "All", context);
                 List<Transaction> formattedList = TransactionManager.formatTransactionHistory(rawList, context);
-                UserSession.setCachedTransactionHistory(formattedList);
 
                 mainThreadHandler.post(() -> {
                     if (view != null) {
@@ -321,7 +320,6 @@ public class DashboardController {
                     Log.d("THController", "Search filter done. Remaining: " + formattedList.size());
                 }
 
-                UserSession.setCachedTransactionHistory(formattedList);
                 List<Transaction> finalFormattedList = formattedList;
                 mainThreadHandler.post(() -> {
                     if (transactionHistoryView != null) {
