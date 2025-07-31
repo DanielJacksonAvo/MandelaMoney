@@ -165,7 +165,9 @@ public class DashboardController {
                             view.displayBalance(updatedBalance);
                             refreshAndDisplayTransactions();
                             if (TransactionHistoryController != null) {
-                                TransactionHistoryController.loadTransactions(null, null, null);
+                                ITransactionHistoryView view = TransactionHistoryController.getTransactionHistoryView();
+                                String[] filters = view.getFilters();
+                                TransactionHistoryController.loadTransactions(filters[0], filters[1], filters[2]);
                             }
                         });
                     }
@@ -251,10 +253,12 @@ public class DashboardController {
         private final ITransactionHistoryView transactionHistoryView;
         private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
-        public TransactionHistoryController(
-                ITransactionHistoryView transactionHistoryView
-        ) {
+        public TransactionHistoryController(ITransactionHistoryView transactionHistoryView) {
             this.transactionHistoryView = transactionHistoryView;
+        }
+
+        public ITransactionHistoryView getTransactionHistoryView() {
+            return transactionHistoryView;
         }
 
         public void handleLoadUserToUI() {

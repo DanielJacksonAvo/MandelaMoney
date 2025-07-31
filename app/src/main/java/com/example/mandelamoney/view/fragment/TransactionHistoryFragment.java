@@ -208,6 +208,15 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         }
     }
 
+    @Override
+    public String[] getFilters() {
+        String[] filters = new String[3];
+        filters[0] = etSearch.getText().toString().trim();
+        filters[1] = selectedPeriod;
+        filters[2] = selectedType;
+        return filters;
+    }
+
 
     @Override
     public void onDestroyView() {
