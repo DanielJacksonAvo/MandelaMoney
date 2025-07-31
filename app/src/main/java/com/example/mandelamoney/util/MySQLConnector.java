@@ -8,9 +8,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.mandelamoney.BuildConfig;
+import com.example.mandelamoney.model.Business;
+import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.TransactionDetails;
 import com.example.mandelamoney.model.User;
-import com.example.mandelamoney.model.UserDetails;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class MySQLConnector {
@@ -50,9 +52,7 @@ public class MySQLConnector {
             Log.e("MySQLConnector", "UI Handler not initialized. Cannot show Toast: " + message);
             return;
         }
-        uiHandler.post(() -> {
-            Toast.makeText(context.getApplicationContext(), message, duration).show();
-        });
+        uiHandler.post(() -> Toast.makeText(context.getApplicationContext(), message, duration).show());
     }
 
 
@@ -196,7 +196,7 @@ public class MySQLConnector {
     public static Object[] getRecoveryCodeHash(String userEmail, Context context) {
         Connection currentConnection = getConnection(context);
         Object[] result = new Object[3];
-        boolean connectionEstablished = false;
+        boolean connectionEstablished;
 
         if (currentConnection == null) {
             Log.e("MySQLConnector", "Cannot return recovery code: No valid database connection.");
@@ -266,7 +266,7 @@ public class MySQLConnector {
             return false;
         }
 
-        boolean resetSuccess = false;
+        boolean resetSuccess;
 
         try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.ResetPasswordWithRecoveryCode(?, ?, ?, ?)}")) {
             callableStatement.setString(1, userEmail);
@@ -405,7 +405,7 @@ public class MySQLConnector {
     public static List<TransactionDetails> getTransactionHistoryWithFilters(String userEmail, String period, String type, Context context) {
         List<TransactionDetails> transactions = new ArrayList<>();
         int transactionCount = 0;
-        Connection conn = null;
+        Connection conn;
 
         try {
             conn = getConnection(context);
@@ -449,7 +449,7 @@ public class MySQLConnector {
     public static List<TransactionDetails> getTransactionHistory(String userEmail, Context context) {
         List<TransactionDetails> transactions = new ArrayList<>();
         int transactionCount = 0;
-        Connection conn = null;
+        Connection conn;
         try {
             conn = getConnection(context);
             if (conn == null) {
@@ -480,8 +480,6 @@ public class MySQLConnector {
             Log.e("MySQLConnector", "SQLException in getTransactionHistory: " + e.getMessage(), e);
         } catch (Exception e) {
             Log.e("MySQLConnector", "General Exception in getTransactionHistory: " + e.getMessage(), e);
-        } finally {
-
         }
         Log.d("MySQLConnector", "Transaction count: " + transactionCount);
         return transactions;
@@ -585,26 +583,31 @@ public class MySQLConnector {
         return details;
     }
 
-    public static UserDetails getUserDetailsByEmail(String email, Context context) {
+    public static User getUserDetailsByEmail(String email, Context context) {
         Connection conn = getConnection(context);
         if (conn == null) {
             Log.e("MySQLConnector", "No valid connection for getUserDetailsByEmail.");
             return null;
         }
 
-        UserDetails userDetails = null;
+        User userDetails = null;
 
         try (CallableStatement cs = conn.prepareCall("{CALL MandelaMoneyDB.getUserDetailsByEmail(?)}")) {
             cs.setString(1, email);
 
             try (ResultSet rs = cs.executeQuery()) {
                 if (rs.next()) {
-                    userDetails = new UserDetails();
-                    userDetails.setEmail(rs.getString("userEmail"));
-                    userDetails.setFirstName(rs.getString("firstName"));
-                    userDetails.setLastName(rs.getString("lastName"));
-                    userDetails.setNumber(rs.getString("userNumber"));
-                    userDetails.setUserType(rs.getString("userType"));
+                    if (Objects.equals(rs.getString("userType"), "student")) {
+                        userDetails = new Student(rs.getString("userEmail"));
+                        ((Student) userDetails).setStudentFirstName(rs.getString("firstName"));
+                        ((Student) userDetails).setStudentLastName(rs.getString("lastName"));
+                        ((Student) userDetails).setStudentNumber(rs.getString("userNumber"));
+                    } else if (Objects.equals(rs.getString("userType"), "business")) {
+                        userDetails = new Business(rs.getString("userEmail"));
+                        ((Business) userDetails).setBusinessName(rs.getString("businessName"));
+                        ((Business) userDetails).setBusinessPhoneNumber(rs.getString("businessPhoneNumber"));
+                        ((Business) userDetails).setBusinessVAT(rs.getString("businessVAT"));
+                    }
                 }
             }
 

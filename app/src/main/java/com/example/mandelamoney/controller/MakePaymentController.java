@@ -17,9 +17,10 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
+import com.example.mandelamoney.model.Business;
+import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.TransactionDetails;
 import com.example.mandelamoney.model.User;
-import com.example.mandelamoney.model.UserDetails;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.ImageUtils;
 import com.example.mandelamoney.util.MySQLConnector;
@@ -53,8 +54,8 @@ public class MakePaymentController {
 
     private int transactionId;
     private float transactionAmount;
-    private UserDetails fromUserDetails;
-    private UserDetails toUserDetails;
+    private User fromUserDetails;
+    private User toUserDetails;
     private IConfirmPaymentView confirmPaymentView;
 
     public MakePaymentController(Context context, IScanQRView scanQrView) {
@@ -195,10 +196,11 @@ public class MakePaymentController {
                     Log.i("MAKE PAYMENT CONTROLLER", "Attempt to updateTransactionFromUser complete");
 
                     TransactionDetails tx = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, context);
+                    assert tx != null;
                     this.transactionAmount = tx.getAmount();
                     this.toUserDetails = MySQLConnector.getUserDetailsByEmail(tx.getToUser(), context);
                     this.fromUserDetails = MySQLConnector.getUserDetailsByEmail(email, context);
-                    Log.i("TRANSACTION DETAILS CAPTURED", "Amount: " + transactionAmount + ", To: " + toUserDetails.getEmail());
+                    Log.i("TRANSACTION DETAILS CAPTURED", "Amount: " + transactionAmount + ", To: " + toUserDetails.getUserEmail());
 
                     // Switch back to the main thread to update UI (start activity)
                     ContextCompat.getMainExecutor(context).execute(() -> {
@@ -229,16 +231,16 @@ public class MakePaymentController {
     public void handleConfirmPayment() {
         // Execute the payment logic on a separate thread
         paymentExecutor.execute(() -> {
-            boolean transactionSuccess = false;
-            boolean sufficientFunds = false;
-            String errorReason = "";
+            boolean transactionSuccess;
+            boolean sufficientFunds;
+            String errorReason;
 
             try {
-                sufficientFunds = MySQLConnector.hasSufficientFunds(fromUserDetails.getEmail(), transactionId, context);
+                sufficientFunds = MySQLConnector.hasSufficientFunds(fromUserDetails.getUserEmail(), transactionId, context);
 
                 if (sufficientFunds) {
                     try {
-                        transactionSuccess = MySQLConnector.confirmTransaction(fromUserDetails.getEmail(), transactionId, context);
+                        transactionSuccess = MySQLConnector.confirmTransaction(fromUserDetails.getUserEmail(), transactionId, context);
 
                         if (transactionSuccess) {
                             // On success, post to main thread to show success screen
@@ -305,10 +307,21 @@ public class MakePaymentController {
 
     public void handleLoadUsersUI() {
         confirmPaymentView.displayAmount(transactionAmount);
-        confirmPaymentView.displayFromUserName(fromUserDetails.getFirstName() + " " + fromUserDetails.getLastName());
-        confirmPaymentView.displayFromUserNumber(fromUserDetails.getNumber());
-        confirmPaymentView.displayToUserName(toUserDetails.getFirstName() + " " + toUserDetails.getLastName());
-        confirmPaymentView.displayToUserNumber(toUserDetails.getNumber());
+        if (fromUserDetails instanceof Student) {
+            confirmPaymentView.displayFromUserName(((Student) fromUserDetails).getStudentFullName());
+            confirmPaymentView.displayFromUserNumber(((Student) fromUserDetails).getStudentNumber());
+        } else if (fromUserDetails instanceof Business) {
+            confirmPaymentView.displayFromUserName(((Business)fromUserDetails).getBusinessName());
+            confirmPaymentView.displayFromUserNumber(((Business)fromUserDetails).getBusinessVAT());
+        }
+
+        if (toUserDetails instanceof Student) {
+            confirmPaymentView.displayToUserName(((Student) toUserDetails).getStudentFullName());
+            confirmPaymentView.displayToUserNumber(((Student) toUserDetails).getStudentNumber());
+        } else if (toUserDetails instanceof Business) {
+            confirmPaymentView.displayToUserName(((Business)toUserDetails).getBusinessName());
+            confirmPaymentView.displayToUserNumber(((Business)toUserDetails).getBusinessVAT());
+        }
     }
 
     public void setConfirmPaymentView(IConfirmPaymentView confirmPaymentView) {

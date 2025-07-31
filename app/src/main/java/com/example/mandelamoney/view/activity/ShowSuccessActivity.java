@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +15,10 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.MakePaymentController;
 import com.example.mandelamoney.controller.RequestPaymentController;
+import com.example.mandelamoney.model.Business;
+import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.TransactionDetails;
-import com.example.mandelamoney.model.UserDetails;
+import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
@@ -61,18 +62,28 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
         final TransactionDetails txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
 
         if (txnDetails != null) {
-            final UserDetails fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);
-            final UserDetails toUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getToUser(), this);
+            final User fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);
+            final User toUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getToUser(), this);
 
             runOnUiThread(() -> {
                 displayAmount(txnDetails.getAmount());
                 if (fromUser != null) {
-                    displayFromUserName(fromUser.getFirstName() + " " + fromUser.getLastName());
-                    displayFromUserNumber(fromUser.getNumber());
+                    if (fromUser instanceof Student) {
+                        displayFromUserName(((Student) fromUser).getStudentFullName());
+                        displayFromUserNumber(((Student) fromUser).getStudentNumber());
+                    } else if (fromUser instanceof Business) {
+                        displayFromUserName(((Business) fromUser).getBusinessName());
+                        displayFromUserNumber(((Business) fromUser).getBusinessVAT());
+                    }
                 }
                 if (toUser != null) {
-                    displayToUserName(toUser.getFirstName() + " " + toUser.getLastName());
-                    displayToUserNumber(toUser.getNumber());
+                    if (toUser instanceof Student) {
+                        displayToUserName(((Student) toUser).getStudentFullName());
+                        displayToUserNumber(((Student) toUser).getStudentNumber());
+                    } else if (toUser instanceof Business) {
+                        displayToUserName(((Business) toUser).getBusinessName());
+                        displayToUserNumber(((Business) toUser).getBusinessVAT());
+                    }
                 }
             });
         }
