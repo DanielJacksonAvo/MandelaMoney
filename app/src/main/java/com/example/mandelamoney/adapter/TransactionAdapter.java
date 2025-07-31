@@ -11,19 +11,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mandelamoney.R;
-import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
 
-    private final List<TransactionDetails> transactionList;
+    private final List<Transaction> transactionList;
     private final String currentUserEmail;
     private static final String TAG = "TransactionAdapter";
 
     // Constructor
-    public TransactionAdapter(List<TransactionDetails> transactionList, String currentUserEmail) {
+    public TransactionAdapter(List<Transaction> transactionList, String currentUserEmail) {
         // Always ensure transactionList is not null, and make a defensive copy
         this.transactionList = (transactionList != null) ? new ArrayList<>(transactionList) : new ArrayList<>();
         this.currentUserEmail = currentUserEmail;
@@ -40,7 +40,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
-        TransactionDetails transaction = transactionList.get(position);
+        Transaction transaction = transactionList.get(position);
         holder.txtDate.setText(transaction.getDate());
         holder.txtTime.setText(transaction.getTime());
         String fromUser = transaction.getFromUser();
@@ -73,7 +73,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         return transactionList.size();
     }
 
-    public void updateData(List<TransactionDetails> newList) {
+    public void updateData(List<Transaction> newList) {
         Log.d(TAG, "Updating adapter with new data. New size: " + newList.size() + ", Old size: " + transactionList.size());
         // Ensure newList is not null before clearing and adding
         if (newList != null) {

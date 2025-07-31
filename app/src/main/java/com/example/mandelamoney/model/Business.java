@@ -5,11 +5,8 @@ import java.io.Serializable;
 public class Business extends User implements Serializable {
     private String businessName, businessPhoneNumber, businessVAT;
 
-    public Business(String userEmail, String userPassword, double userBalance,  String businessName, String businessPhoneNumber, String businessVAT) {
-        super(userEmail, userPassword, userBalance);
-        this.businessName = businessName;
-        this.businessPhoneNumber = businessPhoneNumber;
-        this.businessVAT = businessVAT;
+    public Business(String userEmail) {
+        super(userEmail);
     }
 
     public String getBusinessName() {

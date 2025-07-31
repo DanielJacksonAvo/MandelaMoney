@@ -6,8 +6,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.mandelamoney.controller.DashboardController;
-import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.Transaction;
 
 import java.util.List;
 
@@ -18,5 +17,5 @@ public interface IHomeDashboardView {
 
     void displayUserName(String name);
 
-    void displayTransactions(List<TransactionDetails> transactionDetails);
+    void displayTransactions(List<Transaction> transactionDetails);
 }

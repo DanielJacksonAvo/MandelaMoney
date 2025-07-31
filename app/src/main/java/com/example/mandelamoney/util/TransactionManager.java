@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
-import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
 
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class TransactionManager {
-    public static List<TransactionDetails> formatTransactionHistory(List<TransactionDetails> transactionList, Context context) {
+    public static List<Transaction> formatTransactionHistory(List<Transaction> transactionList, Context context) {
         Log.d("THController", "formatTransactionHistory(): received " + transactionList.size() + " transactions");
 
         User user = UserSession.getUser();
@@ -26,7 +26,7 @@ public class TransactionManager {
         Set<String> emailsToLookup = new HashSet<>();
 
         // Collect emails to lookup
-        for (TransactionDetails tx : transactionList) {
+        for (Transaction tx : transactionList) {
             Log.d("THController", "Before format: " + tx.toString());
 
             if (tx.isSelfTransaction()) {
@@ -49,7 +49,7 @@ public class TransactionManager {
         Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup, context);
 
         // Format each transaction
-        for (TransactionDetails tx : transactionList) {
+        for (Transaction tx : transactionList) {
             if (tx.isSelfTransaction()) {
                 setSelfTransactionName(tx);
             } else {
@@ -70,7 +70,7 @@ public class TransactionManager {
         return transactionList;
     }
 
-    private static void setSelfTransactionName(TransactionDetails tx) {
+    private static void setSelfTransactionName(Transaction tx) {
         User user = UserSession.getUser();
         if (user instanceof Student) {
             String fullname = ((Student) user).getStudentFirstName() + " " + ((Student) user).getStudentLastName();
