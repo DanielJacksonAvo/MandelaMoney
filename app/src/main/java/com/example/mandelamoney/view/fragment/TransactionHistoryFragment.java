@@ -110,7 +110,6 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     }
 
     private void loadOrFetchTransactions() {
-        // Default first load: no search, all filters (controller will call the “All/All” SP)
         controller.TransactionHistoryController.loadTransactions(null, null, null);
     }
 
@@ -209,13 +208,6 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         }
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        String query = etSearch != null ? etSearch.getText().toString().trim() : null;
-        controller.TransactionHistoryController.loadTransactions(query, selectedPeriod, selectedType);
-    }
 
     @Override
     public void onDestroyView() {
