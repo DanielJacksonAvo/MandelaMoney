@@ -100,6 +100,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         imgPasswordIcon = findViewById(R.id.img_password_login);
         btnForgotPassword = findViewById(R.id.btn_forgotPassword_login);
         btnSignup = findViewById(R.id.btn_signup_login2);
+        loadingSpinner = findViewById(R.id.login_loading_spinner);
 
         if (btnLogin != null && tbxUserEmail != null && tbxUserPassword != null) {
             configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
