@@ -53,21 +53,12 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
 //        });
 
         unlockController = new UnlockController(this, this);
-        setupPhoneUI();
-       // View tabletSpecificViewCheck = findViewById(R.id.blurView_unlock_account);
-//        if (tabletSpecificViewCheck != null) {
-//            Log.d("LoginActivity", "Tablet layout (layout-sw600dp) loaded.");
-//            setupTabletUI();
-//        } else {
-//            Log.d("LoginActivity", "Phone layout (default layout) loaded.");
-//            setupPhoneUI();
-//        }
-
+        connectToUI();
         hideLoadingSpinner();
         hideErrorMessage();
 
     }
-    public void setupPhoneUI() {
+    public void connectToUI() {
         btnUnlock = findViewById(R.id.btn_unlock);
         tbxUserPassword = findViewById(R.id.tbx_password_unlock);
         txtError = findViewById(R.id.txt_error_unlock_application);
