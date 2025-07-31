@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mandelamoney.R;
@@ -22,9 +23,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private final String currentUserEmail;
     private static final String TAG = "TransactionAdapter";
 
-    // Constructor
     public TransactionAdapter(List<Transaction> transactionList, String currentUserEmail) {
-        // Always ensure transactionList is not null, and make a defensive copy
         this.transactionList = (transactionList != null) ? new ArrayList<>(transactionList) : new ArrayList<>();
         this.currentUserEmail = currentUserEmail;
     }
@@ -73,17 +72,24 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         return transactionList.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateData(List<Transaction> newList) {
-        Log.d(TAG, "Updating adapter with new data. New size: " + newList.size() + ", Old size: " + transactionList.size());
-        // Ensure newList is not null before clearing and adding
-        if (newList != null) {
-            transactionList.clear();
-            transactionList.addAll(newList);
-            // Notify the adapter that the data set has changed to refresh the RecyclerView
-            notifyDataSetChanged();
-        } else {
+        if (newList == null) {
             Log.w(TAG, "Attempted to update data with a null list.");
+            if (!this.transactionList.isEmpty()) {
+                this.transactionList.clear();
+                notifyDataSetChanged();
+            }
+            return;
         }
+
+        TransactionDiffCallback diffCallback = new TransactionDiffCallback(this.transactionList, newList);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+
+        this.transactionList.clear();
+        this.transactionList.addAll(newList);
+
+        diffResult.dispatchUpdatesTo(this);
     }
 
     static class TransactionViewHolder extends RecyclerView.ViewHolder {
@@ -95,6 +101,37 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             txtTime = itemView.findViewById(R.id.txt_transaction_time_card);
             txtToFrom = itemView.findViewById(R.id.txt_transaction_tofrom_name_card);
             txtAmount = itemView.findViewById(R.id.txt_transaction_amount_card);
+        }
+    }
+
+    private static class TransactionDiffCallback extends DiffUtil.Callback {
+
+        private final List<Transaction> oldList;
+        private final List<Transaction> newList;
+
+        public TransactionDiffCallback(List<Transaction> oldList, List<Transaction> newList) {
+            this.oldList = oldList;
+            this.newList = newList;
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldList.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newList.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldList.get(oldItemPosition).getId().equals(newList.get(newItemPosition).getId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
         }
     }
 }

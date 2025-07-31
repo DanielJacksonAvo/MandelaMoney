@@ -1,6 +1,10 @@
 package com.example.mandelamoney.model;
 
+import java.util.Objects;
+import java.util.UUID;
+
 public class Transaction {
+    private String id;
     private String toUser;
     private String fromUser;
     private float amount;
@@ -10,12 +14,17 @@ public class Transaction {
     private boolean selfTransaction;
 
     public Transaction(String fromUser, String toUser, float amount, String date, String time) {
+        this.id = UUID.randomUUID().toString();
         this.toUser = toUser;
         this.fromUser = fromUser;
         this.amount = amount;
         this.date = date;
         this.time = time;
         this.displayName ="";
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getToUser() {
@@ -64,5 +73,24 @@ public class Transaction {
 
     public void setSelfTransaction(boolean selfTransaction) {
         this.selfTransaction = selfTransaction;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return Float.compare(that.amount, amount) == 0 &&
+                isSelfTransaction() == that.isSelfTransaction() &&
+                Objects.equals(toUser, that.toUser) &&
+                Objects.equals(fromUser, that.fromUser) &&
+                Objects.equals(date, that.date) &&
+                Objects.equals(time, that.time) &&
+                Objects.equals(displayName, that.displayName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, toUser, fromUser, amount, date, time, displayName, selfTransaction);
     }
 }
