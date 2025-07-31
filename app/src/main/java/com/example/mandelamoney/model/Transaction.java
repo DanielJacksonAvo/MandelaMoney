@@ -1,46 +1,68 @@
 package com.example.mandelamoney.model;
 
 public class Transaction {
-    private String senderEmail, receiverEmail;
-    private double amount;
-    private int type;
+    private String toUser;
+    private String fromUser;
+    private float amount;
+    private final String date;
+    private final String time;
+    private String displayName;
+    private boolean selfTransaction;
 
-    public Transaction(String senderEmail, String receiverEmail, double amount, int type) {
-        this.senderEmail = senderEmail;
-        this.receiverEmail = receiverEmail;
+    public Transaction(String fromUser, String toUser, float amount, String date, String time) {
+        this.toUser = toUser;
+        this.fromUser = fromUser;
         this.amount = amount;
-        this.type = type;
+        this.date = date;
+        this.time = time;
+        this.displayName ="";
     }
 
-    public String getSenderEmail() {
-        return senderEmail;
+    public String getToUser() {
+        return toUser;
     }
 
-    public void setSenderEmail(String senderEmail) {
-        this.senderEmail = senderEmail;
+    public void setToUser(String toUser) {
+        this.toUser = toUser;
     }
 
-    public String getReceiverEmail() {
-        return receiverEmail;
+    public String getFromUser() {
+        return fromUser;
     }
 
-    public void setReceiverEmail(String receiverEmail) {
-        this.receiverEmail = receiverEmail;
+    public void setFromUser(String fromUser) {
+        this.fromUser = fromUser;
     }
 
-    public double getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 
-    public int getType() {
-        return type;
+    public String getDate() {
+        return date;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public String getTime() {
+        return time;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public boolean isSelfTransaction() {
+        return selfTransaction;
+    }
+
+    public void setSelfTransaction(boolean selfTransaction) {
+        this.selfTransaction = selfTransaction;
     }
 }

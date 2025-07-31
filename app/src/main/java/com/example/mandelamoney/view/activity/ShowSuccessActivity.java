@@ -17,7 +17,7 @@ import com.example.mandelamoney.controller.MakePaymentController;
 import com.example.mandelamoney.controller.RequestPaymentController;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
-import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.MySQLConnector;
@@ -59,7 +59,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
     }
 
     private void fetchDataAndPopulateUI() {
-        final TransactionDetails txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
+        final Transaction txnDetails = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, this);
 
         if (txnDetails != null) {
             final User fromUser = MySQLConnector.getUserDetailsByEmail(txnDetails.getFromUser(), this);

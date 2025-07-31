@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.example.mandelamoney.BuildConfig;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
-import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
 
 import java.sql.CallableStatement;
@@ -402,8 +402,8 @@ public class MySQLConnector {
 
         return transactionId;
     }
-    public static List<TransactionDetails> getTransactionHistoryWithFilters(String userEmail, String period, String type, Context context) {
-        List<TransactionDetails> transactions = new ArrayList<>();
+    public static List<Transaction> getTransactionHistoryWithFilters(String userEmail, String period, String type, Context context) {
+        List<Transaction> transactions = new ArrayList<>();
         int transactionCount = 0;
         Connection conn;
 
@@ -429,10 +429,15 @@ public class MySQLConnector {
                 String time = rs.getString("time");
 
                 Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
+                Transaction tx;
                 if(from.equals(userEmail)&&to.equals(userEmail)){
-                    transactions.add(new TransactionDetails(from, to, amount, date, time, true));
+                    tx = new Transaction(from, to, amount, date, time);
+                    tx.setSelfTransaction(true);
+                    transactions.add(tx);
                 }else{
-                transactions.add(new TransactionDetails(from, to, amount, date, time,false));}
+                    tx = new Transaction(from, to, amount, date, time);
+                    tx.setSelfTransaction(false);
+                transactions.add(tx);}
                 transactionCount++;
             }
 
@@ -446,8 +451,8 @@ public class MySQLConnector {
         return transactions;
     }
 
-    public static List<TransactionDetails> getTransactionHistory(String userEmail, Context context) {
-        List<TransactionDetails> transactions = new ArrayList<>();
+    public static List<Transaction> getTransactionHistory(String userEmail, Context context) {
+        List<Transaction> transactions = new ArrayList<>();
         int transactionCount = 0;
         Connection conn;
         try {
@@ -468,10 +473,15 @@ public class MySQLConnector {
                 String date = rs.getString("date");
                 String time = rs.getString("time");
                 Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
+                Transaction tx;
                 if(from.equals(userEmail)&&to.equals(userEmail)){
-                    transactions.add(new TransactionDetails(from, to, amount, date, time, true));
+                    tx = new Transaction(from, to, amount, date, time);
+                    tx.setSelfTransaction(true);
+                    transactions.add(tx);
                 }else {
-                    transactions.add(new TransactionDetails(from, to, amount, date, time, false));
+                    tx = new Transaction(from, to, amount, date, time);
+                    tx.setSelfTransaction(false);
+                    transactions.add(tx);
                 }
                 transactionCount++;
             }
@@ -550,14 +560,14 @@ public class MySQLConnector {
     }
 
 
-    public static TransactionDetails getTransactionDetailsFromProcedure(int txnId, Context context) {
+    public static Transaction getTransactionDetailsFromProcedure(int txnId, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
             Log.e("MySQLConnector", "No valid DB connection for getTransactionDetailsFromProcedure.");
             return null;
         }
 
-        TransactionDetails details = null;
+        Transaction details = null;
 
         try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.getTransactionDetails(?)}")) {
             stmt.setInt(1, txnId);
@@ -566,7 +576,7 @@ public class MySQLConnector {
             if (hasResults) {
                 try (ResultSet rs = stmt.getResultSet()) {
                     if (rs.next()) {
-                        details = new TransactionDetails(
+                        details = new Transaction(
                                 rs.getString("fromUser"),
                                 rs.getString("toUser"),
                                 rs.getFloat("transactionAmount"),

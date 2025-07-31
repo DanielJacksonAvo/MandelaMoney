@@ -40,7 +40,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.adapter.TransactionAdapter;
 import com.example.mandelamoney.controller.DashboardController;
-import com.example.mandelamoney.model.TransactionDetails;
+import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.google.android.material.button.MaterialButton;
@@ -199,9 +199,9 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
     }
 
     @Override
-    public void updateData(List<TransactionDetails> formattedList) {
+    public void updateData(List<Transaction> formattedList) {
         Log.d("THFragment", "updateData() called. Items: " + formattedList.size());
-        for (TransactionDetails tx : formattedList) {
+        for (Transaction tx : formattedList) {
             Log.d("THFragment", "UI item: " + tx.toString());
         }
 
