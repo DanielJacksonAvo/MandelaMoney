@@ -25,7 +25,6 @@ public class TransactionManager {
         String currentUserEmail = user.getUserEmail();
         Set<String> emailsToLookup = new HashSet<>();
 
-        // Collect emails to lookup
         for (Transaction tx : transactionList) {
             Log.d("THController", "Before format: " + tx.toString());
 
@@ -45,10 +44,8 @@ public class TransactionManager {
 
         Log.d("THController", "Emails to lookup: " + emailsToLookup);
 
-        // Get display names for other users
         Map<String, String> emailToDisplayName = MySQLConnector.getDisplayNamesForEmails(emailsToLookup, context);
 
-        // Format each transaction
         for (Transaction tx : transactionList) {
             if (tx.isSelfTransaction()) {
                 setSelfTransactionName(tx);
@@ -82,4 +79,5 @@ public class TransactionManager {
         tx.setSelfTransaction(true);
         Log.d("THController", "Setting self-transaction name with from user: "+tx.getFromUser() + "to user: "+tx.getToUser());
     }
+
 }
