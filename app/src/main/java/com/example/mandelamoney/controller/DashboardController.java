@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 public class DashboardController {
     private final IDashboardView view;
     private final Context context;
-    private final User user;
 
     private int currentFragment = 0;
 
@@ -45,7 +44,6 @@ public class DashboardController {
     public DashboardController(Context context, IDashboardView view) {
         this.context = context;
         this.view = view;
-        this.user = UserSession.getUser();
     }
 
 
@@ -146,21 +144,24 @@ public class DashboardController {
         }
 
         public String getUserName() {
-            if (user instanceof Student) {
-                return ((Student) user).getStudentFullName();
-            } else if (user instanceof Business) {
-                return ((Business) user).getBusinessName();
+            if (UserSession.getUser() != null) {
+                User user = UserSession.getUser();
+                if (user instanceof Student) {
+                    return ((Student) user).getStudentFullName();
+                } else if (user instanceof Business) {
+                    return ((Business) user).getBusinessName();
+                }
             }
             return null;
         }
 
         public void handleBalanceRefresh() {
-            if (user != null) {
+            if (UserSession.getUser() != null) {
                 Executors.newSingleThreadExecutor().execute(() -> {
-                    double previousBalance = user.getUserBalance();
-                    double updatedBalance = MySQLConnector.getUserBalance(user.getUserEmail(), context);
+                    double previousBalance = UserSession.getUser().getUserBalance();
+                    double updatedBalance = UserSession.updateBalance(context);
                     if (updatedBalance != previousBalance) {
-                        user.setUserBalance(updatedBalance);
+                        UserSession.getUser().setUserBalance(updatedBalance);
                         mainThreadHandler.post(() -> {
                             view.displayBalance(updatedBalance);
                             refreshAndDisplayTransactions();

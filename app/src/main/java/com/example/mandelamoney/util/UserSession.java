@@ -54,6 +54,12 @@ public class UserSession {
         cachedTransactionHistory = null;
     }
 
+    public static Double updateBalance(Context context) {
+        Double balance = MySQLConnector.getUserBalance(currentUser.getUserEmail(), context);
+        currentUser.setUserBalance(balance);
+        return balance;
+    }
+
 
     public static void updateTransactions(Context context) {
         List<Transaction> rawTransactionHistory = MySQLConnector.getTransactionHistory(currentUser.getUserEmail(), context);
