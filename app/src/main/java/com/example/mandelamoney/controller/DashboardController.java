@@ -139,7 +139,7 @@ public class DashboardController {
                 }
                 view.displayBalance(user.getUserBalance());
                 view.displayUserName(getUserName());
-                displayTransactions(UserSession.getLastWeekTransactionHistory());
+                displayTransactions(UserSession.getLastWeekTransactions());
             } catch (Exception e) {
                 Log.e("DashboardHomeController", "Error in handleLoadUserToUI", e);
             }
@@ -223,7 +223,7 @@ public class DashboardController {
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
                 UserSession.updateTransactions(context);
-                List<Transaction> txList = UserSession.getLastWeekTransactionHistory();
+                List<Transaction> txList = UserSession.getLastWeekTransactions();
                 displayTransactions(txList);
             }).start();
         }
@@ -278,7 +278,7 @@ public class DashboardController {
                 mainThreadHandler.post(() -> {
                     if (transactionHistoryView != null) {
                         Log.d("THController", "Updating UI with cache");
-                        transactionHistoryView.updateData(UserSession.getTransactionHistory());
+                        transactionHistoryView.updateData(UserSession.getTransactions());
                     } else {
                         Log.e("THController", "transactionHistoryView is null. Cannot update UI");
                     }
