@@ -404,7 +404,6 @@ public class MySQLConnector {
     }
     public static List<Transaction> getTransactionHistoryWithFilters(String userEmail, String period, String type, Context context) {
         List<Transaction> transactions = new ArrayList<>();
-        int transactionCount = 0;
         Connection conn;
 
         try {
@@ -421,25 +420,7 @@ public class MySQLConnector {
 
             ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
-                String from = rs.getString("fromUser");
-                String to = rs.getString("toUser");
-                float amount = rs.getFloat("transactionAmount");
-                String date = rs.getString("date");
-                String time = rs.getString("time");
-
-                Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
-                Transaction tx;
-                if(from.equals(userEmail)&&to.equals(userEmail)){
-                    tx = new Transaction(from, to, amount, date, time);
-                    tx.setSelfTransaction(true);
-                    transactions.add(tx);
-                }else{
-                    tx = new Transaction(from, to, amount, date, time);
-                    tx.setSelfTransaction(false);
-                transactions.add(tx);}
-                transactionCount++;
-            }
+            transactions = ResultSetParser.parseTransactions(rs, userEmail);
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "SQLException in getTransactionHistoryWithFilters: " + e.getMessage(), e);
@@ -447,13 +428,12 @@ public class MySQLConnector {
             Log.e("MySQLConnector", "Exception in getTransactionHistoryWithFilters: " + e.getMessage(), e);
         }
 
-        Log.d("MySQLConnector", "Transaction count: " + transactionCount);
+        Log.d("MySQLConnector", "Transaction count: " + transactions.size() + 1);
         return transactions;
     }
 
     public static List<Transaction> getTransactionHistory(String userEmail, Context context) {
         List<Transaction> transactions = new ArrayList<>();
-        int transactionCount = 0;
         Connection conn;
         try {
             conn = getConnection(context);
@@ -466,32 +446,14 @@ public class MySQLConnector {
             stmt.setString(1, userEmail);
             ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
-                String from = rs.getString("fromUser");
-                String to = rs.getString("toUser");
-                float amount = rs.getFloat("transactionAmount");
-                String date = rs.getString("date");
-                String time = rs.getString("time");
-                Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
-                Transaction tx;
-                if(from.equals(userEmail)&&to.equals(userEmail)){
-                    tx = new Transaction(from, to, amount, date, time);
-                    tx.setSelfTransaction(true);
-                    transactions.add(tx);
-                }else {
-                    tx = new Transaction(from, to, amount, date, time);
-                    tx.setSelfTransaction(false);
-                    transactions.add(tx);
-                }
-                transactionCount++;
-            }
+            transactions = ResultSetParser.parseTransactions(rs, userEmail);
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "SQLException in getTransactionHistory: " + e.getMessage(), e);
         } catch (Exception e) {
             Log.e("MySQLConnector", "General Exception in getTransactionHistory: " + e.getMessage(), e);
         }
-        Log.d("MySQLConnector", "Transaction count: " + transactionCount);
+        Log.d("MySQLConnector", "Transaction count: " + transactions.size() + 1);
         return transactions;
     }
 

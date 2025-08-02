@@ -1,12 +1,18 @@
 package com.example.mandelamoney.util;
 
+import android.util.Log;
+
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
+import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ResultSetParser {
     private static final int EXPECTED_COLUMN_COUNT = 5;
@@ -51,6 +57,27 @@ public class ResultSetParser {
         return user;
     }
 
-    public static void main(String[] args) {
+    public static List<Transaction> parseTransactions(ResultSet rs, String userEmail) throws SQLException {
+        List<Transaction> transactions = new ArrayList<>();
+        while (rs.next()) {
+            String from = rs.getString("fromUser");
+            String to = rs.getString("toUser");
+            float amount = rs.getFloat("transactionAmount");
+            String date = rs.getString("date");
+            String time = rs.getString("time");
+
+            Log.d("MySQLConnector", "Transaction: from=" + from + ", to=" + to + ", amount=" + amount + ", date=" + date + ", time=" + time);
+            Transaction tx;
+            if(from.equals(userEmail)&&to.equals(userEmail)){
+                tx = new Transaction(from, to, amount, date, time);
+                tx.setSelfTransaction(true);
+                transactions.add(tx);
+            } else {
+                tx = new Transaction(from, to, amount, date, time);
+                tx.setSelfTransaction(false);
+                transactions.add(tx);
+            }
+        }
+        return transactions;
     }
 }
