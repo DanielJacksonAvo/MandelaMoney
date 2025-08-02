@@ -58,7 +58,7 @@ public class UserSession {
         cachedTransactionHistory = TransactionManager.formatTransactionHistory(rawTransactionHistory, context);
     }
 
-    public static List<Transaction> getLastWeekTransactionHistory() {
+    public static List<Transaction> getLastWeekTransactions() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
         LocalDate today = LocalDate.now();
         LocalDate oneWeekAgo = today.minusWeeks(1);
@@ -75,7 +75,7 @@ public class UserSession {
                 })
                 .collect(Collectors.toList());
     }
-    public static List<Transaction> getLastMonthTransactionHistory() {
+    public static List<Transaction> getLastMonthTransactions() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
         LocalDate today = LocalDate.now();
         LocalDate oneMonthAgo = today.minusMonths(1);
@@ -92,7 +92,7 @@ public class UserSession {
                 .collect(Collectors.toList());
     }
 
-    public static List<Transaction> getLastYearTransactionHistory() {
+    public static List<Transaction> getLastYearTransactions() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
         LocalDate today = LocalDate.now();
         LocalDate oneYearAgo = today.minusYears(1);
@@ -110,7 +110,7 @@ public class UserSession {
                 .collect(Collectors.toList());
     }
 
-    public static List<Transaction> getTransactionHistory() {
+    public static List<Transaction> getTransactions() {
         return cachedTransactionHistory;
     }
 
