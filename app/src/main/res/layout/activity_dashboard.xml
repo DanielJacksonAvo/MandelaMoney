@@ -15,6 +15,7 @@
         style="@style/BottomNavigationView.NoActiveIndicator"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:background="@color/mandelaBlue"
         app:itemIconSize="32dp"
         app:itemIconTint="@color/bottom_nav_item_colors"
