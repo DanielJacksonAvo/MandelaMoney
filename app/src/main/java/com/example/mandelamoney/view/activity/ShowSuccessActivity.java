@@ -43,10 +43,13 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
             return insets;
         });
 
-        if (DataShare.receive() instanceof MakePaymentController) {
-            MakePaymentController makePaymentController = (MakePaymentController) DataShare.receive();
-        } else if (DataShare.receive() instanceof RequestPaymentController) {
-            RequestPaymentController requestPaymentController = (RequestPaymentController) DataShare.receive();
+        Object controller = DataShare.receive();
+        if (controller instanceof MakePaymentController) {
+            MakePaymentController makePaymentController = (MakePaymentController) controller;
+            makePaymentController.setTransactionStatusDisplayView(this);
+            makePaymentController.setContext(this);
+        } else if (controller instanceof RequestPaymentController) {
+            RequestPaymentController requestPaymentController = (RequestPaymentController) controller;
         }
 
         transactionId = getIntent().getIntExtra("TRANSACTION_ID", 0);
