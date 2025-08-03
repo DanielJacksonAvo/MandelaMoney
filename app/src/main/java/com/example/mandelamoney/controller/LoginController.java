@@ -34,12 +34,6 @@ public class LoginController {
 
     public void handleLogin(String userEmail, String userPassword) {
         view.showLoadingSpinner();
-        if ((userEmail.length() < 5) || (userPassword.length() < 5))
-        {
-            view.showErrorMessage();
-            return;
-        }
-
         LoginManager.login(context, userEmail, userPassword,
                 this::onSuccess
                 ,this::onFailure
