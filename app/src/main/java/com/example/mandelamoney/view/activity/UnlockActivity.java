@@ -3,41 +3,28 @@ package com.example.mandelamoney.view.activity;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
+import androidx.core.view.WindowInsetsControllerCompat;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.UnlockController;
 import com.example.mandelamoney.view.Iface.IUnlockView;
-
-import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class UnlockActivity extends AppCompatActivity implements IUnlockView {
     private UnlockController unlockController;
     private TextView txtError;
-    private Button btnUnlock;
-    private Button btnBiometrics;
-    private EditText tbxUserPassword;
-    private ImageView imgPasswordIcon;
-    private TextView btnLogOut;
     private ConstraintLayout loadingSpinner;
 
     @Override
@@ -45,6 +32,9 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_unlock_account);
+
+        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        insetsController.setAppearanceLightStatusBars(false);
 
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
 //            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -59,12 +49,12 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
 
     }
     public void connectToUI() {
-        btnUnlock = findViewById(R.id.btn_unlock);
-        tbxUserPassword = findViewById(R.id.tbx_password_unlock);
+        Button btnUnlock = findViewById(R.id.btn_unlock);
+        EditText tbxUserPassword = findViewById(R.id.tbx_password_unlock);
         txtError = findViewById(R.id.txt_error_unlock_application);
-        imgPasswordIcon = findViewById(R.id.img_password_unlock);
-        btnBiometrics = findViewById(R.id.btn_biometrics_unlock);
-        btnLogOut = findViewById(R.id.btn_logout_unlock);
+        ImageView imgPasswordIcon = findViewById(R.id.img_password_unlock);
+        Button btnBiometrics = findViewById(R.id.btn_biometrics_unlock);
+        TextView btnLogOut = findViewById(R.id.btn_logout_unlock);
         loadingSpinner = findViewById(R.id.unlock_loading_spinner);
 
         if (btnUnlock != null && tbxUserPassword != null) {
