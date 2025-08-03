@@ -94,5 +94,6 @@
     <string name="today">Today</string>"
     <string name="invalid_password">Invalid Password</string>
     <string name="forgot_password_message">Enter your email to begin recovery.</string>
+    <string name="reset_password_message">Enter a new secure password.</string>
 
 </resources>
