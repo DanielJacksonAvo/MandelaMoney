@@ -27,6 +27,7 @@ import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IConfirmPaymentView;
 import com.example.mandelamoney.view.Iface.IScanQRView;
+import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
 import com.example.mandelamoney.view.activity.ConfirmPaymentActivity;
 import com.example.mandelamoney.view.activity.DashboardActivity;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
@@ -46,7 +47,7 @@ import java.util.concurrent.Executors;
 
 public class MakePaymentController {
 
-    private final Context context;
+    private Context context;
     private final IScanQRView scanQrView;
     private PreviewView previewView;
     private final ExecutorService cameraExecutor;
@@ -57,6 +58,7 @@ public class MakePaymentController {
     private User fromUserDetails;
     private User toUserDetails;
     private IConfirmPaymentView confirmPaymentView;
+    private ITransactionStatusDisplayView transactionStatusDisplayView;
 
     public MakePaymentController(Context context, IScanQRView scanQrView) {
         this.context = context;
@@ -138,13 +140,11 @@ public class MakePaymentController {
                 Camera camera = cameraProvider.bindToLifecycle((MakePaymentScanQrActivity) context,
                         CameraSelector.DEFAULT_BACK_CAMERA, preview, analysis);
 
-                // Set 2x zoom
                 if (camera.getCameraInfo().getZoomState().getValue() != null) {
                     float maxZoom = camera.getCameraInfo().getZoomState().getValue().getMaxZoomRatio();
                     float minZoom = camera.getCameraInfo().getZoomState().getValue().getMinZoomRatio();
                     float targetZoom = 2.0f;
 
-                    // Ensure targetZoom is within the camera's capabilities
                     if (targetZoom >= minZoom && targetZoom <= maxZoom) {
                         camera.getCameraControl().setZoomRatio(targetZoom);
                         Log.d("CameraZoom", "Set zoom to: " + targetZoom + "x");
@@ -184,7 +184,6 @@ public class MakePaymentController {
             return;
         }
 
-        // Execute the scanning and data fetching logic on a separate thread
         paymentExecutor.execute(() -> {
             Log.d("DEBUG", "Checking if transaction exists: " + transactionId);
             try {
@@ -229,15 +228,14 @@ public class MakePaymentController {
     }
 
     public void handleConfirmPayment() {
-        // Execute the payment logic on a separate thread
         paymentExecutor.execute(() -> {
             boolean transactionSuccess;
             boolean sufficientFunds;
             String errorReason;
+            DataShare.send(this);
 
             try {
                 sufficientFunds = MySQLConnector.hasSufficientFunds(fromUserDetails.getUserEmail(), transactionId, context);
-
                 if (sufficientFunds) {
                     try {
                         transactionSuccess = MySQLConnector.confirmTransaction(fromUserDetails.getUserEmail(), transactionId, context);
@@ -326,5 +324,13 @@ public class MakePaymentController {
 
     public void setConfirmPaymentView(IConfirmPaymentView confirmPaymentView) {
         this.confirmPaymentView = confirmPaymentView;
+    }
+
+    public void setTransactionStatusDisplayView(ITransactionStatusDisplayView transactionStatusDisplayView) {
+        this.transactionStatusDisplayView = transactionStatusDisplayView;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }
