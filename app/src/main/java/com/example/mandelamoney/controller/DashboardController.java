@@ -177,7 +177,6 @@ public class DashboardController {
         }
 
         public void handleMakePayment() {
-            DataShare.send(this);
             stopPolling();
             Intent intent = new Intent(context, MakePaymentScanQrActivity.class);
             context.startActivity(intent);
