@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,6 +13,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -27,6 +29,7 @@ public class MakePaymentScanQrActivity extends AppCompatActivity implements ISca
 
     private static final int REQUEST_CAMERA_PERMISSION = 10;
     private MakePaymentController controller;
+    private ConstraintLayout loadingSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +47,11 @@ public class MakePaymentScanQrActivity extends AppCompatActivity implements ISca
         });
 
         PreviewView previewView = findViewById(R.id.img_request_payment_qr);
+        connectToUI();
         controller = new MakePaymentController(this, this);
         controller.setPreviewView(previewView);
 
         checkCameraPermission();
-        connectToUI();
     }
 
     private void checkCameraPermission() {
@@ -62,18 +65,10 @@ public class MakePaymentScanQrActivity extends AppCompatActivity implements ISca
     private void connectToUI() {
         Button btnScan = findViewById(R.id.btn_scan_qr);
         TextView btnCancel = findViewById(R.id.btn_cancel_scan_qr);
-        btnScan.setOnClickListener(v -> {
-            Log.d("DEBUG", "Scan button clicked — transactionId: " + controller.getTransactionId());
-            controller.handleScanQR();
-        });
+        configureCancelButton(btnCancel);
+        configureScanButton(btnScan);
+        loadingSpinner = findViewById(R.id.scanqr_loading_spinner);
 
-        btnCancel.setOnClickListener(v -> controller.handleCancel());
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        controller.shutdown();
     }
 
     @Override
@@ -88,8 +83,29 @@ public class MakePaymentScanQrActivity extends AppCompatActivity implements ISca
 
     @Override public void showErrorMessage() {}
     @Override public void hideErrorMessage() {}
+
     @Override public void finishActivity() {
-        runOnUiThread(this::finish);
+        //finish();
+    }
+
+    @Override
+    public void showLoadingSpinner() {
+        loadingSpinner.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        loadingSpinner.setVisibility(View.GONE);
+    }
+
+    private void configureCancelButton(TextView btnCancel) {
+        btnCancel.setOnClickListener((view) -> controller.handleCancel());
+    }
+
+    private void configureScanButton(Button btnScan) {
+        btnScan.setOnClickListener((view) -> {
+            controller.handleScanQR();
+        });
     }
 }
 
