@@ -40,18 +40,17 @@ public class MakePaymentScanQrActivity extends AppCompatActivity implements ISca
         WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         PreviewView previewView = findViewById(R.id.img_request_payment_qr);
-        controller = new MakePaymentController();
         connectToUI();
+        controller = new MakePaymentController(this, this);
         controller.setPreviewView(previewView);
-        controller.setContext(this);
-        controller.setScanQrView(this);
+
         checkCameraPermission();
     }
 
@@ -82,36 +81,21 @@ public class MakePaymentScanQrActivity extends AppCompatActivity implements ISca
         }
     }
 
-
-
-    @Override
-    public void showToast(String message) {
-        runOnUiThread(() -> {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        });
-    }
+    @Override public void showErrorMessage() {}
+    @Override public void hideErrorMessage() {}
 
     @Override public void finishActivity() {
-        finish();
+        //finish();
     }
 
     @Override
     public void showLoadingSpinner() {
-        runOnUiThread(() -> {
-            if (loadingSpinner != null) {
-                loadingSpinner.setVisibility(View.VISIBLE);
-            }
-        });
+        loadingSpinner.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoadingSpinner() {
-        runOnUiThread(() -> {
-            if (loadingSpinner != null) {
-                loadingSpinner.setVisibility(View.GONE);
-            }
-        });
-
+        loadingSpinner.setVisibility(View.GONE);
     }
 
     private void configureCancelButton(TextView btnCancel) {
