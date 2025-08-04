@@ -4,4 +4,6 @@ public interface IScanQRView {
     void showErrorMessage();
     void hideErrorMessage();
     void finishActivity();
+    void showLoadingSpinner();
+    void hideLoadingSpinner();
 }

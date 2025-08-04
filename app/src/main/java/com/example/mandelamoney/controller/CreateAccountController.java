@@ -38,17 +38,6 @@ public class CreateAccountController {
         this.viewSelectUserType = viewSelectUserType;
     }
 
-    public CreateAccountController(Context context, ICreateStudentAccountView viewCreateStudentAccount) {
-        this.context = context;
-        this.viewCreateStudentAccount = viewCreateStudentAccount;
-    }
-
-    public CreateAccountController(Context context, ICreateBusinessAccountView viewCreateBusinessAccount) {
-        this.context = context;
-        this.viewCreateBusinessAccount = viewCreateBusinessAccount;
-    }
-
-
     public void handleUserTypeSelection(int userNewType) {
         Intent intent;
         // No need to nullify viewSelectUserType here, as it's passed via constructor

@@ -19,7 +19,7 @@ import com.example.mandelamoney.view.Iface.IConfirmPaymentView;
 
 public class ConfirmPaymentActivity extends AppCompatActivity implements IConfirmPaymentView {
 
-    private MakePaymentController controller;
+    private MakePaymentController makePaymentController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +35,12 @@ public class ConfirmPaymentActivity extends AppCompatActivity implements IConfir
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        controller = (MakePaymentController) DataShare.receive();
         connectToUI();
-        controller.setConfirmPaymentView(this);
-        controller.handleLoadUsersUI();
+        Object obj = DataShare.receive();
+        if (obj instanceof MakePaymentController) {
+            makePaymentController = (MakePaymentController) obj;
+            makePaymentController.setConfirmPaymentView(this);
+        }
     }
 
 
@@ -50,11 +52,11 @@ public class ConfirmPaymentActivity extends AppCompatActivity implements IConfir
     }
 
     private void configureConfirmButton(Button btnConfirm) {
-        btnConfirm.setOnClickListener((view) -> controller.handleConfirmPayment());
+        //btnConfirm.setOnClickListener((view) -> controller.handleConfirmPayment());
     }
 
     private void configureCancelButton(TextView btnCancel) {
-        btnCancel.setOnClickListener((view) -> controller.handleCancel());
+        //btnCancel.setOnClickListener((view) -> controller.handleCancel());
     }
 
     @Override
