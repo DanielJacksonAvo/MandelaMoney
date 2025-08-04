@@ -76,7 +76,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.502"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createstudentaccount"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createbusinessaccount"
                 app:layout_constraintVertical_bias="0.25" />
 
             <TextView
