@@ -26,6 +26,7 @@ import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.ImageUtils;
 import com.example.mandelamoney.util.MySQLConnector;
+import com.example.mandelamoney.util.PaymentManager;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IConfirmPaymentView;
 import com.example.mandelamoney.view.Iface.IScanQRView;
@@ -50,21 +51,22 @@ import java.util.concurrent.Executors;
 public class MakePaymentController {
 
     private Context context;
-    private final IScanQRView scanQrView;
+    private IScanQRView scanQrView;
     private PreviewView previewView;
     private final ExecutorService cameraExecutor;
 
     private int transactionId;
-    private float transactionAmount;
-    private User fromUserDetails;
-    private User toUserDetails;
+    private Transaction transaction;
+
     private IConfirmPaymentView confirmPaymentView;
     private ITransactionStatusDisplayView transactionStatusDisplayView;
 
-    public MakePaymentController(Context context, IScanQRView scanQrView) {
-        this.context = context;
-        this.scanQrView = scanQrView;
+    public MakePaymentController() {
         this.cameraExecutor = Executors.newSingleThreadExecutor();
+    }
+
+    public void setScanQrView(IScanQRView scanQrView) {
+        this.scanQrView = scanQrView;
     }
 
     public void setPreviewView(PreviewView previewView) {
@@ -163,54 +165,82 @@ public class MakePaymentController {
     }
 
     public void handleScanQR() {
+        scanQrView.showLoadingSpinner();
+        PaymentManager.processTransaction(transactionId, context ,this::onScanQRSuccess, this::onScanQRError);
+    }
+
+    private void onScanQRSuccess(Transaction transaction) {
+        this.transaction = transaction;
+        scanQrView.hideLoadingSpinner();
+        shutdown();
+        DataShare.send(this);
         Intent intent = new Intent(context, ConfirmPaymentActivity.class);
         context.startActivity(intent);
+    }
 
+    private void onScanQRError(String error) {
+        scanQrView.hideLoadingSpinner();
+        scanQrView.showToast(error);
     }
 
     public void handleCancel() {
         DataShare.send(this);
         context.startActivity(new Intent(context, DashboardActivity.class));
-        scanQrView.finishActivity();
+        try {
+            if (scanQrView != null) {
+                scanQrView.finishActivity();
+            }
+            if (confirmPaymentView != null) {
+                confirmPaymentView.finishActivity();
+            }
+            if (transactionStatusDisplayView != null) {
+                transactionStatusDisplayView.finishActivity();
+            }
+
+        } catch (Exception ignored) {
+
+        }
     }
 
     public void handleConfirmPayment() {
+        confirmPaymentView.showLoadingSpinner();
+        PaymentManager.confirmTransaction(transaction, context, this::showSuccessScreen, this::showFailScreen);
 
     }
 
-    public void showFailScreen(boolean transactionFailed, String errorReason) {
+    public void showFailScreen(String errorReason) {
+        confirmPaymentView.hideLoadingSpinner();
+        DataShare.send(this);
+        context.startActivity(new Intent(context, ShowFailedActivity.class));
+        try {
+            if (scanQrView != null) {
+                scanQrView.finishActivity();
+            }
+            if (confirmPaymentView != null) {
+                confirmPaymentView.finishActivity();
+            }
+        } catch (Exception ignored) {
+        }
 
     }
 
     public void showSuccessScreen() {
-
+        confirmPaymentView.hideLoadingSpinner();
+        DataShare.send(this);
+        context.startActivity(new Intent(context, ShowSuccessActivity.class));
+        try {
+            if (scanQrView != null) {
+                scanQrView.finishActivity();
+            }
+            if (confirmPaymentView != null) {
+                confirmPaymentView.finishActivity();
+            }
+        } catch (Exception ignored) {
+        }
     }
 
     public void shutdown() {
         cameraExecutor.shutdown();
-    }
-
-    public void showConfirmPaymentData() {
-        confirmPaymentView.displayAmount(transactionAmount);
-        if (fromUserDetails instanceof Student) {
-            confirmPaymentView.displayFromUserName(((Student) fromUserDetails).getStudentFullName());
-            confirmPaymentView.displayFromUserNumber(((Student) fromUserDetails).getStudentNumber());
-        } else if (fromUserDetails instanceof Business) {
-            confirmPaymentView.displayFromUserName(((Business) fromUserDetails).getBusinessName());
-            confirmPaymentView.displayFromUserNumber(((Business) fromUserDetails).getBusinessVAT());
-        }
-
-        if (toUserDetails instanceof Student) {
-            confirmPaymentView.displayToUserName(((Student) toUserDetails).getStudentFullName());
-            confirmPaymentView.displayToUserNumber(((Student) toUserDetails).getStudentNumber());
-        } else if (toUserDetails instanceof Business) {
-            confirmPaymentView.displayToUserName(((Business) toUserDetails).getBusinessName());
-            confirmPaymentView.displayToUserNumber(((Business) toUserDetails).getBusinessVAT());
-        }
-    }
-
-    public void setTransactionStatusDisplayView(ITransactionStatusDisplayView transactionStatusDisplayView) {
-        this.transactionStatusDisplayView = transactionStatusDisplayView;
     }
 
     public void setConfirmPaymentView(IConfirmPaymentView confirmPaymentView) {
@@ -221,25 +251,53 @@ public class MakePaymentController {
         this.context = context;
     }
 
-    public void showTransactionStatusData() {
-        transactionStatusDisplayView.displayAmount(transactionAmount);
-        if (fromUserDetails != null) {
-            if (fromUserDetails instanceof Student) {
-                transactionStatusDisplayView.displayFromUserName(((Student) fromUserDetails).getStudentFullName());
-                transactionStatusDisplayView.displayFromUserNumber(((Student) fromUserDetails).getStudentNumber());
-            } else if (fromUserDetails instanceof Business) {
-                transactionStatusDisplayView.displayFromUserName(((Business) fromUserDetails).getBusinessName());
-                transactionStatusDisplayView.displayFromUserNumber(((Business) fromUserDetails).getBusinessVAT());
+    public void loadTransactionStatusData() {
+        transactionStatusDisplayView.displayAmount(transaction.getAmount());
+        if (transaction.getFromUserObj() != null) {
+            if (transaction.getFromUserObj() instanceof Student) {
+                transactionStatusDisplayView.displayFromUserName(((Student) transaction.getFromUserObj()).getStudentFullName());
+                transactionStatusDisplayView.displayFromUserNumber(((Student) transaction.getFromUserObj()).getStudentNumber());
+            } else if (transaction.getFromUserObj() instanceof Business) {
+                transactionStatusDisplayView.displayFromUserName(((Business) transaction.getFromUserObj()).getBusinessName());
+                transactionStatusDisplayView.displayFromUserNumber(((Business) transaction.getFromUserObj()).getBusinessVAT());
             }
         }
-        if (toUserDetails != null) {
-            if (toUserDetails instanceof Student) {
-                transactionStatusDisplayView.displayToUserName(((Student) toUserDetails).getStudentFullName());
-                transactionStatusDisplayView.displayToUserNumber(((Student) toUserDetails).getStudentNumber());
-            } else if (toUserDetails instanceof Business) {
-                transactionStatusDisplayView.displayToUserName(((Business) toUserDetails).getBusinessName());
-                transactionStatusDisplayView.displayToUserNumber(((Business) toUserDetails).getBusinessVAT());
+        if (transaction.getToUserObj() != null) {
+            if (transaction.getToUserObj() instanceof Student) {
+                transactionStatusDisplayView.displayToUserName(((Student) transaction.getToUserObj()).getStudentFullName());
+                transactionStatusDisplayView.displayToUserNumber(((Student) transaction.getToUserObj()).getStudentNumber());
+            } else if (transaction.getToUserObj() instanceof Business) {
+                transactionStatusDisplayView.displayToUserName(((Business) transaction.getToUserObj()).getBusinessName());
+                transactionStatusDisplayView.displayToUserNumber(((Business) transaction.getToUserObj()).getBusinessVAT());
             }
         }
+    }
+
+    public void loadConfirmPaymentData() {
+        if (confirmPaymentView != null) {
+            confirmPaymentView.displayAmount(transaction.getAmount());
+            if (transaction.getFromUserObj() != null) {
+                if (transaction.getFromUserObj() instanceof Student) {
+                    confirmPaymentView.displayFromUserName(((Student) transaction.getFromUserObj()).getStudentFullName());
+                    confirmPaymentView.displayFromUserNumber(((Student) transaction.getFromUserObj()).getStudentNumber());
+                } else if (transaction.getFromUserObj() instanceof Business) {
+                    confirmPaymentView.displayFromUserName(((Business) transaction.getFromUserObj()).getBusinessName());
+                    confirmPaymentView.displayFromUserNumber(((Business) transaction.getFromUserObj()).getBusinessVAT());
+                }
+            }
+            if (transaction.getToUserObj() != null) {
+                if (transaction.getToUserObj() instanceof Student) {
+                    confirmPaymentView.displayToUserName(((Student) transaction.getToUserObj()).getStudentFullName());
+                    confirmPaymentView.displayToUserNumber(((Student) transaction.getToUserObj()).getStudentNumber());
+                } else if (transaction.getToUserObj() instanceof Business) {
+                    confirmPaymentView.displayToUserName(((Business) transaction.getToUserObj()).getBusinessName());
+                    confirmPaymentView.displayToUserNumber(((Business) transaction.getToUserObj()).getBusinessVAT());
+                }
+            }
+        }
+    }
+
+    public void setTransactionStatusDisplayView(ITransactionStatusDisplayView transactionStatusDisplayView) {
+        this.transactionStatusDisplayView = transactionStatusDisplayView;
     }
 }
