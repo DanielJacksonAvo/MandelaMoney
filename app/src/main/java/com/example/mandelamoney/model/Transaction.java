@@ -6,6 +6,8 @@ import java.util.UUID;
 public class Transaction {
     private String id;
     private String toUser;
+    private User toUserObj;
+    private User fromUserObj;
     private String fromUser;
     private float amount;
     private final String date;
@@ -92,5 +94,21 @@ public class Transaction {
     @Override
     public int hashCode() {
         return Objects.hash(id, toUser, fromUser, amount, date, time, displayName, selfTransaction);
+    }
+
+    public User getToUserObj() {
+        return toUserObj;
+    }
+
+    public void setToUserObj(User toUserObj) {
+        this.toUserObj = toUserObj;
+    }
+
+    public User getFromUserObj() {
+        return fromUserObj;
+    }
+
+    public void setFromUserObj(User fromUserObj) {
+        this.fromUserObj = fromUserObj;
     }
 }
