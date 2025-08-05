@@ -9,4 +9,6 @@ public interface IConfirmPaymentView {
     void displayFromUserTransactionType(String type);
     void displayAmount(double amount);
     void finishActivity();
+    void showLoadingSpinner();
+    void hideLoadingSpinner();
 }
