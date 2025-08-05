@@ -35,12 +35,15 @@ public class ConfirmPaymentActivity extends AppCompatActivity implements IConfir
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        connectToUI();
+
         Object obj = DataShare.receive();
         if (obj instanceof MakePaymentController) {
             makePaymentController = (MakePaymentController) obj;
             makePaymentController.setConfirmPaymentView(this);
+            makePaymentController.setContext(this);
         }
+        connectToUI();
+
     }
 
 
@@ -52,11 +55,15 @@ public class ConfirmPaymentActivity extends AppCompatActivity implements IConfir
     }
 
     private void configureConfirmButton(Button btnConfirm) {
-        //btnConfirm.setOnClickListener((view) -> controller.handleConfirmPayment());
+        if (makePaymentController != null) {
+            btnConfirm.setOnClickListener((view) -> makePaymentController.handleConfirmPayment());
+        }
     }
 
     private void configureCancelButton(TextView btnCancel) {
-        //btnCancel.setOnClickListener((view) -> controller.handleCancel());
+        if (makePaymentController != null) {
+            btnCancel.setOnClickListener((view) -> makePaymentController.handleCancel());
+        }
     }
 
     @Override
