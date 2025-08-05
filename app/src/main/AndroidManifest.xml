@@ -82,6 +82,7 @@
         <activity
             android:name="com.example.mandelamoney.view.activity.DashboardActivity"
             android:exported="false"
+            android:configChanges="uiMode"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.example.mandelamoney.view.activity.LoginActivity"
