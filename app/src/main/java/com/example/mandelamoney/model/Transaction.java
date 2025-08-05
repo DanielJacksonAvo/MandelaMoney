@@ -25,8 +25,22 @@ public class Transaction {
         this.displayName ="";
     }
 
+    public Transaction(String fromUser, String toUser, float amount, String date, String time, int id) {
+        this.id = Integer.toString(id);
+        this.toUser = toUser;
+        this.fromUser = fromUser;
+        this.amount = amount;
+        this.date = date;
+        this.time = time;
+        this.displayName ="";
+    }
+
     public String getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = Integer.toString(id);
     }
 
     public String getToUser() {
