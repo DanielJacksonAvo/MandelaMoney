@@ -3,7 +3,6 @@ package com.example.mandelamoney.view.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,8 +28,7 @@ import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
 public class ShowFailedActivity extends AppCompatActivity implements ITransactionStatusDisplayView {
 
     private MakePaymentController makePaymentController;
-    private RequestPaymentController requestPaymentController;
-    private TextView txtToname, txtFromname, txtTonumber, txtFromnumber, txtAmount, txtError;
+    private TextView txtToname, txtFromname, txtTonumber, txtFromnumber, txtAmount;
 
 
     @Override
@@ -53,21 +51,9 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
             makePaymentController = (MakePaymentController) obj;
             makePaymentController.setTransactionStatusDisplayView(this);
             makePaymentController.setContext(this);
-        } else if (obj instanceof RequestPaymentController) {
-            requestPaymentController = (RequestPaymentController) obj;
-            requestPaymentController.setTransactionStatusDisplayView(this);
-            requestPaymentController.setContext(this);
-
         }
         connectToUi();
-        if (makePaymentController != null) {
-            makePaymentController.loadTransactionStatusData();
-            String errorReason = getIntent().getStringExtra("ERROR_REASON");
-            displayErrorMessage(errorReason);
-        } else if (requestPaymentController != null) {
-            requestPaymentController.loadTransactionStatusData();
-            displayErrorMessage("Transaction Failed and Rolled Back");
-        }
+        makePaymentController.loadTransactionStatusData();
     }
 
     private void connectToUi() {
@@ -76,7 +62,6 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
         txtTonumber = findViewById(R.id.txt_tonumber_failed);
         txtFromnumber = findViewById(R.id.txt_fromnumber_failed);
         txtAmount = findViewById(R.id.txt_amount_failed);
-        txtError = findViewById(R.id.txt_error_failed);
         Button btnClose = findViewById(R.id.btn_generate_qr_failed);
         configureCloseButton(btnClose);
 
@@ -84,16 +69,7 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
 
     private void configureCloseButton(Button btnClose) {
         btnClose.setOnClickListener(v -> {
-            if (makePaymentController != null) {
-                try {
-                    makePaymentController.handleCancel();
-                } catch (Exception ignore) {}
-            }
-            if (requestPaymentController != null) {
-                try {
-                    requestPaymentController.handleCancelButton();
-                } catch (Exception ignore) {}
-            }
+            makePaymentController.handleCancel();
         });
     }
 
@@ -126,9 +102,5 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
     @Override
     public void finishActivity() {
         finish();
-    }
-
-    private void displayErrorMessage(String error) {
-        txtError.setText(error);
     }
 }
