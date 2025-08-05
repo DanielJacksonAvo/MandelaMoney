@@ -20,6 +20,7 @@ import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
 public class ShowSuccessActivity extends AppCompatActivity implements ITransactionStatusDisplayView {
 
     private TextView txtToname, txtFromname, txtTonumber, txtFromnumber, txtAmount;
+    private MakePaymentController makePaymentController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +37,14 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
             return insets;
         });
 
-        connectToUi();
-
-//        Object controller = ;
-       // if (controller instanceof MakePaymentController) {
-            MakePaymentController makePaymentController = (MakePaymentController) DataShare.receive();
+        Object obj = DataShare.receive();
+        if (obj instanceof MakePaymentController) {
+            makePaymentController = (MakePaymentController) obj;
             makePaymentController.setTransactionStatusDisplayView(this);
             makePaymentController.setContext(this);
-            makePaymentController.showTransactionStatusData();
-//        } else if (controller instanceof RequestPaymentController) {
-//            RequestPaymentController requestPaymentController = (RequestPaymentController) controller;
-//        }
+        }
+        connectToUi();
+        makePaymentController.loadTransactionStatusData();
 
 
 
@@ -88,10 +86,14 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
         txtAmount.setText("R " + String.format("%.2f", amount));
     }
 
+    @Override
+    public void finishActivity() {
+        finish();
+    }
+
     private void configureCloseButton(Button btnClose) {
         btnClose.setOnClickListener(v -> {
-            startActivity(new Intent(ShowSuccessActivity.this, DashboardActivity.class));
-            finish();
+            makePaymentController.handleCancel();
         });
     }
 }
