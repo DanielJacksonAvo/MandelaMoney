@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.MakePaymentController;
+import com.example.mandelamoney.controller.RequestPaymentController;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
 
@@ -21,6 +22,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
 
     private TextView txtToname, txtFromname, txtTonumber, txtFromnumber, txtAmount;
     private MakePaymentController makePaymentController;
+    private RequestPaymentController requestPaymentController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +44,22 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
             makePaymentController = (MakePaymentController) obj;
             makePaymentController.setTransactionStatusDisplayView(this);
             makePaymentController.setContext(this);
-        }
-        connectToUi();
-        makePaymentController.loadTransactionStatusData();
+        } else {
+            if (obj instanceof RequestPaymentController) {
+                requestPaymentController = (RequestPaymentController) obj;
+                requestPaymentController.setTransactionStatusDisplayView(this);
+                requestPaymentController.setContext(this);
+            }
 
+        }
+
+        connectToUi();
+
+        if (makePaymentController != null) {
+            makePaymentController.loadTransactionStatusData();
+        } else if (requestPaymentController != null) {
+            requestPaymentController.loadTransactionStatusData();
+        }
 
 
     }
@@ -93,7 +107,17 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
 
     private void configureCloseButton(Button btnClose) {
         btnClose.setOnClickListener(v -> {
-            makePaymentController.handleCancel();
+            if (makePaymentController != null) {
+                try {
+                    makePaymentController.handleCancel();
+
+                } catch (Exception ignore) {}
+            }
+            if (requestPaymentController != null) {
+                try {
+                    requestPaymentController.handleCancelButton();
+                } catch (Exception ignore) {}
+            }
         });
     }
 }
