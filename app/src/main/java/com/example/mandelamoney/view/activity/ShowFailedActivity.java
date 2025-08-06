@@ -28,6 +28,7 @@ import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
 public class ShowFailedActivity extends AppCompatActivity implements ITransactionStatusDisplayView {
 
     private MakePaymentController makePaymentController;
+    private RequestPaymentController requestPaymentController;
     private TextView txtToname, txtFromname, txtTonumber, txtFromnumber, txtAmount;
 
 
@@ -51,9 +52,18 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
             makePaymentController = (MakePaymentController) obj;
             makePaymentController.setTransactionStatusDisplayView(this);
             makePaymentController.setContext(this);
+        } else if (obj instanceof RequestPaymentController) {
+            requestPaymentController = (RequestPaymentController) obj;
+            requestPaymentController.setTransactionStatusDisplayView(this);
+            requestPaymentController.setContext(this);
+
         }
         connectToUi();
-        makePaymentController.loadTransactionStatusData();
+        if (makePaymentController != null) {
+            makePaymentController.loadTransactionStatusData();
+        } else if (requestPaymentController != null) {
+            requestPaymentController.loadTransactionStatusData();
+        }
     }
 
     private void connectToUi() {
@@ -69,7 +79,16 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
 
     private void configureCloseButton(Button btnClose) {
         btnClose.setOnClickListener(v -> {
-            makePaymentController.handleCancel();
+            if (makePaymentController != null) {
+                try {
+                    makePaymentController.handleCancel();
+                } catch (Exception ignore) {}
+            }
+            if (requestPaymentController != null) {
+                try {
+                    requestPaymentController.handleCancelButton();
+                } catch (Exception ignore) {}
+            }
         });
     }
 
