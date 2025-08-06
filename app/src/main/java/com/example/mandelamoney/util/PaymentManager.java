@@ -65,6 +65,33 @@ public class PaymentManager {
 
     }
 
+    public static void createTransaction(Float amount, Context context, Consumer<Transaction> onSuccess, Consumer<String> onFailure) {
+        new Thread(() -> {
+            try {
+                Integer id = MySQLConnector.createTransaction(UserSession.getUser().getUserEmail(), amount, context);
+                if (id == null) {
+                    String error = "Failed To Create Transaction";
+                    runOnMainThread(context, () -> onFailure.accept(error));
+                } else {
+                    Transaction transaction = MySQLConnector.getTransactionDetailsFromProcedure(id, context);
+                    if (transaction == null) {
+                        String error = "Failed To Create Transaction";
+                        runOnMainThread(context, () -> onFailure.accept(error));
+                    } else {
+                        runOnMainThread(context, () -> onSuccess.accept(transaction));
+                    }
+                }
+            } catch (Exception e) {
+                String error = "Failed To Create Transaction";
+                runOnMainThread(context, () -> onFailure.accept(error));
+            }
+
+        }).start();
+
+
+
+    }
+
     private static void runOnMainThread(Context context, Runnable runnable) {
         android.os.Handler handler = new android.os.Handler(context.getMainLooper());
         handler.post(runnable);
