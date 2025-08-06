@@ -1,9 +1,10 @@
 package com.example.mandelamoney.view.Iface;
 
-public interface IShowQRCodeRequestPaymentView {
-    void showError();
+import android.graphics.Bitmap;
 
-    void hideError();
+public interface IShowQRCodeRequestPaymentView {
+    void displayToast(String message);
+    void displayQR(Bitmap bitmap);
 
     void finishActivity();
 }
