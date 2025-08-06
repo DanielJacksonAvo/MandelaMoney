@@ -78,6 +78,7 @@ public class PaymentManager {
                         String error = "Failed To Create Transaction";
                         runOnMainThread(context, () -> onFailure.accept(error));
                     } else {
+                        transaction.setId(id);
                         runOnMainThread(context, () -> onSuccess.accept(transaction));
                     }
                 }
