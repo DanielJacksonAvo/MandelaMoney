@@ -55,7 +55,7 @@ public class MakePaymentController {
     private PreviewView previewView;
     private final ExecutorService cameraExecutor;
 
-    private int transactionId;
+    private int transactionId = -1;
     private Transaction transaction;
 
     private IConfirmPaymentView confirmPaymentView;
@@ -165,6 +165,10 @@ public class MakePaymentController {
     }
 
     public void handleScanQR() {
+        if (transactionId == -1) {
+            onScanQRError("No QR Code Detected");
+            return;
+        }
         scanQrView.showLoadingSpinner();
         PaymentManager.processTransaction(transactionId, context ,this::onScanQRSuccess, this::onScanQRError);
     }
