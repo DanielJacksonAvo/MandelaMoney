@@ -2,6 +2,7 @@ package com.example.mandelamoney.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Looper;
 import android.os.Handler;
 import android.util.Log; // Import Log for debugging
@@ -9,16 +10,25 @@ import android.util.Log; // Import Log for debugging
 import androidx.core.content.ContextCompat; // For getting main executor
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.model.Business;
+import com.example.mandelamoney.model.Student;
+import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.MySQLConnector;
+import com.example.mandelamoney.util.PaymentManager;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IEnterAmountRequestPaymentView;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.IShowQRCodeRequestPaymentView; // Not directly used but good to keep
+import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
+import com.example.mandelamoney.view.activity.ConfirmPaymentActivity;
 import com.example.mandelamoney.view.activity.DashboardActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentShowQrActivity;
 import com.example.mandelamoney.view.activity.ShowFailedActivity;
 import com.example.mandelamoney.view.activity.ShowSuccessActivity;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.concurrent.ExecutorService; // New import
 import java.util.concurrent.Executors;
@@ -28,100 +38,76 @@ import java.util.concurrent.TimeUnit;
 
 public class RequestPaymentController {
     private Context context;
-    private IEnterAmountRequestPaymentView requestPaymentView;
-    private IHomeDashboardView homeDashboardView;
     private int transactionIdNumeric;
+    private Transaction transaction;
+    private RequestPaymentShowQrActivity requestPaymentShowQrActivity;
+    private IEnterAmountRequestPaymentView enterAmountRequestPaymentView;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     private ScheduledFuture<?> pollingHandle;
     private Runnable statusChecker;
 
-    private final ExecutorService requestExecutor = Executors.newSingleThreadExecutor(); // New executor for single requests
+    private final ExecutorService requestExecutor;
+    private ITransactionStatusDisplayView transactionStatusDisplayView;
 
-    public RequestPaymentController(Context context, Object obj) {
-        this.context = context;
-        if (obj instanceof IEnterAmountRequestPaymentView){
-            requestPaymentView = (IEnterAmountRequestPaymentView) obj;
-        }
-
-        if (obj instanceof IHomeDashboardView) {
-            homeDashboardView = (IHomeDashboardView) obj;
-        }
+    public RequestPaymentController() {
+        requestExecutor = Executors.newSingleThreadExecutor();
     }
 
 
-    public void handleGenerateQR(String amount) {
-        if (!isValidInput(amount)) {
-            Log.d("RequestPaymentController", "Invalid input for QR generation.");
+    public void handleGenerateQR(String samount) {
+        if (!ValidateInput.checkValidAmount(samount)) {
+            enterAmountRequestPaymentView.showError("Invalid Amount");
             return;
         }
-
-        requestExecutor.execute(() -> {
-            float transactionAmount = Float.parseFloat(amount);
-            transactionAmount = (float) Math.ceil(transactionAmount * 100) / 100;
-
-            String toUserEmail = UserSession.getUser().getUserEmail().trim();
-
-            Log.d("RequestPaymentController", "Attempting to create transaction for amount: " + transactionAmount);
-            Integer transactionID = MySQLConnector.createTransaction(toUserEmail, transactionAmount, context);
-
-            ContextCompat.getMainExecutor(context).execute(() -> {
-                if (transactionID == null) {
-                    Log.e("RequestPaymentController", "Failed to create transaction: transactionID is null.");
-                    if (requestPaymentView != null) {
-                        requestPaymentView.showError(context.getString(R.string.could_not_create_transaction));
-                    }
-                    return;
-                }
-
-                Log.d("RequestPaymentController", "Transaction created with ID: " + transactionID);
-                DataShare.send(this);
-                Intent intent = new Intent(context, RequestPaymentShowQrActivity.class);
-                intent.putExtra("transaction_id", transactionID.toString());
-                context.startActivity(intent);
-            });
-        });
+        float amount = Float.parseFloat(samount);
+        amount = (float) Math.ceil(amount * 100) / 100;
+        PaymentManager.createTransaction(amount, context, this::onCreateTransactionSuccess, this::onCreateTransactionFailure);
     }
-    public void startPollingStatus(int txnId) {
+
+    private void onCreateTransactionSuccess(Transaction transaction) {
+        this.transaction = transaction;
+        enterAmountRequestPaymentView.hideError();
+        enterAmountRequestPaymentView.hideLoadingSpinner();
+        DataShare.send(this);
+        Intent intent = new Intent(context, RequestPaymentShowQrActivity.class);
+        context.startActivity(intent);
+    }
+
+    private void onCreateTransactionFailure(String error) {
+        enterAmountRequestPaymentView.hideLoadingSpinner();
+        enterAmountRequestPaymentView.showError(error);
+    }
+    public void startPollingStatus() {
         if (pollingHandle != null && !pollingHandle.isDone()) {
             Log.d("RequestPaymentController", "Polling already active or pending.");
             return;
         }
-        this.transactionIdNumeric = txnId;
-        Log.d("RequestPaymentController", "Starting polling for transaction ID: " + txnId);
+        Log.d("RequestPaymentController", "Starting polling for transaction ID: " + transaction.getId());
 
 
         statusChecker = () -> {
             try {
-                String status = MySQLConnector.getTransactionStatus(transactionIdNumeric, context);
-                Log.d("RequestPaymentController", "Polling status for " + transactionIdNumeric + ": " + status);
+                String status = MySQLConnector.getTransactionStatus(Integer.parseInt(transaction.getId()), context);
+                Log.d("RequestPaymentController", "Polling status for " + transaction.getId() + ": " + status);
                 mainThreadHandler.post(() -> {
                     if ("success".equalsIgnoreCase(status)) {
                         stopPolling();
-                        Log.d("RequestPaymentController", "Transaction " + transactionIdNumeric + " succeeded. Navigating to success screen.");
+                        Log.d("RequestPaymentController", "Transaction " + transaction.getId() + " succeeded. Navigating to success screen.");
                         Intent intent = new Intent(context, ShowSuccessActivity.class);
-                        intent.putExtra("TRANSACTION_ID", transactionIdNumeric);
-                        DataShare.send(RequestPaymentController.this);
+                        DataShare.send(this);
                         context.startActivity(intent);
                     } else if ("failed".equalsIgnoreCase(status)) {
                         stopPolling();
-                        Log.d("RequestPaymentController", "Transaction " + transactionIdNumeric + " failed. Navigating to failed screen.");
+                        Log.d("RequestPaymentController", "Transaction " + transaction.getId() + " failed. Navigating to failed screen.");
                         Intent intent = new Intent(context, ShowFailedActivity.class);
-                        intent.putExtra("TRANSACTION_ID", transactionIdNumeric);
-                        intent.putExtra("ERROR_REASON", "Transaction was not completed.");
-                        DataShare.send(RequestPaymentController.this);
+                        DataShare.send(this);
                         context.startActivity(intent);
                     }
                 });
             } catch (Exception e) {
-                Log.e("RequestPaymentController", "Error during polling status: " + e.getMessage(), e);
-                // Optionally, stop polling or show an error toast on the main thread if severe
-                mainThreadHandler.post(() -> {
-                    // You might want to stop polling on a persistent error to avoid spamming logs
-                    // stopPolling();
-                    // Toast.makeText(context, "Error checking transaction status.", Toast.LENGTH_SHORT).show();
-                });
+                requestPaymentShowQrActivity.displayToast("Confirmation Display Error");
             }
         };
         pollingHandle = scheduler.scheduleAtFixedRate(statusChecker, 0, 1, TimeUnit.SECONDS);
@@ -135,30 +121,13 @@ public class RequestPaymentController {
         }
     }
 
-    private boolean isValidInput(String amount) {
-        // All Toast/UI updates for isValidInput should ideally be on the main thread
-        // This method is called from handleGenerateQR, which itself is now on a background thread.
-        // So, any direct UI calls from here need to be posted to the main thread.
-        if (requestPaymentView != null) {
-            requestPaymentView.hideError();
-            if (ValidateInput.isEmpty(amount) || !ValidateInput.isDouble(amount) || !ValidateInput.isPositive(Double.parseDouble(amount))) {
-                ContextCompat.getMainExecutor(context).execute(() ->
-                        requestPaymentView.showError(context.getString(R.string.enter_a_valid_amount))
-                );
-                return false;
-            }
-        } else {
-            if (homeDashboardView != null) {
-                if (ValidateInput.isEmpty(amount) || !ValidateInput.isDouble(amount) || !ValidateInput.isPositive(Double.parseDouble(amount))) {
-                    return false; // No UI to update, just return false
-                }
-            } else { return false; } // No view to update, just return false
-        }
-        return true;
-    }
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public void setEnterAmountRequestPaymentView(IEnterAmountRequestPaymentView enterAmountRequestPaymentView) {
+        this.enterAmountRequestPaymentView = enterAmountRequestPaymentView;
     }
 
     public void handleCancelButton() {
@@ -196,18 +165,68 @@ public class RequestPaymentController {
         Log.d("RequestPaymentController", "Controller cleaned up.");
     }
 
+    public void setShowQRCodeRequestPaymentView(RequestPaymentShowQrActivity requestPaymentShowQrActivity) {
+        this.requestPaymentShowQrActivity = requestPaymentShowQrActivity;
+    }
+
+    public void generateQR() {
+        try {
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(transaction.getId(), BarcodeFormat.QR_CODE, 600, 600);
+            requestPaymentShowQrActivity.displayQR(bitmap);
+        } catch (WriterException e) {
+            requestPaymentShowQrActivity.displayToast("Error Generating QR Code");
+            throw new RuntimeException(e);
+
+        }
+    }
+
+    public void setTransactionStatusDisplayView(ITransactionStatusDisplayView transactionStatusDisplayView) {
+        this.transactionStatusDisplayView = transactionStatusDisplayView;
+    }
+
+    public void loadTransactionStatusData() {
+        transactionStatusDisplayView.displayAmount(transaction.getAmount());
+        if (transaction.getFromUserObj() != null) {
+            if (transaction.getFromUserObj() instanceof Student) {
+                transactionStatusDisplayView.displayFromUserName(((Student) transaction.getFromUserObj()).getStudentFullName());
+                transactionStatusDisplayView.displayFromUserNumber(((Student) transaction.getFromUserObj()).getStudentNumber());
+            } else if (transaction.getFromUserObj() instanceof Business) {
+                transactionStatusDisplayView.displayFromUserName(((Business) transaction.getFromUserObj()).getBusinessName());
+                transactionStatusDisplayView.displayFromUserNumber(((Business) transaction.getFromUserObj()).getBusinessVAT());
+            }
+        }
+        if (transaction.getToUserObj() != null) {
+            if (transaction.getToUserObj() instanceof Student) {
+                transactionStatusDisplayView.displayToUserName(((Student) transaction.getToUserObj()).getStudentFullName());
+                transactionStatusDisplayView.displayToUserNumber(((Student) transaction.getToUserObj()).getStudentNumber());
+            } else if (transaction.getToUserObj() instanceof Business) {
+                transactionStatusDisplayView.displayToUserName(((Business) transaction.getToUserObj()).getBusinessName());
+                transactionStatusDisplayView.displayToUserNumber(((Business) transaction.getToUserObj()).getBusinessVAT());
+            }
+        }
+    }
+
     private static class ValidateInput {
-        public static boolean isEmpty(String s) {
+
+        public static boolean checkValidAmount(String amount) {
+            if (isEmpty(amount) && isFloat(amount) && isPositive(Float.parseFloat(amount))) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        private static boolean isEmpty(String s) {
             return s == null || s.isEmpty();
         }
 
-        public static boolean isPositive(double amount) {
+        private static boolean isPositive(float amount) {
             return amount > 0;
         }
 
-        public static boolean isDouble(String amount) {
+        private static boolean isFloat(String amount) {
             try {
-                Double.parseDouble(amount);
+                Float.parseFloat(amount);
                 return true;
             } catch (NumberFormatException e) {
                 return false;
