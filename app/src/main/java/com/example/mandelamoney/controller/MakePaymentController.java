@@ -215,7 +215,9 @@ public class MakePaymentController {
     public void showFailScreen(String errorReason) {
         confirmPaymentView.hideLoadingSpinner();
         DataShare.send(this);
-        context.startActivity(new Intent(context, ShowFailedActivity.class));
+        Intent intent = new Intent(context, ShowFailedActivity.class);
+        intent.putExtra("ERROR_REASON", errorReason);
+        context.startActivity(intent);
         try {
             if (scanQrView != null) {
                 scanQrView.finishActivity();
