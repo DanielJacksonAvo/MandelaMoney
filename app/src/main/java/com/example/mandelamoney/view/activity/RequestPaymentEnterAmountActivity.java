@@ -32,11 +32,11 @@ public class RequestPaymentEnterAmountActivity extends AppCompatActivity impleme
         insetsController.setAppearanceLightStatusBars(false);
 
         setContentView(R.layout.activity_request_payment_enter_amount);
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         requestPaymentController = new RequestPaymentController();
         requestPaymentController.setContext(this);
         connectToUI();
