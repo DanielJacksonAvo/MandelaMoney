@@ -131,7 +131,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     }
 
     @Override
-    public void displayBalance(double balance) {
+    public void displayBalance(float balance) {
         String display = "R " + String.format(Locale.getDefault(), "%.2f", balance);
         txtBalance.setText(display);
     }
