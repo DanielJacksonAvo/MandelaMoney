@@ -34,7 +34,6 @@ public class PaymentManager {
     public static void confirmTransaction(Transaction transaction, Context context, Runnable onSuccess, Consumer<String> onFailure) {
         new Thread(() -> {
             try {
-                MySQLConnector.hasSufficientFunds(transaction.getFromUserObj().getUserEmail(), Integer.parseInt(transaction.getId()), context);
                 if (MySQLConnector.hasSufficientFunds(transaction.getFromUserObj().getUserEmail(), Integer.parseInt(transaction.getId()), context)) {
                     if (Objects.equals(transaction.getFromUserObj().getUserEmail(), UserSession.getUser().getUserEmail())) {
                         if (MySQLConnector.confirmTransaction(transaction.getFromUserObj().getUserEmail(), Integer.parseInt(transaction.getId()), context)) {
@@ -49,6 +48,7 @@ public class PaymentManager {
                     }
                 } else {
                     String error = "Insufficient Funds";
+                    MySQLConnector.updateTransactionStatus(Integer.parseInt(transaction.getId()), "failed", context);
                     runOnMainThread(context, () -> onFailure.accept(error));
                 }
             } catch (Exception e) {
