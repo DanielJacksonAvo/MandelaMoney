@@ -38,7 +38,6 @@ import java.util.concurrent.TimeUnit;
 
 public class RequestPaymentController {
     private Context context;
-    private int transactionIdNumeric;
     private Transaction transaction;
     private RequestPaymentShowQrActivity requestPaymentShowQrActivity;
     private IEnterAmountRequestPaymentView enterAmountRequestPaymentView;
@@ -57,8 +56,11 @@ public class RequestPaymentController {
 
 
     public void handleGenerateQR(String samount) {
+        enterAmountRequestPaymentView.showLoadingSpinner();
+        enterAmountRequestPaymentView.hideError();
         if (!ValidateInput.checkValidAmount(samount)) {
             enterAmountRequestPaymentView.showError("Invalid Amount");
+            enterAmountRequestPaymentView.hideLoadingSpinner();
             return;
         }
         float amount = Float.parseFloat(samount);
@@ -68,11 +70,11 @@ public class RequestPaymentController {
 
     private void onCreateTransactionSuccess(Transaction transaction) {
         this.transaction = transaction;
-        enterAmountRequestPaymentView.hideError();
-        enterAmountRequestPaymentView.hideLoadingSpinner();
         DataShare.send(this);
         Intent intent = new Intent(context, RequestPaymentShowQrActivity.class);
         context.startActivity(intent);
+        enterAmountRequestPaymentView.hideError();
+        enterAmountRequestPaymentView.hideLoadingSpinner();
     }
 
     private void onCreateTransactionFailure(String error) {
@@ -91,21 +93,28 @@ public class RequestPaymentController {
             try {
                 String status = MySQLConnector.getTransactionStatus(Integer.parseInt(transaction.getId()), context);
                 Log.d("RequestPaymentController", "Polling status for " + transaction.getId() + ": " + status);
-                mainThreadHandler.post(() -> {
-                    if ("success".equalsIgnoreCase(status)) {
-                        stopPolling();
-                        Log.d("RequestPaymentController", "Transaction " + transaction.getId() + " succeeded. Navigating to success screen.");
+                if ("success".equalsIgnoreCase(status)) {
+                    stopPolling();
+                    Log.d("RequestPaymentController", "Transaction " + transaction.getId() + " succeeded. Navigating to success screen.");
+                    transaction = PaymentManager.getTransaction(Integer.parseInt(transaction.getId()), context);
+                    DataShare.send(this);
+                    mainThreadHandler.post(() -> {
                         Intent intent = new Intent(context, ShowSuccessActivity.class);
-                        DataShare.send(this);
                         context.startActivity(intent);
-                    } else if ("failed".equalsIgnoreCase(status)) {
-                        stopPolling();
-                        Log.d("RequestPaymentController", "Transaction " + transaction.getId() + " failed. Navigating to failed screen.");
+                    });
+                }
+                else if ("failed".equalsIgnoreCase(status)) {
+                    stopPolling();
+                    Log.d("RequestPaymentController", "Transaction " + transaction.getId() + " failed. Navigating to failed screen.");
+                    transaction = PaymentManager.getTransaction(Integer.parseInt(transaction.getId()), context);
+                    DataShare.send(this);
+                    mainThreadHandler.post(() -> {
                         Intent intent = new Intent(context, ShowFailedActivity.class);
-                        DataShare.send(this);
                         context.startActivity(intent);
-                    }
-                });
+                    });
+
+                }
+
             } catch (Exception e) {
                 requestPaymentShowQrActivity.displayToast("Confirmation Display Error");
             }
@@ -208,9 +217,8 @@ public class RequestPaymentController {
     }
 
     private static class ValidateInput {
-
         public static boolean checkValidAmount(String amount) {
-            if (isEmpty(amount) && isFloat(amount) && isPositive(Float.parseFloat(amount))) {
+            if (!isEmpty(amount) && isFloat(amount) && isPositive(Float.parseFloat(amount))) {
                 return true;
             } else {
                 return false;
