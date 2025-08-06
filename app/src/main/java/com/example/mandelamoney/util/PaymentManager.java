@@ -15,12 +15,7 @@ public class PaymentManager {
             try {
                 if (Boolean.TRUE.equals(MySQLConnector.transactionExists(context, id))) {
                     MySQLConnector.updateTransactionFromUser(context, id, ((User)UserSession.getUser()).getUserEmail());
-                    Transaction tx = MySQLConnector.getTransactionDetailsFromProcedure(id, context);
-                    tx.setId(id);
-                    User toUser = MySQLConnector.getUserDetailsByEmail(tx.getToUser() ,context);
-                    User fromUser = MySQLConnector.getUserDetailsByEmail(tx.getFromUser(), context);
-                    tx.setToUserObj(toUser);
-                    tx.setFromUserObj(fromUser);
+                    Transaction tx = getTransaction(id, context);
                     runOnMainThread(context, () -> onSuccess.accept(tx));
                 }
                 else {
@@ -79,6 +74,7 @@ public class PaymentManager {
                         runOnMainThread(context, () -> onFailure.accept(error));
                     } else {
                         transaction.setId(id);
+                        transaction.setToUserObj(UserSession.getUser());
                         runOnMainThread(context, () -> onSuccess.accept(transaction));
                     }
                 }
@@ -88,9 +84,16 @@ public class PaymentManager {
             }
 
         }).start();
+    }
 
-
-
+    public static Transaction getTransaction(int id, Context context) {
+        Transaction tx = MySQLConnector.getTransactionDetailsFromProcedure(id, context);
+        tx.setId(id);
+        User toUser = MySQLConnector.getUserDetailsByEmail(tx.getToUser() ,context);
+        User fromUser = MySQLConnector.getUserDetailsByEmail(tx.getFromUser(), context);
+        tx.setToUserObj(toUser);
+        tx.setFromUserObj(fromUser);
+        return tx;
     }
 
     private static void runOnMainThread(Context context, Runnable runnable) {
