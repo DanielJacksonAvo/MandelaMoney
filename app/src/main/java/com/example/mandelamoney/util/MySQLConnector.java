@@ -698,14 +698,14 @@ public class MySQLConnector {
         }
     }
 
-    public static double getUserBalance(String email, Context context) {
+    public static float getUserBalance(String email, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
             Log.e("MySQLConnector", "Cannot fetch balance: No valid DB connection.");
-            return 0.0;
+            return 0.0F;
         }
 
-        double balance = 0.0;
+        float balance = 0.0F;
 
         try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.getUserBalance(?, ?)}")) {
             stmt.setString(1, email);

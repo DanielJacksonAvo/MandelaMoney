@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class User implements Serializable {
     private final String userEmail;
     private String userPassword;
-    private double userBalance;
+    private float userBalance;
 
     public User(String userEmail) {
        this.userEmail = userEmail;
@@ -23,10 +23,10 @@ public class User implements Serializable {
         this.userPassword = userPassword;
     }
 
-    public void setUserBalance(double balance) {
+    public void setUserBalance(float balance) {
         userBalance = balance;
     }
-    public double getUserBalance() {
+    public float getUserBalance() {
         return userBalance;
     }
 
