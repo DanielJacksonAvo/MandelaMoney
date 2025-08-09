@@ -25,6 +25,7 @@ import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.controller.RequestPaymentController;
 import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
@@ -179,8 +180,9 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     private void configureGenerateQRCodeButton(Button btnGenerateQR) {
         if (btnGenerateQR != null && checkTablet()) {
             btnGenerateQR.setOnClickListener((view) -> {
-                Intent intent = new Intent(getContext(),RequestPaymentEnterAmountActivity.class);
-                startActivity(intent);
+                RequestPaymentController requestPaymentController = new RequestPaymentController();
+                requestPaymentController.setContext(getContext());
+                requestPaymentController.handleGenerateQR(tbxRequestPayAmount.getText().toString());
             });
 
         }

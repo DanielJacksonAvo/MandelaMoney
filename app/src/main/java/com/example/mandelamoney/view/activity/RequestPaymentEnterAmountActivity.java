@@ -39,11 +39,11 @@ public class RequestPaymentEnterAmountActivity extends AppCompatActivity impleme
 //        });
         requestPaymentController = new RequestPaymentController();
         requestPaymentController.setContext(this);
-        connectToUI();
+        connectToUi();
         requestPaymentController.setEnterAmountRequestPaymentView(this);
     }
 
-    private void connectToUI() {
+    private void connectToUi() {
         Button btnGenerateQRButton = findViewById(R.id.btn_generate_qr_request_payment);
         EditText tbxPaymentAmount = findViewById(R.id.tbx_amount_request_payment);
         TextView btnCancel = findViewById(R.id.btn_cancel_request_payment);
