@@ -1,12 +1,14 @@
 package com.example.mandelamoney.view.activity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -20,6 +22,7 @@ public class RequestPaymentEnterAmountActivity extends AppCompatActivity impleme
 
     private RequestPaymentController requestPaymentController;
     private TextView txtErrorMessage;
+    private ConstraintLayout loadingSpinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,22 +32,25 @@ public class RequestPaymentEnterAmountActivity extends AppCompatActivity impleme
         insetsController.setAppearanceLightStatusBars(false);
 
         setContentView(R.layout.activity_request_payment_enter_amount);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-        requestPaymentController = new RequestPaymentController(this, this);
-        connectToUI();
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
+        requestPaymentController = new RequestPaymentController();
+        requestPaymentController.setContext(this);
+        connectToUi();
+        requestPaymentController.setEnterAmountRequestPaymentView(this);
     }
 
-    private void connectToUI() {
+    private void connectToUi() {
         Button btnGenerateQRButton = findViewById(R.id.btn_generate_qr_request_payment);
         EditText tbxPaymentAmount = findViewById(R.id.tbx_amount_request_payment);
         TextView btnCancel = findViewById(R.id.btn_cancel_request_payment);
         txtErrorMessage = findViewById(R.id.txt_error_request_payment);
         configureGenerateQRButton(btnGenerateQRButton, tbxPaymentAmount);
         configureCancelButton(btnCancel);
+        loadingSpinner = findViewById(R.id.enteramount_loading_spinner);
 
 
     }
@@ -71,5 +77,21 @@ public class RequestPaymentEnterAmountActivity extends AppCompatActivity impleme
     @Override
     public void finishActivity() {
         finish();
+    }
+
+    @Override
+    public void showLoadingSpinner() {
+        if (loadingSpinner != null) {
+            loadingSpinner.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        if (loadingSpinner != null) {
+            loadingSpinner.setVisibility(View.GONE);
+        }
+
     }
 }

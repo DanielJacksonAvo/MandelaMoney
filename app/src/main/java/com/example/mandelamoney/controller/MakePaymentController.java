@@ -3,12 +3,14 @@ package com.example.mandelamoney.controller;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Size;
 import android.widget.Toast;
 
 import androidx.annotation.OptIn;
-import androidx.camera.core.Camera; // Import Camera
+import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageAnalysis;
@@ -24,11 +26,14 @@ import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.ImageUtils;
 import com.example.mandelamoney.util.MySQLConnector;
+import com.example.mandelamoney.util.PaymentManager;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IConfirmPaymentView;
 import com.example.mandelamoney.view.Iface.IScanQRView;
+import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
 import com.example.mandelamoney.view.activity.ConfirmPaymentActivity;
 import com.example.mandelamoney.view.activity.DashboardActivity;
+import com.example.mandelamoney.view.activity.MainActivity;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.ShowFailedActivity;
 import com.example.mandelamoney.view.activity.ShowSuccessActivity;
@@ -43,26 +48,25 @@ import com.google.zxing.common.HybridBinarizer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 public class MakePaymentController {
 
-    private final Context context;
-    private final IScanQRView scanQrView;
+    private Context context;
+    private IScanQRView scanQrView;
     private PreviewView previewView;
     private final ExecutorService cameraExecutor;
-    private final ExecutorService paymentExecutor; // Executor for payment and QR scan processing
 
-    private int transactionId;
-    private float transactionAmount;
-    private User fromUserDetails;
-    private User toUserDetails;
+    private int transactionId = -1;
+    private Transaction transaction;
+
     private IConfirmPaymentView confirmPaymentView;
+    private ITransactionStatusDisplayView transactionStatusDisplayView;
 
-    public MakePaymentController(Context context, IScanQRView scanQrView) {
-        this.context = context;
-        this.scanQrView = scanQrView;
+    public MakePaymentController() {
         this.cameraExecutor = Executors.newSingleThreadExecutor();
-        this.paymentExecutor = Executors.newSingleThreadExecutor(); // Reusing for "Scan Now" button logic
+    }
+
+    public void setScanQrView(IScanQRView scanQrView) {
+        this.scanQrView = scanQrView;
     }
 
     public void setPreviewView(PreviewView previewView) {
@@ -138,26 +142,22 @@ public class MakePaymentController {
                 Camera camera = cameraProvider.bindToLifecycle((MakePaymentScanQrActivity) context,
                         CameraSelector.DEFAULT_BACK_CAMERA, preview, analysis);
 
-                // Set 2x zoom
                 if (camera.getCameraInfo().getZoomState().getValue() != null) {
                     float maxZoom = camera.getCameraInfo().getZoomState().getValue().getMaxZoomRatio();
                     float minZoom = camera.getCameraInfo().getZoomState().getValue().getMinZoomRatio();
                     float targetZoom = 2.0f;
 
-                    // Ensure targetZoom is within the camera's capabilities
                     if (targetZoom >= minZoom && targetZoom <= maxZoom) {
                         camera.getCameraControl().setZoomRatio(targetZoom);
                         Log.d("CameraZoom", "Set zoom to: " + targetZoom + "x");
                     } else if (targetZoom > maxZoom) {
                         camera.getCameraControl().setZoomRatio(maxZoom);
                         Log.w("CameraZoom", "Requested zoom " + targetZoom + "x is greater than max zoom, setting to max: " + maxZoom + "x");
-                    } else { // targetZoom < minZoom, though unlikely for 2x
+                    } else {
                         camera.getCameraControl().setZoomRatio(minZoom);
                         Log.w("CameraZoom", "Requested zoom " + targetZoom + "x is less than min zoom, setting to min: " + minZoom + "x");
                     }
                 }
-
-
             } catch (ExecutionException | InterruptedException e) {
                 Log.e("Camera", "Failed to bind camera use cases", e);
             }
@@ -165,166 +165,145 @@ public class MakePaymentController {
     }
 
     public void handleScanQR() {
-        Log.d("DEBUG", "handleScanQR() triggered");
-
-        User user = UserSession.getUser();
-        if (user == null) {
-            Log.e("DEBUG", "User session is null");
-            ContextCompat.getMainExecutor(context).execute(() ->
-                    Toast.makeText(context, "User session expired", Toast.LENGTH_SHORT).show()
-            );
+        if (transactionId == -1) {
+            onScanQRError("No QR Code Detected");
             return;
         }
+        scanQrView.showLoadingSpinner();
+        PaymentManager.processTransaction(transactionId, context ,this::onScanQRSuccess, this::onScanQRError);
+    }
 
-        if (transactionId == 0) {
-            Log.e("DEBUG", "transactionId = 0, no valid QR code detected yet.");
-            ContextCompat.getMainExecutor(context).execute(() ->
-                    Toast.makeText(context, "No QR code detected yet. Try again.", Toast.LENGTH_SHORT).show()
-            );
-            return;
-        }
+    private void onScanQRSuccess(Transaction transaction) {
+        this.transaction = transaction;
+        scanQrView.hideLoadingSpinner();
+        shutdown();
+        DataShare.send(this);
+        Intent intent = new Intent(context, ConfirmPaymentActivity.class);
+        context.startActivity(intent);
+    }
 
-        // Execute the scanning and data fetching logic on a separate thread
-        paymentExecutor.execute(() -> {
-            Log.d("DEBUG", "Checking if transaction exists: " + transactionId);
-            try {
-                if (Boolean.TRUE.equals(MySQLConnector.transactionExists(context, transactionId))) {
-                    Log.i("TRANSACTION EXISTS", String.valueOf(transactionId));
-                    String email = user.getUserEmail();
-                    Log.i("FROM USER EMAIL", email);
-                    MySQLConnector.updateTransactionFromUser(context, transactionId, email);
-                    Log.i("MAKE PAYMENT CONTROLLER", "Attempt to updateTransactionFromUser complete");
-
-                    Transaction tx = MySQLConnector.getTransactionDetailsFromProcedure(transactionId, context);
-                    assert tx != null;
-                    this.transactionAmount = tx.getAmount();
-                    this.toUserDetails = MySQLConnector.getUserDetailsByEmail(tx.getToUser(), context);
-                    this.fromUserDetails = MySQLConnector.getUserDetailsByEmail(email, context);
-                    Log.i("TRANSACTION DETAILS CAPTURED", "Amount: " + transactionAmount + ", To: " + toUserDetails.getUserEmail());
-
-                    // Switch back to the main thread to update UI (start activity)
-                    ContextCompat.getMainExecutor(context).execute(() -> {
-                        DataShare.send(this);
-                        context.startActivity(new Intent(context, ConfirmPaymentActivity.class));
-                    });
-                } else {
-                    Log.i("TRANSACTION ID", "TransactionId is not valid");
-                    ContextCompat.getMainExecutor(context).execute(() ->
-                            Toast.makeText(context, "Invalid Transaction ID", Toast.LENGTH_SHORT).show()
-                    );
-                }
-            } catch (Exception e) {
-                Log.e("handleScanQR", "Error during QR scan processing: " + e.getMessage(), e);
-                ContextCompat.getMainExecutor(context).execute(() ->
-                        Toast.makeText(context, "Error processing QR code. Please try again.", Toast.LENGTH_SHORT).show()
-                );
-            }
-        });
+    private void onScanQRError(String error) {
+        scanQrView.hideLoadingSpinner();
+        scanQrView.showToast(error);
     }
 
     public void handleCancel() {
         DataShare.send(this);
         context.startActivity(new Intent(context, DashboardActivity.class));
-        scanQrView.finishActivity();
-    }
-
-    public void handleConfirmPayment() {
-        // Execute the payment logic on a separate thread
-        paymentExecutor.execute(() -> {
-            boolean transactionSuccess;
-            boolean sufficientFunds;
-            String errorReason;
-
-            try {
-                sufficientFunds = MySQLConnector.hasSufficientFunds(fromUserDetails.getUserEmail(), transactionId, context);
-
-                if (sufficientFunds) {
-                    try {
-                        transactionSuccess = MySQLConnector.confirmTransaction(fromUserDetails.getUserEmail(), transactionId, context);
-
-                        if (transactionSuccess) {
-                            // On success, post to main thread to show success screen
-                            ContextCompat.getMainExecutor(context).execute(this::showSuccessScreen);
-                        } else {
-                            Log.e("MakePaymentController", "Transaction confirmed but failed in procedure.");
-                            errorReason = "Transaction Failed or Reversed";
-                            // On failure, post to main thread to show fail screen
-                            final String finalErrorReason = errorReason;
-                            ContextCompat.getMainExecutor(context).execute(() -> showFailScreen(true, finalErrorReason));
-                        }
-                    } catch (Exception e) {
-                        Log.e("MakePaymentController", "Error confirming transaction: " + e.getMessage());
-                        errorReason = "Transaction Failed or Reversed";
-                        final String finalErrorReason = errorReason;
-                        ContextCompat.getMainExecutor(context).execute(() -> showFailScreen(true, finalErrorReason));
-                    }
-                } else {
-                    Log.w("MakePaymentController", "Insufficient funds for transaction " + transactionId);
-                    MySQLConnector.updateTransactionStatus(transactionId, "failed", context);
-                    errorReason = "Insufficient Funds";
-                    final String finalErrorReason = errorReason;
-                    ContextCompat.getMainExecutor(context).execute(() -> showFailScreen(false, finalErrorReason));
-                }
-
-            } catch (Exception e) {
-                Log.e("MakePaymentController", "Error checking sufficient funds: " + e.getMessage());
-                errorReason = "An unexpected error occurred.";
-                final String finalErrorReason = errorReason;
-                ContextCompat.getMainExecutor(context).execute(() -> showFailScreen(false, finalErrorReason));
+        try {
+            if (scanQrView != null) {
+                scanQrView.finishActivity();
             }
-        });
-    }
+            if (confirmPaymentView != null) {
+                confirmPaymentView.finishActivity();
+            }
+            if (transactionStatusDisplayView != null) {
+                transactionStatusDisplayView.finishActivity();
+            }
 
-    public void showFailScreen(boolean transactionFailed, String errorReason) {
-        Intent intent = new Intent(context, ShowFailedActivity.class);
-        intent.putExtra("TRANSACTION_ID", transactionId);
-        intent.putExtra("ERROR_REASON", errorReason);
-        Log.d("MakePaymentController", "Navigating to ShowFailedActivity with reason: " + errorReason);
-        context.startActivity(intent);
-        if (confirmPaymentView != null) { // Null check for safety
-            confirmPaymentView.finishActivity();
+        } catch (Exception ignored) {
+
         }
     }
 
-    public void showSuccessScreen() {
-        Intent intent = new Intent(context, ShowSuccessActivity.class);
-        intent.putExtra("TRANSACTION_ID", transactionId);
-        Log.d("MakePaymentController", "Navigating to ShowSuccessActivity with ID: " + transactionId);
+    public void handleConfirmPayment() {
+        confirmPaymentView.showLoadingSpinner();
+        PaymentManager.confirmTransaction(transaction, context, this::showSuccessScreen, this::showFailScreen);
+
+    }
+
+    public void showFailScreen(String errorReason) {
+        confirmPaymentView.hideLoadingSpinner();
+        DataShare.send(this);
+        Intent intent = new Intent(context, ShowFailedActivity.class);
+        intent.putExtra("ERROR_REASON", errorReason);
         context.startActivity(intent);
-        if (confirmPaymentView != null) { // Null check for safety
-            confirmPaymentView.finishActivity();
+        try {
+            if (scanQrView != null) {
+                scanQrView.finishActivity();
+            }
+            if (confirmPaymentView != null) {
+                confirmPaymentView.finishActivity();
+            }
+        } catch (Exception ignored) {
+        }
+
+    }
+
+    public void showSuccessScreen() {
+        confirmPaymentView.hideLoadingSpinner();
+        DataShare.send(this);
+        context.startActivity(new Intent(context, ShowSuccessActivity.class));
+        try {
+            if (scanQrView != null) {
+                scanQrView.finishActivity();
+            }
+            if (confirmPaymentView != null) {
+                confirmPaymentView.finishActivity();
+            }
+        } catch (Exception ignored) {
         }
     }
 
     public void shutdown() {
         cameraExecutor.shutdown();
-        paymentExecutor.shutdown(); // Shutdown the payment executor as well
-    }
-
-    public int getTransactionId() {
-        return transactionId;
-    }
-
-    public void handleLoadUsersUI() {
-        confirmPaymentView.displayAmount(transactionAmount);
-        if (fromUserDetails instanceof Student) {
-            confirmPaymentView.displayFromUserName(((Student) fromUserDetails).getStudentFullName());
-            confirmPaymentView.displayFromUserNumber(((Student) fromUserDetails).getStudentNumber());
-        } else if (fromUserDetails instanceof Business) {
-            confirmPaymentView.displayFromUserName(((Business)fromUserDetails).getBusinessName());
-            confirmPaymentView.displayFromUserNumber(((Business)fromUserDetails).getBusinessVAT());
-        }
-
-        if (toUserDetails instanceof Student) {
-            confirmPaymentView.displayToUserName(((Student) toUserDetails).getStudentFullName());
-            confirmPaymentView.displayToUserNumber(((Student) toUserDetails).getStudentNumber());
-        } else if (toUserDetails instanceof Business) {
-            confirmPaymentView.displayToUserName(((Business)toUserDetails).getBusinessName());
-            confirmPaymentView.displayToUserNumber(((Business)toUserDetails).getBusinessVAT());
-        }
     }
 
     public void setConfirmPaymentView(IConfirmPaymentView confirmPaymentView) {
         this.confirmPaymentView = confirmPaymentView;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public void loadTransactionStatusData() {
+        transactionStatusDisplayView.displayAmount(transaction.getAmount());
+        if (transaction.getFromUserObj() != null) {
+            if (transaction.getFromUserObj() instanceof Student) {
+                transactionStatusDisplayView.displayFromUserName(((Student) transaction.getFromUserObj()).getStudentFullName());
+                transactionStatusDisplayView.displayFromUserNumber(((Student) transaction.getFromUserObj()).getStudentNumber());
+            } else if (transaction.getFromUserObj() instanceof Business) {
+                transactionStatusDisplayView.displayFromUserName(((Business) transaction.getFromUserObj()).getBusinessName());
+                transactionStatusDisplayView.displayFromUserNumber(((Business) transaction.getFromUserObj()).getBusinessVAT());
+            }
+        }
+        if (transaction.getToUserObj() != null) {
+            if (transaction.getToUserObj() instanceof Student) {
+                transactionStatusDisplayView.displayToUserName(((Student) transaction.getToUserObj()).getStudentFullName());
+                transactionStatusDisplayView.displayToUserNumber(((Student) transaction.getToUserObj()).getStudentNumber());
+            } else if (transaction.getToUserObj() instanceof Business) {
+                transactionStatusDisplayView.displayToUserName(((Business) transaction.getToUserObj()).getBusinessName());
+                transactionStatusDisplayView.displayToUserNumber(((Business) transaction.getToUserObj()).getBusinessVAT());
+            }
+        }
+    }
+
+    public void loadConfirmPaymentData() {
+        if (confirmPaymentView != null) {
+            confirmPaymentView.displayAmount(transaction.getAmount());
+            if (transaction.getFromUserObj() != null) {
+                if (transaction.getFromUserObj() instanceof Student) {
+                    confirmPaymentView.displayFromUserName(((Student) transaction.getFromUserObj()).getStudentFullName());
+                    confirmPaymentView.displayFromUserNumber(((Student) transaction.getFromUserObj()).getStudentNumber());
+                } else if (transaction.getFromUserObj() instanceof Business) {
+                    confirmPaymentView.displayFromUserName(((Business) transaction.getFromUserObj()).getBusinessName());
+                    confirmPaymentView.displayFromUserNumber(((Business) transaction.getFromUserObj()).getBusinessVAT());
+                }
+            }
+            if (transaction.getToUserObj() != null) {
+                if (transaction.getToUserObj() instanceof Student) {
+                    confirmPaymentView.displayToUserName(((Student) transaction.getToUserObj()).getStudentFullName());
+                    confirmPaymentView.displayToUserNumber(((Student) transaction.getToUserObj()).getStudentNumber());
+                } else if (transaction.getToUserObj() instanceof Business) {
+                    confirmPaymentView.displayToUserName(((Business) transaction.getToUserObj()).getBusinessName());
+                    confirmPaymentView.displayToUserNumber(((Business) transaction.getToUserObj()).getBusinessVAT());
+                }
+            }
+        }
+    }
+
+    public void setTransactionStatusDisplayView(ITransactionStatusDisplayView transactionStatusDisplayView) {
+        this.transactionStatusDisplayView = transactionStatusDisplayView;
     }
 }
