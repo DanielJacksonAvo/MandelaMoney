@@ -56,11 +56,15 @@ public class RequestPaymentController {
 
 
     public void handleGenerateQR(String samount) {
-        enterAmountRequestPaymentView.showLoadingSpinner();
-        enterAmountRequestPaymentView.hideError();
+        if (enterAmountRequestPaymentView != null ) {
+            enterAmountRequestPaymentView.showLoadingSpinner();
+            enterAmountRequestPaymentView.hideError();
+        }
         if (!ValidateInput.checkValidAmount(samount)) {
-            enterAmountRequestPaymentView.showError("Invalid Amount");
-            enterAmountRequestPaymentView.hideLoadingSpinner();
+            if (enterAmountRequestPaymentView != null) {
+                enterAmountRequestPaymentView.showError("Invalid Amount");
+                enterAmountRequestPaymentView.hideLoadingSpinner();
+            }
             return;
         }
         float amount = Float.parseFloat(samount);
@@ -73,13 +77,17 @@ public class RequestPaymentController {
         DataShare.send(this);
         Intent intent = new Intent(context, RequestPaymentShowQrActivity.class);
         context.startActivity(intent);
-        enterAmountRequestPaymentView.hideError();
-        enterAmountRequestPaymentView.hideLoadingSpinner();
+        if (enterAmountRequestPaymentView != null) {
+            enterAmountRequestPaymentView.hideError();
+            enterAmountRequestPaymentView.hideLoadingSpinner();
+        }
     }
 
     private void onCreateTransactionFailure(String error) {
-        enterAmountRequestPaymentView.hideLoadingSpinner();
-        enterAmountRequestPaymentView.showError(error);
+        if (enterAmountRequestPaymentView != null) {
+            enterAmountRequestPaymentView.hideLoadingSpinner();
+            enterAmountRequestPaymentView.showError(error);
+        }
     }
     public void startPollingStatus() {
         if (pollingHandle != null && !pollingHandle.isDone()) {
