@@ -6,6 +6,8 @@ import java.util.UUID;
 public class Transaction {
     private String id;
     private String toUser;
+    private User toUserObj;
+    private User fromUserObj;
     private String fromUser;
     private float amount;
     private final String date;
@@ -23,8 +25,22 @@ public class Transaction {
         this.displayName ="";
     }
 
+    public Transaction(String fromUser, String toUser, float amount, String date, String time, int id) {
+        this.id = Integer.toString(id);
+        this.toUser = toUser;
+        this.fromUser = fromUser;
+        this.amount = amount;
+        this.date = date;
+        this.time = time;
+        this.displayName ="";
+    }
+
     public String getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = Integer.toString(id);
     }
 
     public String getToUser() {
@@ -92,5 +108,21 @@ public class Transaction {
     @Override
     public int hashCode() {
         return Objects.hash(id, toUser, fromUser, amount, date, time, displayName, selfTransaction);
+    }
+
+    public User getToUserObj() {
+        return toUserObj;
+    }
+
+    public void setToUserObj(User toUserObj) {
+        this.toUserObj = toUserObj;
+    }
+
+    public User getFromUserObj() {
+        return fromUserObj;
+    }
+
+    public void setFromUserObj(User fromUserObj) {
+        this.fromUserObj = fromUserObj;
     }
 }

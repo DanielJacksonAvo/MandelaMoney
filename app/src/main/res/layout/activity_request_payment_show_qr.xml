@@ -85,21 +85,6 @@
                     tools:srcCompat="@tools:sample/avatars" />
             </FrameLayout>
 
-
-            <TextView
-                android:id="@+id/lbl_error_qr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:ems="10"
-                android:text="@string/could_not_generate_qr"
-                android:textColor="@color/mandelaYellow"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/img_request_payment_qr" />
-
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline3"
                 android:layout_width="wrap_content"
@@ -143,5 +128,7 @@
         app:layout_constraintStart_toStartOf="@+id/blurView_request_payment"
         app:layout_constraintTop_toBottomOf="@+id/blurView_request_payment"
         app:layout_constraintVertical_bias="0.19999999" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

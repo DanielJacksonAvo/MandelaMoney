@@ -112,18 +112,6 @@
                     </FrameLayout>
 
 
-                    <TextView
-                        android:id="@+id/lbl_error_qr"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:text="@string/could_not_generate_qr"
-                        android:textColor="@color/mandelaYellow"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </eightbitlab.com.blurview.BlurView>
