@@ -94,5 +94,12 @@
     <string name="today">Today</string>"
     <string name="invalid_password">Invalid Password</string>
     <string name="forgot_password_message">Enter your email to begin recovery.</string>
+    <string name="your_profile">Your Profile</string>
+    <string name="first_name_">First Name:</string>
+    <string name="last_name_">Last Name:</string>
+    <string name="email_">Email:</string>
+    <string name="student_number_">Student Number:</string>
+    <string name="balance_">Balance:</string>
+
 
 </resources>
