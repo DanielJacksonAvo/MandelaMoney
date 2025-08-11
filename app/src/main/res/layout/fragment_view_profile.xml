@@ -31,7 +31,7 @@
             tools:layout_editor_absoluteY="-84dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout6"
+                android:id="@+id/btn_logout_profile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -50,7 +50,8 @@
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8" />
+                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8"
+                    android:layout_width="0dp"/>
 
                 <TextView
                     android:id="@+id/txt_transaction_amount_card8"
@@ -68,7 +69,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout6"
+                android:id="@+id/btn_changepassword_profile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -87,7 +88,8 @@
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8" />
+                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8"
+                    android:layout_width="0dp"/>
 
                 <TextView
                     android:id="@+id/txt_transaction_amount_card8"
@@ -105,7 +107,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout6"
+                android:id="@+id/btn_deposit_profile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -124,7 +126,8 @@
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8" />
+                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8"
+                    android:layout_width="0dp"/>
 
                 <TextView
                     android:id="@+id/txt_transaction_amount_card8"
@@ -217,7 +220,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
                 android:fontFamily="@font/dm_sans_medium"
-                android:text="@string/your_profile"
+                android:text="@string/options"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -226,7 +229,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout6"
+                android:id="@+id/btn_editprofile_profile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -238,14 +241,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/top_center_line3">
 
                 <ImageView
-                    android:id="@+id/imageView21"
                     android:layout_height="0dp"
                     android:layout_marginEnd="4dp"
                     android:src="@drawable/img_drop_down_icon"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8" />
+                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8"
+                    android:layout_width="0dp"/>
 
                 <TextView
                     android:id="@+id/txt_transaction_amount_card8"
@@ -288,7 +291,7 @@
             tools:layout_editor_absoluteY="-84dp">
 
             <TextView
-                android:id="@+id/txt_transaction_amount_card3"
+                android:id="@+id/txt_firstname_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/dm_sans_medium"
@@ -298,11 +301,11 @@
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line5"
                 app:layout_constraintEnd_toEndOf="@+id/top_center_line2"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/textView4"
+                app:layout_constraintStart_toEndOf="@+id/txt_firstnamelabel_profile"
                 app:layout_constraintTop_toBottomOf="@+id/top_center_line2" />
 
             <TextView
-                android:id="@+id/txt_transaction_amount_card4"
+                android:id="@+id/txt_lastname_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/dm_sans_medium"
@@ -312,11 +315,11 @@
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line7"
                 app:layout_constraintEnd_toEndOf="@+id/top_center_line2"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/textView5"
+                app:layout_constraintStart_toEndOf="@+id/txt_lastnamelabel_profile"
                 app:layout_constraintTop_toBottomOf="@+id/top_center_line5" />
 
             <TextView
-                android:id="@+id/txt_transaction_amount_card5"
+                android:id="@+id/txt_email_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/dm_sans_medium"
@@ -326,11 +329,11 @@
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line6"
                 app:layout_constraintEnd_toEndOf="@+id/top_center_line2"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/textView6"
+                app:layout_constraintStart_toEndOf="@+id/txt_emaillabel_profile"
                 app:layout_constraintTop_toBottomOf="@+id/top_center_line7" />
 
             <TextView
-                android:id="@+id/txt_transaction_amount_card6"
+                android:id="@+id/txt_studentnumber_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/dm_sans_medium"
@@ -340,11 +343,11 @@
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line8"
                 app:layout_constraintEnd_toEndOf="@+id/top_center_line2"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/textView7"
+                app:layout_constraintStart_toEndOf="@+id/txt_studentnumberlabel_profile"
                 app:layout_constraintTop_toBottomOf="@+id/top_center_line6" />
 
             <TextView
-                android:id="@+id/txt_transaction_amount_card7"
+                android:id="@+id/txt_balance_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/dm_sans_medium"
@@ -354,11 +357,11 @@
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line4"
                 app:layout_constraintEnd_toEndOf="@+id/top_center_line2"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/textView10"
+                app:layout_constraintStart_toEndOf="@+id/txt_balancelabel_profile"
                 app:layout_constraintTop_toBottomOf="@+id/top_center_line8" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/txt_firstnamelabel_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -388,7 +391,7 @@
                 app:layout_constraintVertical_bias="0.4" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/txt_lastnamelabel_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -405,7 +408,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/txt_emaillabel_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -423,7 +426,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
-                android:id="@+id/textView10"
+                android:id="@+id/txt_balancelabel_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -440,7 +443,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
-                android:id="@+id/textView7"
+                android:id="@+id/txt_studentnumberlabel_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
