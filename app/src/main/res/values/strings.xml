@@ -101,6 +101,9 @@
     <string name="student_number_">Student Number:</string>
     <string name="balance_">Balance:</string>
     <string name="options">Options</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="change_password">Change Password</string>
+    <string name="log_out">Logout</string>
 
 
 </resources>
