@@ -44,26 +44,27 @@
 
                 <ImageView
                     android:id="@+id/imageView21"
+                    android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginEnd="4dp"
-                    android:src="@drawable/img_drop_down_icon"
+                    android:src="@drawable/img_forwardarrow_icon"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8"
-                    android:layout_width="0dp"/>
+                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8" />
 
                 <ImageView
                     android:id="@+id/imageView24"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:src="@drawable/img_drop_down_icon"
+                    android:src="@drawable/img_logout_icon"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8" />
+                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
                     android:id="@+id/txt_transaction_amount_card8"
@@ -96,20 +97,20 @@
 
                 <ImageView
                     android:id="@+id/imageView21"
+                    android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginEnd="4dp"
-                    android:src="@drawable/img_drop_down_icon"
+                    android:src="@drawable/img_forwardarrow_icon"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8"
-                    android:layout_width="0dp"/>
+                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8" />
 
                 <ImageView
                     android:id="@+id/imageView23"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:src="@drawable/img_drop_down_icon"
+                    android:src="@drawable/img_changepassword_icon"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -151,7 +152,7 @@
                     android:id="@+id/imageView22"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:src="@drawable/img_drop_down_icon"
+                    android:src="@drawable/img_wallet_icon"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintStart_toStartOf="parent"
@@ -160,14 +161,14 @@
 
                 <ImageView
                     android:id="@+id/imageView21"
+                    android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginEnd="4dp"
-                    android:src="@drawable/img_drop_down_icon"
+                    android:src="@drawable/img_forwardarrow_icon"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8"
-                    android:layout_width="0dp"/>
+                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8" />
 
                 <TextView
                     android:id="@+id/txt_transaction_amount_card8"
@@ -282,20 +283,20 @@
                 app:layout_constraintTop_toBottomOf="@+id/top_center_line3">
 
                 <ImageView
+                    android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginEnd="4dp"
-                    android:src="@drawable/img_drop_down_icon"
+                    android:src="@drawable/img_forwardarrow_icon"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8"
-                    android:layout_width="0dp"/>
+                    app:layout_constraintTop_toTopOf="@+id/txt_transaction_amount_card8" />
 
                 <ImageView
                     android:id="@+id/imageView17"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:src="@drawable/img_drop_down_icon"
+                    android:src="@drawable/img_edit_icon"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_transaction_amount_card8"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintStart_toStartOf="parent"
@@ -349,7 +350,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/dm_sans_medium"
-                android:text="Bottom Right"
+                android:text="Rick"
                 android:textColor="@color/white"
                 android:textSize="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line5"
@@ -363,7 +364,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/dm_sans_medium"
-                android:text="Bottom Right"
+                android:text="Astley"
                 android:textColor="@color/white"
                 android:textSize="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line7"
@@ -377,7 +378,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/dm_sans_medium"
-                android:text="Bottom Right"
+                android:text="richastley@mandela.ac.za"
                 android:textColor="@color/white"
                 android:textSize="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line6"
@@ -391,7 +392,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/dm_sans_medium"
-                android:text="Bottom Right"
+                android:text="s225081139"
                 android:textColor="@color/white"
                 android:textSize="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line8"
@@ -405,7 +406,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/dm_sans_medium"
-                android:text="Bottom Right"
+                android:text="R 420.69"
                 android:textColor="@color/white"
                 android:textSize="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line4"
