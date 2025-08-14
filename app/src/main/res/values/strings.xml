@@ -95,5 +95,11 @@
     <string name="invalid_password">Invalid Password</string>
     <string name="forgot_password_message">Enter your email to begin recovery.</string>
     <string name="reset_password_message">Enter a new secure password.</string>
+    <string name="invalid_deposit_funds">One of the fields are empty or invalid.</string>
+    <string name="card_number">CARD NUMBER</string>
+    <string name="name">NAME</string>
+    <string name="expiry_date">EXPIRY DATE</string>
+    <string name="cvv">CVV</string>
+    <string name="deposit_funds">DEPOSIT FUNDS</string>
 
 </resources>
