@@ -2,16 +2,20 @@ package com.example.mandelamoney.view.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.view.Iface.IProfileView;
 
 public class ProfileDashboardFragment extends Fragment implements IProfileView {
+    View rootView;
 
     public ProfileDashboardFragment() {
         // Required empty public constructor
@@ -25,38 +29,54 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
     }
 
     @Override
-    public void setFirstNameLabel(String label) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        rootView = view;
+    }
 
+    private void connectToUi() {
+        
+    }
+
+    @Override
+    public void setFirstNameLabel(String label) {
+        TextView textView = rootView.findViewById(R.id.txt_firstnamelabel_profile);
+        textView.setText(label);
     }
 
     @Override
     public void setFirstName(String firstName) {
-
+        TextView textView = rootView.findViewById(R.id.txt_firstname_profile);
+        textView.setText(firstName);
     }
 
     @Override
     public void setLastNameLabel(String label) {
-
+        TextView textView = rootView.findViewById(R.id.txt_lastnamelabel_profile);
+        textView.setText(label);
     }
 
     @Override
     public void setLastName(String lastName) {
-
+        TextView textView = rootView.findViewById(R.id.txt_lastname_profile);
+        textView.setText(lastName);
     }
 
     @Override
     public void setEmail(String email) {
-
+        TextView textView = rootView.findViewById(R.id.txt_email_profile);
+        textView.setText(email);
     }
 
     @Override
     public void setStudentNumberLabel(String label) {
-
+        TextView textView = rootView.findViewById(R.id.txt_studentnumberlabel_profile);
+        textView.setText(label);
     }
 
     @Override
     public void setBalance(Float balance) {
-
+        TextView textView = rootView.findViewById(R.id.txt_balance_profile);
+        textView.setText(Float.toString(balance));
     }
 
     @Override
