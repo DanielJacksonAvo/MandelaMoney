@@ -158,8 +158,8 @@ public class DashboardController {
         public void handleBalanceRefresh() {
             if (UserSession.getUser() != null) {
                 Executors.newSingleThreadExecutor().execute(() -> {
-                    double previousBalance = UserSession.getUser().getUserBalance();
-                    double updatedBalance = UserSession.updateBalance(context);
+                    float previousBalance = UserSession.getUser().getUserBalance();
+                    float updatedBalance = UserSession.updateBalance(context);
                     if (updatedBalance != previousBalance) {
                         UserSession.getUser().setUserBalance(updatedBalance);
                         mainThreadHandler.post(() -> {
