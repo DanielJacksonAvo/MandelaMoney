@@ -19,6 +19,7 @@ import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
+import com.example.mandelamoney.view.Iface.IProfileView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
@@ -39,6 +40,7 @@ public class DashboardController {
 
     public DashboardHomeController DashboardHomeController;
     public TransactionHistoryController TransactionHistoryController;
+    public DashboardProfileController DashboardProfileController;
 
 
     public DashboardController(Context context, IDashboardView view) {
@@ -115,6 +117,10 @@ public class DashboardController {
 
     public void createTransactionHistoryController(ITransactionHistoryView view) {
         TransactionHistoryController = new TransactionHistoryController(view);
+    }
+
+    public void createDashboardProfileController(IProfileView view) {
+        DashboardProfileController = new DashboardProfileController(view);
     }
 
 
@@ -237,11 +243,51 @@ public class DashboardController {
         }
 
     }
+
     private class DashboardSettingsController {
     }
+
     private class DashboardProfileController {
+        IProfileView view;
+        public DashboardProfileController(IProfileView view) {
+            this.view = view;
+            loadUserToUi();
+        }
+
+        public void loadUserToUi() {
+            if (UserSession.getUser() instanceof Student) {
+                view.setWelcomeName(((Student) UserSession.getUser()).getStudentFullName());
+                view.setFirstNameLabel(context.getString(R.string.first_name_));
+                view.setFirstName(((Student) UserSession.getUser()).getStudentFirstName());
+                view.setLastNameLabel(context.getString(R.string.last_name_));
+                view.setLastName(((Student) UserSession.getUser()).getStudentLastName());
+                view.setStudentNumberLabel(context.getString(R.string.student_number_));
+                view.setStudentNumber(((Student) UserSession.getUser()).getStudentNumber());
+                view.setBalance((float) UserSession.getUser().getUserBalance());
+                view.setEmail(UserSession.getUser().getUserEmail());
+            } else if (UserSession.getUser() instanceof Business) {
+                view.setWelcomeName((((Business) UserSession.getUser()).getBusinessName()));
+            }
+        }
+
+        public void handleEditButton() {
+
+        }
+
+        public void handleDepositButton() {
+
+        }
+
+        public void handleChangePasswordButton() {
+
+        }
+
+        public void handleLogoutButton() {
+
+        }
 
     }
+
     public class TransactionHistoryController {
 
         private final ITransactionHistoryView transactionHistoryView;
