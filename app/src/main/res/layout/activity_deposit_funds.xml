@@ -69,7 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginRight="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -93,8 +93,10 @@
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:autofillHints="Student Number"
+                    android:autofillHints="@string/expiry_date"
                     android:hint="@string/expiry_date"
+                    android:inputType="number"
+                    android:maxLength="7"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -109,7 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginRight="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -133,7 +135,7 @@
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:autofillHints="Last Name"
+                    android:autofillHints="@string/name"
                     android:hint="@string/name"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -149,12 +151,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginRight="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_branch_code_deposit_funds"
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
@@ -173,7 +175,7 @@
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:autofillHints="First Name"
+                    android:autofillHints="@string/card_number"
                     android:hint="@string/card_number"
                     android:textAllCaps="false"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -186,11 +188,52 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout_branch_code_deposit_funds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="25dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_bank_name_deposit_funds"
+                app:layout_constraintVertical_bias="0.0">
+
+                <EditText
+                    android:id="@+id/tbx_branch_code_deposit_funds"
+                    style="@style/TextBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:autofillHints="@string/branch_code"
+                    android:hint="@string/branch_code"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/img_branch_code_icon_deposit_funds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="10dp"
+                    android:contentDescription="@string/view_hide"
+                    android:src="@drawable/img_asterisk_icon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/tbx_branch_code_deposit_funds"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/tbx_branch_code_deposit_funds"
+                    app:layout_constraintTop_toTopOf="@+id/tbx_branch_code_deposit_funds" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout_cvv_deposit_funds"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginRight="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -216,7 +259,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:contentDescription="@string/view_hide"
-                    android:src="@drawable/img_password_icon"
+                    android:src="@drawable/img_creditcardcvv"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/tbx_cvv_deposit_funds"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -224,6 +267,7 @@
                     app:layout_constraintTop_toTopOf="@+id/tbx_cvv_deposit_funds" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout2"
@@ -235,7 +279,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_deposit_funds_title"
-                app:layout_constraintVertical_bias="0.100000024">
+                app:layout_constraintVertical_bias="0.01999998">
 
                 <ImageView
                     android:id="@+id/img_rand_icon_deposit_funds"
@@ -262,6 +306,46 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0"
                     tools:ignore="TextFields" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout_bank_name_deposit_funds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="25dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+                app:layout_constraintVertical_bias="0.0">
+
+                <EditText
+                    android:id="@+id/tbx_bank_name_deposit_funds"
+                    style="@style/TextBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:autofillHints="@string/bank_name"
+                    android:hint="@string/bank_name"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/img_bank_name_icon_deposit_funds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:contentDescription="@string/view_hide"
+                    android:src="@drawable/img_bank_icon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/tbx_bank_name_deposit_funds"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/tbx_bank_name_deposit_funds"
+                    app:layout_constraintTop_toTopOf="@+id/tbx_bank_name_deposit_funds" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

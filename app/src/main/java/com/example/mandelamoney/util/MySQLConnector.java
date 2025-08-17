@@ -259,6 +259,50 @@ public class MySQLConnector {
 
         return isMatch;
     }
+    public static Object[] createDepositBankAndPendingTransaction(
+            String userEmail,
+            float amount,
+            String baNumber,
+            String baBranchCode,
+            String baName,
+            String baBank,
+            Context context
+    ) {
+        Connection currentConnection = getConnection(context);
+        Object[] out = new Object[]{false, null, null}; // [success(Boolean), transactionId(Integer), errorCode(String)]
+        if (currentConnection == null) return out;
+
+        try (CallableStatement stmt = currentConnection.prepareCall(
+                "{CALL MandelaMoneyDB.createDepositBankAndPendingTransaction(?, ?, ?, ?, ?, ?, ?, ?, ?)}"
+        )) {
+            int i = 1;
+            stmt.setString(i++, userEmail);
+            stmt.setFloat (i++, amount);
+            stmt.setString(i++, baNumber);
+            stmt.setString(i++, baBranchCode);
+            stmt.setString(i++, baName);
+            stmt.setString(i++, baBank);
+
+            // OUT params
+            stmt.registerOutParameter(i++, java.sql.Types.BOOLEAN); // success (or use Types.BIT/TINYINT if needed)
+            stmt.registerOutParameter(i++, java.sql.Types.INTEGER); // transactionId
+            stmt.registerOutParameter(i  , java.sql.Types.VARCHAR); // errorCode
+
+            stmt.execute();
+
+            boolean success = stmt.getBoolean(7);
+            Integer txnId   = stmt.getInt(8);
+            String  errCode = stmt.getString(9);
+
+            out[0] = success;
+            out[1] = txnId;
+            out[2] = errCode;
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "createDepositBankAndPendingTransaction failed: " + e.getMessage(), e);
+        }
+        return out;
+    }
     public static Boolean resetPassword(String userEmail, String recoveryCode, String newPassword, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
