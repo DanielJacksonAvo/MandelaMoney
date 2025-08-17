@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.mandelamoney.R;
@@ -31,10 +32,15 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+        connectToUi();
     }
 
     private void connectToUi() {
-        
+        Button btnEdit = rootView.findViewById(R.id.btn_editprofile_profile);
+        Button btnDeposit = rootView.findViewById(R.id.btn_deposit_profile);
+        Button btnChangePassword = rootView.findViewById(R.id.btn_changepassword_profile);
+        Button btnLogout = rootView.findViewById(R.id.btn_logout_profile);
+
     }
 
     @Override
