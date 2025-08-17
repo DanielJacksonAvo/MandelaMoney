@@ -80,6 +80,12 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
     }
 
     @Override
+    public void setStudentNumber(String number) {
+        TextView textView = rootView.findViewById(R.id.txt_studentnumber_profile);
+        textView.setText(number);
+    }
+
+    @Override
     public void setBalance(Float balance) {
         TextView textView = rootView.findViewById(R.id.txt_balance_profile);
         textView.setText(Float.toString(balance));
@@ -87,6 +93,7 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
 
     @Override
     public void setWelcomeName(String name) {
-
+        TextView textView = rootView.findViewById(R.id.txt_user_name_profile);
+        textView.setText(name);
     }
 }
