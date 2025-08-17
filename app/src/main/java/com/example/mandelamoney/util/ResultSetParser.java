@@ -29,7 +29,7 @@ public class ResultSetParser {
             }
 
             int userType = resultSet.getInt(1);
-            float userBalance = resultSet.getFloat(2);
+            double userBalance = resultSet.getDouble(2);
             String col3 = resultSet.getString(3);
             String col4 = resultSet.getString(4);
             String col5 = resultSet.getString(5);
