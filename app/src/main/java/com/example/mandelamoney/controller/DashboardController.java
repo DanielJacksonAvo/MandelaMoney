@@ -77,6 +77,7 @@ public class DashboardController {
 
     public void handleProfile() {
         currentFragment = 3;
+        DataShare.send(this);
         view.displayProfile();
         manageControllers();
     }
@@ -294,7 +295,7 @@ public class DashboardController {
             UserSession.deleteSession(context);
             Intent intent = new Intent(context, LoginActivity.class);
             context.startActivity(intent);
-            DashboardController.this.view.finishActivity();
+            //DashboardController.this.view.finishActivity();
         }
 
     }
