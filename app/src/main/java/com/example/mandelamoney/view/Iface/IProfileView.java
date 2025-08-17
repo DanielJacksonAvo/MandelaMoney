@@ -7,6 +7,7 @@ public interface IProfileView {
     void setLastName(String lastName);
     void setEmail(String email);
     void setStudentNumberLabel(String label);
+    void setStudentNumber(String number);
     void setBalance(Float balance);
     void setWelcomeName(String name);
 
