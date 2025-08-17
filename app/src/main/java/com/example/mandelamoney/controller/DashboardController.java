@@ -237,14 +237,8 @@ public class DashboardController {
         }
 
     }
-
-
-
-
     private class DashboardSettingsController {
-
     }
-
     private class DashboardProfileController {
 
     }
