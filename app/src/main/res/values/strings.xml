@@ -104,6 +104,9 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="change_password">Change Password</string>
     <string name="log_out">Logout</string>
+    <string name="business_name_">Business Name:</string>
+    <string name="vat_number_">VAT Number:</string>
+    <string name="phone_number_">Phone Number:</string>
 
 
 </resources>

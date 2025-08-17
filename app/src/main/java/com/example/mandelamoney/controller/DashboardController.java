@@ -21,6 +21,7 @@ import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.IProfileView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
+import com.example.mandelamoney.view.activity.LoginActivity;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
 import com.example.mandelamoney.view.activity.UnlockActivity;
@@ -247,7 +248,7 @@ public class DashboardController {
     private class DashboardSettingsController {
     }
 
-    private class DashboardProfileController {
+    public class DashboardProfileController {
         IProfileView view;
         public DashboardProfileController(IProfileView view) {
             this.view = view;
@@ -263,27 +264,37 @@ public class DashboardController {
                 view.setLastName(((Student) UserSession.getUser()).getStudentLastName());
                 view.setStudentNumberLabel(context.getString(R.string.student_number_));
                 view.setStudentNumber(((Student) UserSession.getUser()).getStudentNumber());
-                view.setBalance((float) UserSession.getUser().getUserBalance());
-                view.setEmail(UserSession.getUser().getUserEmail());
             } else if (UserSession.getUser() instanceof Business) {
                 view.setWelcomeName((((Business) UserSession.getUser()).getBusinessName()));
+                view.setFirstNameLabel(context.getString(R.string.business_name_));
+                view.setFirstName((((Business) UserSession.getUser()).getBusinessName()));
+                view.setLastNameLabel(context.getString(R.string.vat_number_));
+                view.setLastName(((Business) UserSession.getUser()).getBusinessVAT());
+                view.setStudentNumberLabel(context.getString(R.string.phone_number_));
+                view.setStudentNumber(((Business) UserSession.getUser()).getBusinessPhoneNumber());
             }
+            view.setEmail(UserSession.getUser().getUserEmail());
+            view.setBalance((float) UserSession.getUser().getUserBalance());
+
         }
 
         public void handleEditButton() {
-
+            /// edit profile activity
         }
 
         public void handleDepositButton() {
-
+            ///  deposit activity
         }
 
         public void handleChangePasswordButton() {
-
+            ///  change password activity
         }
 
         public void handleLogoutButton() {
-
+            UserSession.deleteSession(context);
+            Intent intent = new Intent(context, LoginActivity.class);
+            context.startActivity(intent);
+            DashboardController.this.view.finishActivity();
         }
 
     }

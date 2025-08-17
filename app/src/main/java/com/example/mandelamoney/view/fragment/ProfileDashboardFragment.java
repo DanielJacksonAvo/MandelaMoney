@@ -13,10 +13,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.view.Iface.IProfileView;
 
 public class ProfileDashboardFragment extends Fragment implements IProfileView {
     View rootView;
+    DashboardController controller;
 
     public ProfileDashboardFragment() {
         // Required empty public constructor
@@ -40,7 +42,19 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
         Button btnDeposit = rootView.findViewById(R.id.btn_deposit_profile);
         Button btnChangePassword = rootView.findViewById(R.id.btn_changepassword_profile);
         Button btnLogout = rootView.findViewById(R.id.btn_logout_profile);
+        btnEdit.setOnClickListener((view) -> controller.DashboardProfileController.handleEditButton());
+        btnDeposit.setOnClickListener((view) -> controller.DashboardProfileController.handleDepositButton());
+        btnChangePassword.setOnClickListener((view) -> controller.DashboardProfileController.handleChangePasswordButton());
+        btnLogout.setOnClickListener((view) -> controller.DashboardProfileController.handleLogoutButton());
 
+    }
+
+
+    public void setController(DashboardController controller) {
+        this.controller = controller;
+        if (this.controller != null) {
+            this.controller.createDashboardProfileController(this);
+        }
     }
 
     @Override
@@ -96,4 +110,5 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
         TextView textView = rootView.findViewById(R.id.txt_user_name_profile);
         textView.setText(name);
     }
+
 }
