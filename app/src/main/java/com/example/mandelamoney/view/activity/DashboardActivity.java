@@ -126,7 +126,6 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
     @Override
     public void displayProfile() {
         selectedFragment = new ProfileDashboardFragment();
-        ((ProfileDashboardFragment)selectedFragment).setController(dashboardController);
         if (selectedFragment != null) {
             loadFragment(selectedFragment);
         }

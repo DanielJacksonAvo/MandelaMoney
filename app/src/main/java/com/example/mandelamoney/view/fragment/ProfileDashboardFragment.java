@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DashboardController;
+import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.view.Iface.IProfileView;
 
 public class ProfileDashboardFragment extends Fragment implements IProfileView {
@@ -34,14 +36,15 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
+        setController();
         connectToUi();
     }
 
     private void connectToUi() {
-        Button btnEdit = rootView.findViewById(R.id.btn_editprofile_profile);
-        Button btnDeposit = rootView.findViewById(R.id.btn_deposit_profile);
-        Button btnChangePassword = rootView.findViewById(R.id.btn_changepassword_profile);
-        Button btnLogout = rootView.findViewById(R.id.btn_logout_profile);
+        ConstraintLayout btnEdit = rootView.findViewById(R.id.btn_editprofile_profile);
+        ConstraintLayout btnDeposit = rootView.findViewById(R.id.btn_deposit_profile);
+        ConstraintLayout btnChangePassword = rootView.findViewById(R.id.btn_changepassword_profile);
+        ConstraintLayout btnLogout = rootView.findViewById(R.id.btn_logout_profile);
         btnEdit.setOnClickListener((view) -> controller.DashboardProfileController.handleEditButton());
         btnDeposit.setOnClickListener((view) -> controller.DashboardProfileController.handleDepositButton());
         btnChangePassword.setOnClickListener((view) -> controller.DashboardProfileController.handleChangePasswordButton());
@@ -49,9 +52,8 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
 
     }
 
-
-    public void setController(DashboardController controller) {
-        this.controller = controller;
+    public void setController() {
+        this.controller = (DashboardController) DataShare.receive();
         if (this.controller != null) {
             this.controller.createDashboardProfileController(this);
         }
@@ -102,7 +104,7 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
     @Override
     public void setBalance(Float balance) {
         TextView textView = rootView.findViewById(R.id.txt_balance_profile);
-        textView.setText(Float.toString(balance));
+        textView.setText("R " + Float.toString(balance));
     }
 
     @Override
