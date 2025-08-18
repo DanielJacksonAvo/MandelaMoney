@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="invalid_deposit_funds">One of the fields are empty or invalid.</string>
+    <string name="card_number">CARD NUMBER</string>
+    <string name="name">NAME</string>
+    <string name="expiry_date">EXPIRY DATE</string>
+    <string name="cvv">CVV</string>
+    <string name="deposit_funds">DEPOSIT FUNDS</string>
+    <string name="bank_name">BANK</string>
+    <string name="branch_code">BRANCH CODE</string>
+    <string name="enter_amount">Enter an amount.</string>
+    <string name="invalid_amount">Please enter a valid amount.</string>
+    <string name="enter_bank_name">"Please enter a bank. "</string>
+    <string name="invalid_bank_name">Please enter a valid bank.</string>
+    <string name="enter_branch_code">Please enter the branch code.</string>
+    <string name="invalid_branch_code">Please enter a valid branch code.</string>
+    <string name="enter_card_number">Please enter a card number.</string>
+    <string name="invalid_card_number">Please enter a valid card number.</string>
+    <string name="enter_name">Please enter a name.</string>
+    <string name="invalid_name">Please enter a valid name.</string>
+    <string name="enter_expiry_date">Please enter the card\'s expiry date.</string>
+    <string name="invalid_expiry_date">Please enter a valid expiry date.</string>
+    <string name="enter_cvv">"Please enter a cvv. "</string>
+    <string name="invalid_cvv">"Please enter a valid cvv. "</string>
+    <string name="deposit_funds_failed">An error occured when attempting to deposit funds.</string>
+    <string name="bank_account_meta_mismatch">Bank account exists with different details. Using saved account info.\n</string>
+    <string name="confirm_deposit">Confirm Deposit</string>
+    <string name="bank_account">Bank Account</string>
+</resources>
