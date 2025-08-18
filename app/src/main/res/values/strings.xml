@@ -94,6 +94,19 @@
     <string name="today">Today</string>"
     <string name="invalid_password">Invalid Password</string>
     <string name="forgot_password_message">Enter your email to begin recovery.</string>
+    <string name="your_profile">Your Profile</string>
+    <string name="first_name_">First Name:</string>
+    <string name="last_name_">Last Name:</string>
+    <string name="email_">Email:</string>
+    <string name="student_number_">Student Number:</string>
+    <string name="balance_">Balance:</string>
+    <string name="options">Options</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="change_password">Change Password</string>
+    <string name="log_out">Logout</string>
+    <string name="business_name_">Business Name:</string>
+    <string name="vat_number_">VAT Number:</string>
+    <string name="phone_number_">Phone Number:</string>
     <string name="reset_password_message">Enter a new secure password.</string>
     <string name="invalid_deposit_funds">One of the fields are empty or invalid.</string>
     <string name="card_number">CARD NUMBER</string>
@@ -125,6 +138,4 @@
     <string name="bank_account_meta_mismatch">Bank account exists with different details. Using saved account info.\n</string>
     <string name="confirm_deposit">Confirm Deposit</string>
     <string name="bank_account">Bank Account</string>
-
-
 </resources>

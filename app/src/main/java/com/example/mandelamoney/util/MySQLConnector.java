@@ -620,9 +620,8 @@ public class MySQLConnector {
                         ((Student) userDetails).setStudentNumber(rs.getString("userNumber"));
                     } else if (Objects.equals(rs.getString("userType"), "business")) {
                         userDetails = new Business(rs.getString("userEmail"));
-                        ((Business) userDetails).setBusinessName(rs.getString("businessName"));
-                        ((Business) userDetails).setBusinessPhoneNumber(rs.getString("businessPhoneNumber"));
-                        ((Business) userDetails).setBusinessVAT(rs.getString("businessVAT"));
+                        ((Business) userDetails).setBusinessName(rs.getString("firstName"));
+                        ((Business) userDetails).setBusinessVAT(rs.getString("userNumber"));
                     }
                 }
             }
