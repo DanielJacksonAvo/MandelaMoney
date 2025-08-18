@@ -2,6 +2,7 @@ package com.example.mandelamoney.view.fragment;
 
 import static android.icu.lang.UCharacter.toUpperCase;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,8 +25,11 @@ import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.controller.RequestPaymentController;
 import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
+import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
+import com.example.mandelamoney.view.activity.ShowFailedActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +180,8 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     private void configureGenerateQRCodeButton(Button btnGenerateQR) {
         if (btnGenerateQR != null && checkTablet()) {
             btnGenerateQR.setOnClickListener((view) -> {
-                RequestPaymentController requestPaymentController = new RequestPaymentController(getContext(), this);
+                RequestPaymentController requestPaymentController = new RequestPaymentController();
+                requestPaymentController.setContext(getContext());
                 requestPaymentController.handleGenerateQR(tbxRequestPayAmount.getText().toString());
             });
 

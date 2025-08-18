@@ -6,4 +6,5 @@ public interface ITransactionStatusDisplayView {
     void displayToUserNumber(String number);
     void displayFromUserNumber(String number);
     void displayAmount(double amount);
+    void finishActivity();
 }

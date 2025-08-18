@@ -6,4 +6,6 @@ public interface IEnterAmountRequestPaymentView {
     void hideError();
 
     void finishActivity();
+    void showLoadingSpinner();
+    void hideLoadingSpinner();
 }

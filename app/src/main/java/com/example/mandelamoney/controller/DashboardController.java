@@ -19,7 +19,9 @@ import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
+import com.example.mandelamoney.view.Iface.IProfileView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
+import com.example.mandelamoney.view.activity.LoginActivity;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
 import com.example.mandelamoney.view.activity.UnlockActivity;
@@ -39,6 +41,7 @@ public class DashboardController {
 
     public DashboardHomeController DashboardHomeController;
     public TransactionHistoryController TransactionHistoryController;
+    public DashboardProfileController DashboardProfileController;
 
 
     public DashboardController(Context context, IDashboardView view) {
@@ -74,6 +77,7 @@ public class DashboardController {
 
     public void handleProfile() {
         currentFragment = 3;
+        DataShare.send(this);
         view.displayProfile();
         manageControllers();
     }
@@ -115,6 +119,10 @@ public class DashboardController {
 
     public void createTransactionHistoryController(ITransactionHistoryView view) {
         TransactionHistoryController = new TransactionHistoryController(view);
+    }
+
+    public void createDashboardProfileController(IProfileView view) {
+        DashboardProfileController = new DashboardProfileController(view);
     }
 
 
@@ -177,7 +185,6 @@ public class DashboardController {
         }
 
         public void handleMakePayment() {
-            DataShare.send(this);
             stopPolling();
             Intent intent = new Intent(context, MakePaymentScanQrActivity.class);
             context.startActivity(intent);
@@ -239,16 +246,60 @@ public class DashboardController {
 
     }
 
-
-
-
     private class DashboardSettingsController {
+    }
+
+    public class DashboardProfileController {
+        IProfileView view;
+        public DashboardProfileController(IProfileView view) {
+            this.view = view;
+            loadUserToUi();
+        }
+
+        public void loadUserToUi() {
+            if (UserSession.getUser() instanceof Student) {
+                view.setWelcomeName(((Student) UserSession.getUser()).getStudentFullName());
+                view.setFirstNameLabel(context.getString(R.string.first_name_));
+                view.setFirstName(((Student) UserSession.getUser()).getStudentFirstName());
+                view.setLastNameLabel(context.getString(R.string.last_name_));
+                view.setLastName(((Student) UserSession.getUser()).getStudentLastName());
+                view.setStudentNumberLabel(context.getString(R.string.student_number_));
+                view.setStudentNumber(((Student) UserSession.getUser()).getStudentNumber());
+            } else if (UserSession.getUser() instanceof Business) {
+                view.setWelcomeName((((Business) UserSession.getUser()).getBusinessName()));
+                view.setFirstNameLabel(context.getString(R.string.business_name_));
+                view.setFirstName((((Business) UserSession.getUser()).getBusinessName()));
+                view.setLastNameLabel(context.getString(R.string.vat_number_));
+                view.setLastName(((Business) UserSession.getUser()).getBusinessVAT());
+                view.setStudentNumberLabel(context.getString(R.string.phone_number_));
+                view.setStudentNumber(((Business) UserSession.getUser()).getBusinessPhoneNumber());
+            }
+            view.setEmail(UserSession.getUser().getUserEmail());
+            view.setBalance((float) UserSession.getUser().getUserBalance());
+
+        }
+
+        public void handleEditButton() {
+            /// edit profile activity
+        }
+
+        public void handleDepositButton() {
+            ///  deposit activity
+        }
+
+        public void handleChangePasswordButton() {
+            ///  change password activity
+        }
+
+        public void handleLogoutButton() {
+            UserSession.deleteSession(context);
+            Intent intent = new Intent(context, LoginActivity.class);
+            context.startActivity(intent);
+            //DashboardController.this.view.finishActivity();
+        }
 
     }
 
-    private class DashboardProfileController {
-
-    }
     public class TransactionHistoryController {
 
         private final ITransactionHistoryView transactionHistoryView;
