@@ -138,4 +138,5 @@
     <string name="bank_account_meta_mismatch">Bank account exists with different details. Using saved account info.\n</string>
     <string name="confirm_deposit">Confirm Deposit</string>
     <string name="bank_account">Bank Account</string>
+    <string name="cardholder_name_fallback">Account Holder</string>
 </resources>
