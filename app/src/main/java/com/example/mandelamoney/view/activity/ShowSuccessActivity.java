@@ -17,12 +17,14 @@ import com.example.mandelamoney.controller.MakePaymentController;
 import com.example.mandelamoney.controller.RequestPaymentController;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
+import com.example.mandelamoney.controller.DepositFundsController;
 
 public class ShowSuccessActivity extends AppCompatActivity implements ITransactionStatusDisplayView {
 
     private TextView txtToname, txtFromname, txtTonumber, txtFromnumber, txtAmount;
     private MakePaymentController makePaymentController;
     private RequestPaymentController requestPaymentController;
+    private DepositFundsController depositFundsController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +46,13 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
             makePaymentController = (MakePaymentController) obj;
             makePaymentController.setTransactionStatusDisplayView(this);
             makePaymentController.setContext(this);
-        } else {
-            if (obj instanceof RequestPaymentController) {
-                requestPaymentController = (RequestPaymentController) obj;
-                requestPaymentController.setTransactionStatusDisplayView(this);
-                requestPaymentController.setContext(this);
-            }
-
+        } else if (obj instanceof RequestPaymentController) {
+            requestPaymentController = (RequestPaymentController) obj;
+            requestPaymentController.setTransactionStatusDisplayView(this);
+            requestPaymentController.setContext(this);
+        } else if (obj instanceof DepositFundsController) {      // NEW
+            depositFundsController = (DepositFundsController) obj;
+            depositFundsController.setTransactionStatusDisplayView(this);
         }
 
         connectToUi();
@@ -59,6 +61,8 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
             makePaymentController.loadTransactionStatusData();
         } else if (requestPaymentController != null) {
             requestPaymentController.loadTransactionStatusData();
+        } else if (depositFundsController != null) {             // NEW
+            depositFundsController.loadTransactionStatusDataForSuccess();
         }
 
 
@@ -107,17 +111,14 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
 
     private void configureCloseButton(Button btnClose) {
         btnClose.setOnClickListener(v -> {
+            // For deposit, just close; dashboard will pick up the refreshed balance
             if (makePaymentController != null) {
-                try {
-                    makePaymentController.handleCancel();
-
-                } catch (Exception ignore) {}
+                try { makePaymentController.handleCancel(); } catch (Exception ignore) {}
             }
             if (requestPaymentController != null) {
-                try {
-                    requestPaymentController.handleCancelButton();
-                } catch (Exception ignore) {}
+                try { requestPaymentController.handleCancelButton(); } catch (Exception ignore) {}
             }
+            finish(); // ensure
         });
     }
 }

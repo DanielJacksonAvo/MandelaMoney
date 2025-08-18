@@ -82,12 +82,25 @@
         <activity
             android:name="com.example.mandelamoney.view.activity.DashboardActivity"
             android:exported="false"
-            android:configChanges="uiMode"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            tools:replace="android:configChanges" />
+
         <activity
             android:name="com.example.mandelamoney.view.activity.LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.example.mandelamoney.view.activity.DepositFundsActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.example.mandelamoney.view.activity.ConfirmDepositActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name="com.example.mandelamoney.view.activity.MainActivity"
             android:exported="true"
