@@ -268,41 +268,54 @@ public class MySQLConnector {
             String baBank,
             Context context
     ) {
-        Connection currentConnection = getConnection(context);
-        Object[] out = new Object[]{false, null, null}; // [success(Boolean), transactionId(Integer), errorCode(String)]
-        if (currentConnection == null) return out;
+        Connection conn = getConnection(context);
+        // [success(Boolean), transactionId(Integer), errorCode(String always null now)]
+        Object[] out = new Object[]{false, null, null};
+        if (conn == null) return out;
 
-        try (CallableStatement stmt = currentConnection.prepareCall(
-                "{CALL MandelaMoneyDB.createDepositBankAndPendingTransaction(?, ?, ?, ?, ?, ?, ?, ?, ?)}"
-        )) {
+        // Updated proc: 6 IN + 2 OUT  => 8 placeholders
+        final String SQL = "{CALL MandelaMoneyDB.createDepositBankAndPendingTransaction(?, ?, ?, ?, ?, ?, ?, ?)}";
+
+        try (CallableStatement stmt = conn.prepareCall(SQL)) {
             int i = 1;
+
+            // IN params
             stmt.setString(i++, userEmail);
-            stmt.setFloat (i++, amount);
+
+            // Your proc expects DECIMAL(12,2). Avoid float rounding surprises:
+            // BigDecimal.valueOf(double) is safer than new BigDecimal(float).
+            java.math.BigDecimal decAmount = java.math.BigDecimal.valueOf(
+                    Math.round((double) amount * 100.0) / 100.0
+            );
+            stmt.setBigDecimal(i++, decAmount);
+
             stmt.setString(i++, baNumber);
             stmt.setString(i++, baBranchCode);
             stmt.setString(i++, baName);
             stmt.setString(i++, baBank);
 
-            // OUT params
-            stmt.registerOutParameter(i++, java.sql.Types.BOOLEAN); // success (or use Types.BIT/TINYINT if needed)
-            stmt.registerOutParameter(i++, java.sql.Types.INTEGER); // transactionId
-            stmt.registerOutParameter(i  , java.sql.Types.VARCHAR); // errorCode
+            // OUT params (7 = success, 8 = transactionId)
+            // MySQL maps BOOLEAN to TINYINT(1); Types.BOOLEAN works with Connector/J 8+,
+            // but Types.TINYINT also works if you ever see driver quirks.
+            stmt.registerOutParameter(i++, java.sql.Types.BOOLEAN);
+            stmt.registerOutParameter(i++, java.sql.Types.INTEGER);
 
             stmt.execute();
 
             boolean success = stmt.getBoolean(7);
-            Integer txnId   = stmt.getInt(8);
-            String  errCode = stmt.getString(9);
+            int txnId = stmt.getInt(8);
+            Integer txnObj = stmt.wasNull() ? null : txnId;
 
             out[0] = success;
-            out[1] = txnId;
-            out[2] = errCode;
+            out[1] = txnObj;
+            out[2] = null; // no errorCode in the new proc
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "createDepositBankAndPendingTransaction failed: " + e.getMessage(), e);
         }
         return out;
     }
+
     public static Boolean resetPassword(String userEmail, String recoveryCode, String newPassword, Context context) {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
