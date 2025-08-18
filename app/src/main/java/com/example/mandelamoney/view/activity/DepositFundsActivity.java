@@ -1,6 +1,8 @@
 package com.example.mandelamoney.view.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,7 +17,9 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DepositFundsController;
+import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.DataShare;
+import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IDepositFundsView;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -27,26 +31,43 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
     TextView txtDepositFundsError;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Try restore user via DataShare (if provided)
+        Object payload = DataShare.receive();
+        if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
+            UserSession.setUser((com.example.mandelamoney.model.User) payload);
+            Log.d("DepositFundsActivity", "Restored user from DataShare.");
+        }
+
+        // Session gate
+        if (UserSession.getUser() == null) {
+            Log.w("DepositFundsActivity", "No session; routing to LoginActivity");
+            startActivity(new Intent(this, com.example.mandelamoney.view.activity.LoginActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            finish();
+            return;
+        }
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_deposit_funds);
 
-        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        WindowInsetsControllerCompat insetsController =
+                new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        setController();
-        connectToUI();
 
+        setController();   // see next step
+        connectToUI();
     }
+
     private void setController() {
-        controller = (DepositFundsController) DataShare.receive();
+        controller = new com.example.mandelamoney.controller.DepositFundsController(this, this);
     }
+
     private void connectToUI() {
         TextView btnCancel = findViewById(R.id.btn_cancel_deposit_funds);
         EditText tbxAmount = findViewById(R.id.tbx_amount_deposit_funds);
@@ -65,9 +86,35 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
         configureDepositFundsButton(btnDepositFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxCardNumber, tbxExpiryDate, tbxCVV, tbxName);
     }
 
-    private void configureDepositFundsButton(Button btnDepositFunds, EditText tbxAmount, EditText tbxBankName, EditText tbxBranchCode, EditText tbxCardNumber, EditText tbxExpiryDate, EditText tbxCVV, EditText tbxName) {
-        btnDepositFunds.setOnClickListener((view) -> controller.handleDepositFunds(Float.valueOf(tbxAmount.getText().toString()),String.valueOf(tbxBankName.getText()),String.valueOf(tbxBranchCode.getText()),String.valueOf(tbxCardNumber.getText()),String.valueOf(tbxName.getText()),String.valueOf(tbxExpiryDate.getText()),tbxCVV.getText().toString()));
+    private void configureDepositFundsButton(
+            Button btnDepositFunds,
+            EditText tbxAmount,
+            EditText tbxBankName,
+            EditText tbxBranchCode,
+            EditText tbxCardNumber,
+            EditText tbxExpiryDate,
+            EditText tbxCVV,
+            EditText tbxName
+    ) {
+        btnDepositFunds.setOnClickListener(v -> {
+            Float amount = null;
+            String amtTxt = tbxAmount.getText().toString().trim();
+            if (!amtTxt.isEmpty()) {
+                try { amount = Float.parseFloat(amtTxt); } catch (NumberFormatException ignored) { /* keep null */ }
+            }
+
+            controller.handleDepositFunds(
+                    amount,
+                    tbxBankName.getText().toString(),
+                    tbxBranchCode.getText().toString(),
+                    tbxCardNumber.getText().toString(),
+                    tbxName.getText().toString(),
+                    tbxExpiryDate.getText().toString(),
+                    tbxCVV.getText().toString()
+            );
+        });
     }
+
 
     private void configureCancelButton(TextView btnCancel) {
         btnCancel.setOnClickListener((view) -> controller.handleCancelDepositFunds());
