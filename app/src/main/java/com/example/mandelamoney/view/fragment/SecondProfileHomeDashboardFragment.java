@@ -4,13 +4,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.mandelamoney.R;
@@ -18,42 +16,36 @@ import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.view.Iface.IProfileView;
 
-public class ProfileDashboardFragment extends Fragment implements IProfileView {
+public class SecondProfileHomeDashboardFragment extends Fragment implements IProfileView {
+
     View rootView;
     DashboardController controller;
 
-    public ProfileDashboardFragment() {
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        rootView = view;
+        setController();
+    }
+
+
+
+
+    public SecondProfileHomeDashboardFragment() {
         // Required empty public constructor
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile_dashboard, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        rootView = view;
-        setController();
-        if (!this.getResources().getBoolean(R.bool.is_tablet_landscape)) {
-            controller.DashboardProfileController.loadUserToUi();
-        }
-        connectToUi();
-
-    }
-
-    private void connectToUi() {
-        ConstraintLayout btnEdit = rootView.findViewById(R.id.btn_editprofile_profile);
-        ConstraintLayout btnDeposit = rootView.findViewById(R.id.btn_deposit_profile);
-        ConstraintLayout btnChangePassword = rootView.findViewById(R.id.btn_changepassword_profile);
-        ConstraintLayout btnLogout = rootView.findViewById(R.id.btn_logout_profile);
-        btnEdit.setOnClickListener((view) -> controller.DashboardProfileController.handleEditButton());
-        btnDeposit.setOnClickListener((view) -> controller.DashboardProfileController.handleDepositButton());
-        btnChangePassword.setOnClickListener((view) -> controller.DashboardProfileController.handleChangePasswordButton());
-        btnLogout.setOnClickListener((view) -> controller.DashboardProfileController.handleLogoutButton());
-
+        return inflater.inflate(R.layout.fragment_second_profile_home_dashboard, container, false);
     }
 
     public void setController() {
@@ -116,5 +108,4 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
         TextView textView = rootView.findViewById(R.id.txt_user_name_profile);
         textView.setText(name);
     }
-
 }

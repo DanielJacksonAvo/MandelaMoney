@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mandelaBlue"
-    tools:context=".SecondProfileHomeDashboardFragment">
+    tools:context=".view.fragment.SecondProfileHomeDashboardFragment">
 
     <eightbitlab.com.blurview.BlurView
         android:id="@+id/blurView_dashboard_balance"

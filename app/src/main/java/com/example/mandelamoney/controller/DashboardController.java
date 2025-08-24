@@ -254,7 +254,6 @@ public class DashboardController {
         IProfileView view;
         public DashboardProfileController(IProfileView view) {
             this.view = view;
-            loadUserToUi();
         }
 
         public void loadUserToUi() {
