@@ -49,7 +49,6 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
             connectToUITablet();
             displayHome();
             displayUserName();
-            displayTabletTransactionHistoryScreen();
         } else {
             connectToPhoneUI();
             displayHome();
@@ -111,6 +110,8 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         if (selectedFragment != null) {
             loadFragment(selectedFragment);
         }
+        displayTabletTransactionHistoryScreen();
+
 
     }
 
