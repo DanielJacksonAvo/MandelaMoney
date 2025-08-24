@@ -25,6 +25,7 @@ public class SecondProfileHomeDashboardFragment extends Fragment implements IPro
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
         setController();
+        controller.DashboardProfileController.loadUserToUi();
     }
 
 
@@ -53,6 +54,7 @@ public class SecondProfileHomeDashboardFragment extends Fragment implements IPro
         if (this.controller != null) {
             this.controller.createDashboardProfileController(this);
         }
+        DataShare.send(controller);
     }
 
     @Override

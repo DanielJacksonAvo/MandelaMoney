@@ -65,6 +65,17 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
             tools:replace="android:screenOrientation" />
+        <activity
+            android:name="com.example.mandelamoney.view.activity.DepositFundsActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:screenOrientation="locked"
+            tools:replace="android:screenOrientation,android:configChanges" />
+
+        <activity
+            android:name="com.example.mandelamoney.view.activity.ConfirmDepositActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:screenOrientation="locked"
+            tools:replace="android:screenOrientation,android:configChanges" />
         <activity android:name="com.example.mandelamoney.view.activity.DashboardActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
