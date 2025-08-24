@@ -283,7 +283,7 @@ public class DepositFundsController {
 
                 // 2) App: refresh session balance so UI shows the new total
                 Executors.newSingleThreadExecutor().execute(() -> {
-                    double updated = UserSession.updateBalance(context);
+                    float updated = UserSession.updateBalance(context);
                     User u = UserSession.getUser();
                     if (u != null) u.setUserBalance(updated);
                     Log.d(TAG, "Session balance refreshed to: " + updated);
