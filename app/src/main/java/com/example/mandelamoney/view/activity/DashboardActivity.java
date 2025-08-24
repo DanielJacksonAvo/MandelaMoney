@@ -125,10 +125,15 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
 
     @Override
     public void displayProfile() {
-        selectedFragment = new ProfileDashboardFragment();
-        if (selectedFragment != null) {
-            loadFragment(selectedFragment);
+        if (checkTablet()) {
+
+        } else {
+            selectedFragment = new ProfileDashboardFragment();
+            if (selectedFragment != null) {
+                loadFragment(selectedFragment);
+            }
         }
+
 
     }
 
