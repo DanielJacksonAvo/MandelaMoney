@@ -73,16 +73,11 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
         EditText tbxBankName = findViewById(R.id.tbx_bank_name_deposit_funds);
         EditText tbxBranchCode = findViewById(R.id.tbx_branch_code_deposit_funds);
         EditText tbxCardNumber = findViewById(R.id.tbx_card_number_deposit_funds);
-        EditText tbxExpiryDate = findViewById(R.id.tbx_expiry_date_deposit_funds);
-        EditText tbxCVV = findViewById(R.id.tbx_cvv_deposit_funds);
         EditText tbxName = findViewById(R.id.tbx_name_deposit_funds);
         Button btnDepositFunds = findViewById(R.id.btn_deposit_funds);
         txtDepositFundsError = findViewById(R.id.txt_error_deposit_funds);
-        tbxExpiryDate.setKeyListener(DigitsKeyListener.getInstance("0123456789/"));
-        tbxExpiryDate.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(7) });
-        tbxExpiryDate.addTextChangedListener(new DateSlashTextWatcher(tbxExpiryDate));
         configureCancelButton(btnCancel);
-        configureDepositFundsButton(btnDepositFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxCardNumber, tbxExpiryDate, tbxCVV, tbxName);
+        configureDepositFundsButton(btnDepositFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxCardNumber, tbxName);
     }
 
     private void configureDepositFundsButton(
@@ -91,8 +86,6 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
             EditText tbxBankName,
             EditText tbxBranchCode,
             EditText tbxCardNumber,
-            EditText tbxExpiryDate,
-            EditText tbxCVV,
             EditText tbxName
     ) {
         btnDepositFunds.setOnClickListener(v -> {
@@ -107,9 +100,7 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
                     tbxBankName.getText().toString(),
                     tbxBranchCode.getText().toString(),
                     tbxCardNumber.getText().toString(),
-                    tbxName.getText().toString(),
-                    tbxExpiryDate.getText().toString(),
-                    tbxCVV.getText().toString()
+                    tbxName.getText().toString()
             );
         });
     }
