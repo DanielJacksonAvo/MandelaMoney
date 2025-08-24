@@ -68,6 +68,7 @@
         <activity android:name="com.example.mandelamoney.view.activity.DashboardActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
-            tools:replace="android:screenOrientation" />
+            android:windowSoftInputMode="stateHidden|adjustNothing"
+            tools:replace="android:screenOrientation,android:configChanges" />
     </application>
 </manifest>
