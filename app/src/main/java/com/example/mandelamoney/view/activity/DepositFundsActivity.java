@@ -17,7 +17,6 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DepositFundsController;
-import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IDepositFundsView;
@@ -166,30 +165,43 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
             if (selfChange) return;
 
             String raw = s.toString();
-
-            String digits = raw.replaceAll("[^\\d]", "");
-            if (digits.length() > 6) digits = digits.substring(0, 6); // dd + yyyy
-
-            StringBuilder out = new StringBuilder();
             int cursor = editText.getSelectionStart();
 
-            if (digits.length() <= 2) {
-                out.append(digits);
-            } else {
-                out.append(digits.substring(0, 2)).append('/');
-                out.append(digits.substring(2));
+            // Keep only digits, max MMYYYY (6 digits)
+            String digits = raw.replaceAll("\\D", "");
+            if (digits.length() > 6) digits = digits.substring(0, 6);
+
+            String formatted;
+            boolean rawHadSlash = raw.contains("/");
+            boolean insertingSlashNow = false;
+
+            if (digits.length() < 2) {
+                // 0–1 digits: just show them
+                formatted = digits;
+            } else if (digits.length() == 2) {
+                // Exactly MM -> auto-insert slash
+                formatted = digits + "/";
+                insertingSlashNow = !rawHadSlash; // we're adding it now
+            } else { // 3–6 digits
+                // MM/YYYY
+                formatted = digits.substring(0, 2) + "/" + digits.substring(2);
+                // If raw had no slash yet, this is the moment we insert it
+                insertingSlashNow = !rawHadSlash;
             }
 
-            String formatted = out.toString();
             if (!formatted.equals(raw)) {
                 selfChange = true;
                 editText.setText(formatted);
-                int newPos = cursor;
-                if (digits.length() == 2 && !raw.contains("/")) {
+
+                int newPos;
+                if (digits.length() == 2 && !rawHadSlash) {
                     newPos = 3;
+                } else if (insertingSlashNow && cursor >= 2) {
+                    newPos = Math.min(formatted.length(), cursor + 1);
                 } else {
-                    newPos = Math.min(formatted.length(), Math.max(0, newPos));
+                    newPos = Math.min(formatted.length(), Math.max(0, cursor));
                 }
+
                 editText.setSelection(newPos);
                 selfChange = false;
             }

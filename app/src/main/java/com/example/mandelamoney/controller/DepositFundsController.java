@@ -17,6 +17,7 @@ import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.view.Iface.IConfirmDepositView;
 import com.example.mandelamoney.view.activity.ConfirmDepositActivity;
+import com.example.mandelamoney.view.activity.DepositFundsActivity;
 import com.example.mandelamoney.view.activity.ShowSuccessActivity;
 import com.example.mandelamoney.view.activity.ShowFailedActivity;
 import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
@@ -339,9 +340,18 @@ public class DepositFundsController {
                 Log.w(TAG, "BG: updateTransactionStatus failed silently in cancel");
             }
             ContextCompat.getMainExecutor(context).execute(() -> {
-                DataShare.send(this);
+                Intent intent = new Intent(context, DepositFundsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                maybeAddNewTaskFlag(intent);
+                try {
+                    context.startActivity(intent);
+                    Log.i(TAG, "UI: startActivity(DepositFundsActivity) called");
+                } catch (Exception startEx) {
+                    Log.e(TAG, "UI: Failed to start DepositFundsActivity", startEx);
+                    Toast.makeText(context, "Could not return to deposit screen.", Toast.LENGTH_SHORT).show();
+                }
                 Log.d(TAG, "UI: finishing confirm screen on cancel");
-                if (viewDepositFunds != null) viewDepositFunds.finishActivity();
+                if (confirmDepositView != null) confirmDepositView.finishActivity();
             });
         });
     }
