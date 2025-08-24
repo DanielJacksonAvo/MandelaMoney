@@ -110,7 +110,10 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         if (selectedFragment != null) {
             loadFragment(selectedFragment);
         }
-        displayTabletTransactionHistoryScreen();
+        if (checkTablet()) {
+            displayTabletTransactionHistoryScreen();
+
+        }
 
 
     }
