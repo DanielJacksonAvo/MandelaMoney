@@ -273,10 +273,12 @@
                         android:layout_height="wrap_content"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
+                        app:layout_constraintVertical_bias="0.23000002" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
