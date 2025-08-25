@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Looper;
 import android.os.Handler;
 import android.util.Log; // Import Log for debugging
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat; // For getting main executor
 
@@ -64,6 +65,8 @@ public class RequestPaymentController {
             if (enterAmountRequestPaymentView != null) {
                 enterAmountRequestPaymentView.showError("Invalid Amount");
                 enterAmountRequestPaymentView.hideLoadingSpinner();
+            } else {
+                Toast.makeText(context, "Invalid Amount", Toast.LENGTH_SHORT).show();
             }
             return;
         }

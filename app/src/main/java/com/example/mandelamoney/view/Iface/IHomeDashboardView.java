@@ -18,4 +18,6 @@ public interface IHomeDashboardView {
     void displayUserName(String name);
 
     void displayTransactions(List<Transaction> transactionDetails);
+    void showErrorMessage(String error);
+    void hideErrorMessage();
 }

@@ -42,7 +42,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     private EditText tbxRequestPayAmount;
     private TransactionAdapter adapter;
     private RecyclerView recyclerView;
-
+    private View rootView;
     private boolean isTabletLandscape = false;
 
     public HomeDashboardFragment() {
@@ -76,6 +76,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        rootView = view;
         if (checkTablet()) {
             connectToUITablet(view);
         } else {
@@ -158,6 +159,23 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
             }
         }
 
+    }
+
+    @Override
+    public void showErrorMessage(String error) {
+        if (checkTablet()) {
+            TextView txtError = rootView.findViewById(R.id.txt_error_request_payment);
+            txtError.setText(error);
+            txtError.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void hideErrorMessage() {
+        if (checkTablet()) {
+            TextView txtError = rootView.findViewById(R.id.txt_error_request_payment);
+            txtError.setVisibility(View.GONE);
+        }
     }
 
 
