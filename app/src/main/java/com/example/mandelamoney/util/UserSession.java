@@ -92,11 +92,11 @@ public class UserSession {
 
     public static void saveSession(Context context) {
         if (currentUser == null) return;
-
         try {
             SharedPreferences prefs = getSecurePrefs(context);
             Gson gson = new Gson();
             String json = gson.toJson(currentUser);
+            if (json == null || json.trim().isEmpty()) return;
             prefs.edit().putString(KEY_USER, json).apply();
         } catch (Exception e) {
             e.printStackTrace();
