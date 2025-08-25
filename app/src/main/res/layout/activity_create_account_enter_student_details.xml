@@ -325,6 +325,7 @@
                     android:layout_height="45dp"
                     android:autofillHints="@string/email"
                     android:hint="@string/email"
+                    android:paddingHorizontal="40dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
