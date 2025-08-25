@@ -93,7 +93,7 @@ public class DashboardController {
 
     private void manageControllers() {
         if (DashboardHomeController != null) {
-            if (currentFragment == 0) {
+            if ((currentFragment == 0) || (currentFragment == 3)) {
                 DashboardHomeController.startPolling();
             } else {
                 DashboardHomeController.stopPolling();
