@@ -161,23 +161,6 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
 
     }
 
-    @Override
-    public void showErrorMessage(String error) {
-        if (checkTablet()) {
-            TextView txtError = rootView.findViewById(R.id.txt_error_request_payment);
-            txtError.setText(error);
-            txtError.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void hideErrorMessage() {
-        if (checkTablet()) {
-            TextView txtError = rootView.findViewById(R.id.txt_error_request_payment);
-            txtError.setVisibility(View.GONE);
-        }
-    }
-
 
     private void configureRequestPayButton(Button btnRequestPay) {
         if (btnRequestPay != null && !checkTablet()) {
