@@ -30,7 +30,6 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
     TextView txtDepositFundsError;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Try restore user via DataShare (if provided)
         Object payload = DataShare.receive();
         if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
             UserSession.setUser((com.example.mandelamoney.model.User) payload);

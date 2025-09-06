@@ -81,6 +81,7 @@ public class ForgotPasswordController {
         return MySQLConnector.getRecoveryCodeHash(userEmail,context);
     }
 
+
     public void setContext(Context context) {
         this.context = context;
     }
