@@ -259,6 +259,33 @@ public class MySQLConnector {
 
         return isMatch;
     }
+    public static boolean verifyPassword(String userEmail, String password, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "No valid DB connection.");
+            return false;
+        }
+
+        boolean isMatch = false;
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.VerifyPassword(?, ?, ?)}")) {
+
+            callableStatement.setString(1, userEmail);
+            callableStatement.setString(2, password);
+            callableStatement.registerOutParameter(3, java.sql.Types.BOOLEAN);
+
+            Log.d("MySQLConnector", "Calling VerifyPassword for user: " + userEmail);
+            callableStatement.execute();
+
+            isMatch = callableStatement.getBoolean(3);
+            Log.d("MySQLConnector", "Password match result: " + isMatch);
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'VerifyPassword': " + e.getMessage());
+        }
+
+        return isMatch;
+    }
     public static Object[] createDepositBankAndPendingTransaction(
             String userEmail,
             float amount,
@@ -339,6 +366,34 @@ public class MySQLConnector {
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error calling stored procedure 'ResetPasswordWithRecoveryCode': " + e.getMessage());
+            resetSuccess = false;
+        }
+
+        return resetSuccess;
+    }
+    public static Boolean changePassword(String userEmail, String oldPassword, String newPassword, Context context) {
+        Connection currentConnection = getConnection(context);
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "No valid DB connection.");
+            return false;
+        }
+
+        boolean resetSuccess;
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL MandelaMoneyDB.ChangePassword(?, ?, ?, ?)}")) {
+            callableStatement.setString(1, userEmail);
+            callableStatement.setString(2, oldPassword);
+            callableStatement.setString(3, newPassword);
+            callableStatement.registerOutParameter(4, java.sql.Types.BOOLEAN);
+
+            Log.d("MySQLConnector", "Calling ChangePassword for user: " + userEmail);
+            callableStatement.execute();
+
+            resetSuccess = callableStatement.getBoolean(4);
+            Log.d("MySQLConnector", "Password change success: " + resetSuccess);
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'ChangePassword': " + e.getMessage());
             resetSuccess = false;
         }
 
