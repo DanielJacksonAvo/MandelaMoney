@@ -11,13 +11,13 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.view.Iface.IEditProfileView;
 
-public class EditProfileActivity extends AppCompatActivity implements IEditProfileView {
+public class EditStudentProfileActivity extends AppCompatActivity implements IEditProfileView {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_edit_profile);
+        setContentView(R.layout.activity_edit_student_profile);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

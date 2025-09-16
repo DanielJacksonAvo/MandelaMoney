@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mandelaBlue"
-    tools:context=".view.activity.EditProfileActivity">
+    tools:context=".view.activity.EditBusinessProfileActivity">
 
     <TextView
-        android:id="@+id/btn_cancel_editstudentprofile"
+        android:id="@+id/btn_cancel_editbusinessprofile"
         style="@style/HyperLinkButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,17 +17,17 @@
         android:text="@android:string/cancel"
         android:textAllCaps="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/blurView_editstudentprofile"
-        app:layout_constraintStart_toStartOf="@+id/blurView_editstudentprofile"
-        app:layout_constraintTop_toBottomOf="@+id/blurView_editstudentprofile"
+        app:layout_constraintEnd_toEndOf="@+id/blurView_editbusinessprofile"
+        app:layout_constraintStart_toStartOf="@+id/blurView_editbusinessprofile"
+        app:layout_constraintTop_toBottomOf="@+id/blurView_editbusinessprofile"
         app:layout_constraintVertical_bias="0.19999999" />
 
     <ImageView
-        android:id="@+id/img_mandelamoney_editstudentprofile"
+        android:id="@+id/img_mandelamoney_editbusinessprofile"
         android:layout_width="375dp"
         android:layout_height="104dp"
         android:contentDescription="@string/todo"
-        app:layout_constraintBottom_toTopOf="@+id/blurView_editstudentprofile"
+        app:layout_constraintBottom_toTopOf="@+id/blurView_editbusinessprofile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,20 +36,20 @@
 
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_create_editstudentprofile"
+        android:id="@+id/btn_save_editbusinessprofile"
         style="@style/PrimaryButton"
         android:layout_width="0dp"
         android:layout_height="43dp"
         android:layout_marginStart="90dp"
         android:layout_marginEnd="90dp"
         android:text="@string/save"
-        app:layout_constraintBottom_toBottomOf="@+id/blurView_editstudentprofile"
-        app:layout_constraintEnd_toEndOf="@+id/blurView_editstudentprofile"
-        app:layout_constraintStart_toStartOf="@+id/blurView_editstudentprofile"
-        app:layout_constraintTop_toBottomOf="@+id/blurView_editstudentprofile" />
+        app:layout_constraintBottom_toBottomOf="@+id/blurView_editbusinessprofile"
+        app:layout_constraintEnd_toEndOf="@+id/blurView_editbusinessprofile"
+        app:layout_constraintStart_toStartOf="@+id/blurView_editbusinessprofile"
+        app:layout_constraintTop_toBottomOf="@+id/blurView_editbusinessprofile" />
 
     <eightbitlab.com.blurview.BlurView
-        android:id="@+id/blurView_editstudentprofile"
+        android:id="@+id/blurView_editbusinessprofile"
         style="@style/BlurPanel"
         android:layout_width="0dp"
         android:layout_height="499dp"
@@ -67,7 +67,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/txt_error_details_editstudentprofile"
+                android:id="@+id/txt_error_details_editbusinessprofile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/email_password_invalid"
@@ -78,7 +78,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout5" />
 
             <TextView
-                android:id="@+id/txt_error_password_editstudentprofile"
+                android:id="@+id/txt_error_password_editbusinessprofile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -104,23 +104,23 @@
                 app:layout_constraintVertical_bias="1.0">
 
                 <ImageView
-                    android:id="@+id/img_studentnumber_icon_editstudentprofile"
+                    android:id="@+id/img_businessnumber_icon_editbusinessprofile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/img_student_icon"
+                    android:src="@drawable/img_vat_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_studentnumber_editstudentprofile"
+                    android:id="@+id/tbx_businessnumber_editbusinessprofile"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:autofillHints="Student Number"
-                    android:hint="@string/student_number_CAPS"
+                    android:autofillHints="Business Number"
+                    android:hint="VAT NUMBER"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -145,23 +145,23 @@
                 app:layout_constraintVertical_bias="0.63">
 
                 <ImageView
-                    android:id="@+id/img_lastname_icon_editstudentprofile"
+                    android:id="@+id/img_lastname_icon_editbusinessprofile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/img_lastname_icon"
+                    android:src="@drawable/img_phone_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_lastname_editstudentprofile"
+                    android:id="@+id/tbx_lastname_editbusinessprofile"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:autofillHints="Last Name"
-                    android:hint="@string/last_name"
+                    android:hint="PHONE"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -187,23 +187,22 @@
                 app:layout_constraintVertical_bias="0.32999998">
 
                 <ImageView
-                    android:id="@+id/img_firstname_icon_editstudentprofile"
+                    android:id="@+id/img_firstname_icon_editbusinessprofile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/img_firstname_icon"
+                    android:src="@drawable/img_business_icon"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_firstname_editstudentprofile"
+                    android:id="@+id/tbx_firstname_editbusinessprofile"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:autofillHints="First Name"
-                    android:hint="@string/first_name"
+                    android:hint="BUSINESS NAME"
                     android:textAllCaps="false"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -229,7 +228,7 @@
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
-                    android:id="@+id/img_email_icon_editstudentprofile"
+                    android:id="@+id/img_email_icon_editbusinessprofile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -240,7 +239,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_email_editstudentprofile"
+                    android:id="@+id/tbx_email_editbusinessprofile"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -272,14 +271,14 @@
     </eightbitlab.com.blurview.BlurView>
 
     <ImageView
-        android:id="@+id/img_mandelamoneylogo_editstudentprofile"
+        android:id="@+id/img_mandelamoneylogo_editbusinessprofile"
         android:layout_width="130dp"
         android:layout_height="105dp"
         android:contentDescription="@string/mandela_money_logo"
-        app:layout_constraintBottom_toTopOf="@+id/blurView_editstudentprofile"
+        app:layout_constraintBottom_toTopOf="@+id/blurView_editbusinessprofile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/blurView_editstudentprofile"
+        app:layout_constraintTop_toTopOf="@+id/blurView_editbusinessprofile"
         app:srcCompat="@drawable/img_mandelamoneylogo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
