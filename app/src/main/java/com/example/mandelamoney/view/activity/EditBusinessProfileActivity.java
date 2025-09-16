@@ -9,8 +9,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.view.Iface.IEditProfileView;
 
-public class EditBusinessProfileActivity extends AppCompatActivity {
+public class EditBusinessProfileActivity extends AppCompatActivity implements IEditProfileView {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,5 +23,15 @@ public class EditBusinessProfileActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        connectToUi();
+    }
+
+    private void connectToUi() {
+
+    }
+
+    @Override
+    public void loadUser() {
+
     }
 }

@@ -1,6 +1,7 @@
 package com.example.mandelamoney.view.activity;
 
 import android.os.Bundle;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import com.example.mandelamoney.R;
 import com.example.mandelamoney.view.Iface.IEditProfileView;
 
 public class EditStudentProfileActivity extends AppCompatActivity implements IEditProfileView {
+    EditText tbxEmail, tbxFirstName, tbxLastName, tbxStudentNumber;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,30 +26,19 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        connectToUi();
     }
 
-    @Override
-    public void setProfileType(int iType) {
-
+    private void connectToUi() {
+        tbxEmail = findViewById(R.id.tbx_email_editstudentprofile);
+        tbxFirstName = findViewById(R.id.tbx_firstname_editstudentprofile);
+        tbxLastName = findViewById(R.id.tbx_lastname_editstudentprofile);
+        tbxStudentNumber = findViewById(R.id.tbx_studentnumber_editstudentprofile);
     }
 
-    @Override
-    public void setEmail(String userEmail) {
-
-    }
 
     @Override
-    public void setFirstName(String string) {
-
-    }
-
-    @Override
-    public void setLastName(String string) {
-
-    }
-
-    @Override
-    public void setStudentNumber(String string) {
+    public void loadUser() {
 
     }
 }
