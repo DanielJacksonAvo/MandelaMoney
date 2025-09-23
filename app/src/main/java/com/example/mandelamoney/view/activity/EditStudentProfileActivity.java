@@ -10,6 +10,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.model.Student;
+import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IEditProfileView;
 
 public class EditStudentProfileActivity extends AppCompatActivity implements IEditProfileView {
@@ -39,6 +41,9 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
 
     @Override
     public void loadUser() {
-
+        tbxEmail.setText(UserSession.getUser().getUserEmail());
+        tbxFirstName.setText(((Student)(UserSession.getUser())).getStudentFirstName());
+        tbxLastName.setText(((Student)(UserSession.getUser())).getStudentLastName());
+        tbxStudentNumber.setText(((Student)(UserSession.getUser())).getStudentNumber());
     }
 }
