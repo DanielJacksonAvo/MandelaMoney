@@ -10,12 +10,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.controller.EditProfileController;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IEditProfileView;
 
 public class EditBusinessProfileActivity extends AppCompatActivity implements IEditProfileView {
-    EditText tbxEmail, tbxBusinessName, tbxPhone, tbxVAT;
+    private EditText tbxEmail, tbxBusinessName, tbxPhone, tbxVAT;
+    private EditProfileController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +29,11 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        controller = new EditProfileController();
         connectToUi();
+        configureSaveButton();
+        configureCancelButton();
+
     }
 
     private void connectToUi() {
@@ -51,6 +57,7 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
         String name = String.valueOf(tbxBusinessName.getText());
         String phone = String.valueOf(tbxPhone.getText());
         String vat = String.valueOf(tbxVAT.getText());
+        controller.handleSaveButton(email, name, phone, vat);
     }
 
     private void configureCancelButton() {
