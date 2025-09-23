@@ -47,7 +47,10 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
     }
 
     private void configureSaveButton() {
-
+        String email = String.valueOf(tbxEmail.getText());
+        String name = String.valueOf(tbxBusinessName.getText());
+        String phone = String.valueOf(tbxPhone.getText());
+        String vat = String.valueOf(tbxVAT.getText());
     }
 
     private void configureCancelButton() {
