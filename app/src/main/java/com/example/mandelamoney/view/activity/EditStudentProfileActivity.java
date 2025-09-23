@@ -1,6 +1,7 @@
 package com.example.mandelamoney.view.activity;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -18,8 +19,8 @@ import com.example.mandelamoney.view.Iface.IEditProfileView;
 
 public class EditStudentProfileActivity extends AppCompatActivity implements IEditProfileView {
     private EditText tbxEmail, tbxFirstName, tbxLastName, tbxStudentNumber;
-    private TextView txtError;
-
+    private TextView txtError, btnCancel;
+    private Button btnSave;
     private EditProfileController controller;
 
 
@@ -29,11 +30,11 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_student_profile);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
         controller = new EditProfileController();
         connectToUi();
         configureSaveButton();
@@ -46,6 +47,8 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
         tbxLastName = findViewById(R.id.tbx_lastname_editstudentprofile);
         tbxStudentNumber = findViewById(R.id.tbx_studentnumber_editstudentprofile);
         txtError = findViewById(R.id.txt_error_details_editstudentprofile);
+        btnCancel = findViewById(R.id.btn_cancel_editstudentprofile);
+        btnSave = findViewById(R.id.btn_save_editstudentprofile);
     }
 
 
@@ -69,14 +72,19 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
     }
 
     private void configureSaveButton() {
-        String email = String.valueOf(tbxEmail.getText());
-        String firstName = String.valueOf(tbxFirstName.getText());
-        String lastName = String.valueOf(tbxLastName.getText());
-        String studentNumber = String.valueOf(tbxStudentNumber.getText());
-        controller.handleSaveButton(email, firstName, lastName, studentNumber);
+        btnSave.setOnClickListener((view) -> {
+            String email = String.valueOf(tbxEmail.getText());
+            String firstName = String.valueOf(tbxFirstName.getText());
+            String lastName = String.valueOf(tbxLastName.getText());
+            String studentNumber = String.valueOf(tbxStudentNumber.getText());
+            controller.handleSaveButton(email, firstName, lastName, studentNumber);
+        });
+
     }
 
     private void configureCancelButton() {
-        controller.handleCancelButton();
+        btnCancel.setOnClickListener((view) -> {
+            controller.handleCancelButton();
+        });
     }
 }
