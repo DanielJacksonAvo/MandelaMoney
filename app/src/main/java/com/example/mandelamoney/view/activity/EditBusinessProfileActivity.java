@@ -76,6 +76,7 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
     }
 
     private void configureCancelButton() {
+        controller.handleCancelButton();
 
     }
 }

@@ -78,6 +78,6 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
     }
 
     private void configureCancelButton() {
-
+        controller.handleCancelButton();
     }
 }
