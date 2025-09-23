@@ -10,12 +10,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.controller.EditProfileController;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IEditProfileView;
 
 public class EditStudentProfileActivity extends AppCompatActivity implements IEditProfileView {
-    EditText tbxEmail, tbxFirstName, tbxLastName, tbxStudentNumber;
+    private EditText tbxEmail, tbxFirstName, tbxLastName, tbxStudentNumber;
+    private EditProfileController controller;
+
 
 
     @Override
@@ -28,8 +31,10 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        controller = new EditProfileController();
         connectToUi();
-    }
+        configureSaveButton();
+        configureCancelButton();    }
 
     private void connectToUi() {
         tbxEmail = findViewById(R.id.tbx_email_editstudentprofile);
@@ -52,6 +57,8 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
         String firstName = String.valueOf(tbxFirstName.getText());
         String lastName = String.valueOf(tbxLastName.getText());
         String studentNumber = String.valueOf(tbxStudentNumber.getText());
+        controller.handleSaveButton(email, firstName, lastName, studentNumber);
+
     }
 
     private void configureCancelButton() {

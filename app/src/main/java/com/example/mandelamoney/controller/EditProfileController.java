@@ -12,19 +12,12 @@ public class EditProfileController {
 
     }
 
-    public void handleSaveButton(String email, String password, String param1 /* firstname, business name */, String param2 /* lastname, phone number */, String param3 /* student number, vat number */) {
+    public void handleSaveButton(String email, String param1 /* firstname, business name */, String param2 /* lastname, phone number */, String param3 /* student number, vat number */) {
 
         if (!UserValueChecker.isValidEmail(email)) {
             return;
         }
 
-        if (!UserValueChecker.checkPasswordLength(password)) {
-            return;
-        }
-
-        if (!UserValueChecker.checkPasswordMatch(password, (UserSession.getUser()).getUserPassword())) {
-            return;
-        }
 
         if (UserValueChecker.checkEmpty(param1)) {
             return;
