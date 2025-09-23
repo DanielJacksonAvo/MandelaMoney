@@ -25,20 +25,24 @@ public class EditProfileController {
             User user;
             if (!UserValueChecker.isValidEmail(email)) {
                 view.showError("Invalid Email");
+                onFailure();
                 return;
             }
 
             if (UserSession.getUser() instanceof Student) {
                 if((param1.length() < 2)) {
                     view.showError("Enter A First Name");
+                    onFailure();
                     return;
                 }
                 if ((param2.length() < 2)) {
                     view.showError("Enter A Last Name");
+                    onFailure();
                     return;
                 }
                 if (!UserValueChecker.isValidStudentNumber(param3)) {
                     view.showError("Invalid Student Number");
+                    onFailure();
                     return;
                 }
                 user = MySQLConnector.updateStudentDetails(UserSession.getUser().getUserEmail(), UserSession.getUser().getUserPassword(), email, param1, param2, param3, context);
@@ -46,14 +50,17 @@ public class EditProfileController {
             } else {
                 if (param1.length() < 2) {
                     view.showError("Enter A Business Name");
+                    onFailure();
                     return;
                 }
                 if (!UserValueChecker.isValidPhoneNumber(param2)) {
                     view.showError("Invalid Phone Number");
+                    onFailure();
                     return;
                 }
                 if (!UserValueChecker.isValidVatNumber(param3)) {
                     view.showError("Invalid VAT Number");
+                    onFailure();
                     return;
                 }
                 user = MySQLConnector.updateBusinessDetails(UserSession.getUser().getUserEmail(), UserSession.getUser().getUserPassword(), email, param1, param2, param3, context);
