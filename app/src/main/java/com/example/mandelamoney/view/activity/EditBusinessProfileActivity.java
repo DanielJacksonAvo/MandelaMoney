@@ -1,6 +1,7 @@
 package com.example.mandelamoney.view.activity;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -18,7 +19,8 @@ import com.example.mandelamoney.view.Iface.IEditProfileView;
 
 public class EditBusinessProfileActivity extends AppCompatActivity implements IEditProfileView {
     private EditText tbxEmail, tbxBusinessName, tbxPhone, tbxVAT;
-    private TextView txtError;
+    private TextView txtError, btnCancel;
+    private Button btnSave;
     private EditProfileController controller;
 
     @Override
@@ -26,11 +28,11 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_business_profile);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
         controller = new EditProfileController();
         connectToUi();
         configureSaveButton();
@@ -44,6 +46,8 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
         tbxPhone = findViewById(R.id.tbx_phone_editbusinessprofile);
         tbxVAT = findViewById(R.id.tbx_vat_editbusinessprofile);
         txtError = findViewById(R.id.txt_error_details_editbusinessprofile);
+        btnCancel = findViewById(R.id.btn_cancel_editbusinessprofile);
+        btnSave = findViewById(R.id.btn_save_editbusinessprofile);
     }
 
     @Override
@@ -66,14 +70,18 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
     }
 
     private void configureSaveButton() {
-        String email = String.valueOf(tbxEmail.getText());
-        String name = String.valueOf(tbxBusinessName.getText());
-        String phone = String.valueOf(tbxPhone.getText());
-        String vat = String.valueOf(tbxVAT.getText());
-        controller.handleSaveButton(email, name, phone, vat);
+        btnSave.setOnClickListener((view) -> {
+            String email = String.valueOf(tbxEmail.getText());
+            String name = String.valueOf(tbxBusinessName.getText());
+            String phone = String.valueOf(tbxPhone.getText());
+            String vat = String.valueOf(tbxVAT.getText());
+            controller.handleSaveButton(email, name, phone, vat);
+        });
     }
 
     private void configureCancelButton() {
-        controller.handleCancelButton();
+        btnCancel.setOnClickListener((view) -> {
+            controller.handleCancelButton();
+        });
     }
 }
