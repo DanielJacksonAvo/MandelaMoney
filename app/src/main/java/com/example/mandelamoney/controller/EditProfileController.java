@@ -47,4 +47,7 @@ public class EditProfileController {
 
 
     }
+    public void handleCancelButton() {
+
+    }
 }

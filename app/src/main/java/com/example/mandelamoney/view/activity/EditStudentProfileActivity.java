@@ -48,7 +48,10 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
     }
 
     private void configureSaveButton() {
-
+        String email = String.valueOf(tbxEmail.getText());
+        String firstName = String.valueOf(tbxFirstName.getText());
+        String lastName = String.valueOf(tbxLastName.getText());
+        String studentNumber = String.valueOf(tbxStudentNumber.getText());
     }
 
     private void configureCancelButton() {
