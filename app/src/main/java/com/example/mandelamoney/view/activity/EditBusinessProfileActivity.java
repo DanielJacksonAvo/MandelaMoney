@@ -52,8 +52,6 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
         tbxBusinessName.setText(((Business)(UserSession.getUser())).getBusinessName());
         tbxPhone.setText(((Business)(UserSession.getUser())).getBusinessPhoneNumber());
         tbxVAT.setText(((Business)(UserSession.getUser())).getBusinessVAT());
-
-
     }
 
     @Override
@@ -77,6 +75,5 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
 
     private void configureCancelButton() {
         controller.handleCancelButton();
-
     }
 }

@@ -37,7 +37,8 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
         controller = new EditProfileController();
         connectToUi();
         configureSaveButton();
-        configureCancelButton();    }
+        configureCancelButton();
+    }
 
     private void connectToUi() {
         tbxEmail = findViewById(R.id.tbx_email_editstudentprofile);
@@ -65,7 +66,6 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
     @Override
     public void hideError() {
         txtError.setVisibility(TextView.GONE);
-
     }
 
     private void configureSaveButton() {
@@ -74,7 +74,6 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
         String lastName = String.valueOf(tbxLastName.getText());
         String studentNumber = String.valueOf(tbxStudentNumber.getText());
         controller.handleSaveButton(email, firstName, lastName, studentNumber);
-
     }
 
     private void configureCancelButton() {
