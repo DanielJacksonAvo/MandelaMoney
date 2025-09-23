@@ -43,6 +43,7 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
         tbxBusinessName = findViewById(R.id.tbx_name_editbusinessprofile);
         tbxPhone = findViewById(R.id.tbx_phone_editbusinessprofile);
         tbxVAT = findViewById(R.id.tbx_vat_editbusinessprofile);
+        txtError = findViewById(R.id.txt_error_details_editbusinessprofile);
     }
 
     @Override
