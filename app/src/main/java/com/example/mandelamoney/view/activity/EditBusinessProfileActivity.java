@@ -10,6 +10,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.model.Business;
+import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IEditProfileView;
 
 public class EditBusinessProfileActivity extends AppCompatActivity implements IEditProfileView {
@@ -37,6 +39,10 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
 
     @Override
     public void loadUser() {
+        tbxEmail.setText(UserSession.getUser().getUserEmail());
+        tbxBusinessName.setText(((Business)(UserSession.getUser())).getBusinessName());
+        tbxPhone.setText(((Business)(UserSession.getUser())).getBusinessPhoneNumber());
+        tbxVAT.setText(((Business)(UserSession.getUser())).getBusinessVAT());
 
     }
 }
