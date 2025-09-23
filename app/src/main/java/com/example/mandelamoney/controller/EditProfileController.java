@@ -9,7 +9,7 @@ import com.example.mandelamoney.view.Iface.IEditProfileView;
 public class EditProfileController {
     private IEditProfileView view;
     public EditProfileController() {
-
+        view.loadUser();
     }
 
     public void handleSaveButton(String email, String param1 /* firstname, business name */, String param2 /* lastname, phone number */, String param3 /* student number, vat number */) {
@@ -42,5 +42,9 @@ public class EditProfileController {
     }
     public void handleCancelButton() {
 
+    }
+
+    public void setView(IEditProfileView view) {
+        this.view = view;
     }
 }
