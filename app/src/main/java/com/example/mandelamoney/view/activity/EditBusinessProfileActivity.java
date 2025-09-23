@@ -2,6 +2,7 @@ package com.example.mandelamoney.view.activity;
 
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import com.example.mandelamoney.view.Iface.IEditProfileView;
 
 public class EditBusinessProfileActivity extends AppCompatActivity implements IEditProfileView {
     private EditText tbxEmail, tbxBusinessName, tbxPhone, tbxVAT;
+    private TextView txtError;
     private EditProfileController controller;
 
     @Override
@@ -50,16 +52,18 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
         tbxPhone.setText(((Business)(UserSession.getUser())).getBusinessPhoneNumber());
         tbxVAT.setText(((Business)(UserSession.getUser())).getBusinessVAT());
 
+
     }
 
     @Override
     public void showError(String error) {
-
+        txtError.setText(error);
+        txtError.setVisibility(TextView.VISIBLE);
     }
 
     @Override
     public void hideError() {
-
+        txtError.setVisibility(TextView.GONE);
     }
 
     private void configureSaveButton() {
