@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -21,6 +22,7 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
     private EditText tbxEmail, tbxBusinessName, tbxPhone, tbxVAT;
     private TextView txtError, btnCancel;
     private Button btnSave;
+    private ConstraintLayout loadingSpinner;
     private EditProfileController controller;
 
     @Override
@@ -33,7 +35,7 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
 //            return insets;
 //        });
-        controller = new EditProfileController();
+        controller = new EditProfileController(this, this);
         connectToUi();
         configureSaveButton();
         configureCancelButton();
@@ -48,6 +50,7 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
         txtError = findViewById(R.id.txt_error_details_editbusinessprofile);
         btnCancel = findViewById(R.id.btn_cancel_editbusinessprofile);
         btnSave = findViewById(R.id.btn_save_editbusinessprofile);
+        loadingSpinner = findViewById(R.id.editbusinessprofile_loading_spinner);
     }
 
     @Override
@@ -67,6 +70,21 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
     @Override
     public void hideError() {
         txtError.setVisibility(TextView.GONE);
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
+    }
+
+    @Override
+    public void showLoadingScreen() {
+        loadingSpinner.setVisibility(ConstraintLayout.VISIBLE);
+    }
+
+    @Override
+    public void hideLoadingScreen() {
+        loadingSpinner.setVisibility(ConstraintLayout.GONE);
     }
 
     private void configureSaveButton() {
