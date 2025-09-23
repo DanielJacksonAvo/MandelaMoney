@@ -52,6 +52,16 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
         tbxStudentNumber.setText(((Student)(UserSession.getUser())).getStudentNumber());
     }
 
+    @Override
+    public void showError(String error) {
+
+    }
+
+    @Override
+    public void hideError() {
+
+    }
+
     private void configureSaveButton() {
         String email = String.valueOf(tbxEmail.getText());
         String firstName = String.valueOf(tbxFirstName.getText());
