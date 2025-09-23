@@ -1,6 +1,7 @@
 package com.example.mandelamoney.view.activity;
 
 import android.os.Bundle;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import com.example.mandelamoney.R;
 import com.example.mandelamoney.view.Iface.IEditProfileView;
 
 public class EditBusinessProfileActivity extends AppCompatActivity implements IEditProfileView {
+    EditText tbxEmail, tbxBusinessName, tbxPhone, tbxVAT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +29,10 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
     }
 
     private void connectToUi() {
-
+        tbxEmail = findViewById(R.id.tbx_email_editbusinessprofile);
+        tbxBusinessName = findViewById(R.id.tbx_name_editbusinessprofile);
+        tbxPhone = findViewById(R.id.tbx_phone_editbusinessprofile);
+        tbxVAT = findViewById(R.id.tbx_vat_editbusinessprofile);
     }
 
     @Override
