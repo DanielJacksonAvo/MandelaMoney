@@ -44,6 +44,7 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
         tbxFirstName = findViewById(R.id.tbx_firstname_editstudentprofile);
         tbxLastName = findViewById(R.id.tbx_lastname_editstudentprofile);
         tbxStudentNumber = findViewById(R.id.tbx_studentnumber_editstudentprofile);
+        txtError = findViewById(R.id.txt_error_details_editstudentprofile);
     }
 
 
