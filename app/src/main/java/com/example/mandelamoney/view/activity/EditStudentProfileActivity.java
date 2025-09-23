@@ -46,4 +46,12 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
         tbxLastName.setText(((Student)(UserSession.getUser())).getStudentLastName());
         tbxStudentNumber.setText(((Student)(UserSession.getUser())).getStudentNumber());
     }
+
+    private void configureSaveButton() {
+
+    }
+
+    private void configureCancelButton() {
+
+    }
 }

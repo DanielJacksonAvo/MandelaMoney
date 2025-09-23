@@ -45,4 +45,12 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
         tbxVAT.setText(((Business)(UserSession.getUser())).getBusinessVAT());
 
     }
+
+    private void configureSaveButton() {
+
+    }
+
+    private void configureCancelButton() {
+
+    }
 }
