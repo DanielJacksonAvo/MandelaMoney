@@ -21,46 +21,60 @@ public class EditProfileController {
 
     public void handleSaveButton(String email, String param1 /* firstname, business name */, String param2 /* lastname, phone number */, String param3 /* student number, vat number */) {
         view.hideError();
-
-        if (!UserValueChecker.isValidEmail(email)) {
-            view.showError("Invalid Email");
-            return;
-        }
-
-        if (UserSession.getUser() instanceof Student) {
-            if((param1.length() < 2)) {
-                view.showError("Enter A First Name");
+        Thread thread = new Thread(() -> {
+            User user;
+            if (!UserValueChecker.isValidEmail(email)) {
+                view.showError("Invalid Email");
                 return;
             }
-            if ((param2.length() < 2)) {
-                view.showError("Enter A Last Name");
-                return;
+
+            if (UserSession.getUser() instanceof Student) {
+                if((param1.length() < 2)) {
+                    view.showError("Enter A First Name");
+                    return;
+                }
+                if ((param2.length() < 2)) {
+                    view.showError("Enter A Last Name");
+                    return;
+                }
+                if (!UserValueChecker.isValidStudentNumber(param3)) {
+                    view.showError("Invalid Student Number");
+                    return;
+                }
+                user = MySQLConnector.updateStudentDetails(UserSession.getUser().getUserEmail(), UserSession.getUser().getUserPassword(), email, param1, param2, param3, context);
+
+            } else {
+                if (param1.length() < 2) {
+                    view.showError("Enter A Business Name");
+                    return;
+                }
+                if (!UserValueChecker.isValidPhoneNumber(param2)) {
+                    view.showError("Invalid Phone Number");
+                    return;
+                }
+                if (!UserValueChecker.isValidVatNumber(param3)) {
+                    view.showError("Invalid VAT Number");
+                    return;
+                }
+                user = MySQLConnector.updateBusinessDetails(UserSession.getUser().getUserEmail(), UserSession.getUser().getUserPassword(), email, param1, param2, param3, context);
             }
-            if (!UserValueChecker.isValidStudentNumber(param3)) {
-                view.showError("Invalid Student Number");
-                return;
+            if (user != null) {
+                onSuccess(user);
+            } else {
+                onFailure();
             }
-            MySQLConnector.updateStudentDetails(UserSession.getUser().getUserEmail(), UserSession.getUser().getUserPassword(), email, param1, param2, param3, context);
+        });
+        thread.start();
+    }
 
+    private void onSuccess(User user) {
+        UserSession.setUser(user);
+        view.hideLoadingScreen();
+        view.finishActivity();
+    }
 
-        } else {
-            if (param1.length() < 2) {
-                view.showError("Enter A Business Name");
-                return;
-            }
-            if (!UserValueChecker.isValidPhoneNumber(param2)) {
-                view.showError("Invalid Phone Number");
-                return;
-            }
-            if (!UserValueChecker.isValidVatNumber(param3)) {
-                view.showError("Invalid VAT Number");
-                return;
-            }
-        }
-
-
-
-
+    private void onFailure() {
+        view.hideLoadingScreen();
     }
     public void handleCancelButton() {
         view.finishActivity();
