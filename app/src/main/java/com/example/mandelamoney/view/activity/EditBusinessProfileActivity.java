@@ -52,6 +52,16 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
 
     }
 
+    @Override
+    public void showError(String error) {
+
+    }
+
+    @Override
+    public void hideError() {
+
+    }
+
     private void configureSaveButton() {
         String email = String.valueOf(tbxEmail.getText());
         String name = String.valueOf(tbxBusinessName.getText());
