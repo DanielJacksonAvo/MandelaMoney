@@ -140,4 +140,7 @@
     <string name="bank_account">Bank Account</string>
     <string name="account_number">ACCOUNT NUMBER</string>
     <string name="cardholder_name_fallback">Account Holder</string>
+    <string name="withdraw_funds">WITHDRAW FUNDS</string>
+    <string name="withdraw_failed_try_again">Withdrawal failed. Please try again.</string>
+    <string name="confirm_withdraw">CONFIRM WITHDRAWAL</string>
 </resources>

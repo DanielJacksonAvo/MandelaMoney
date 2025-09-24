@@ -22,6 +22,7 @@ import com.example.mandelamoney.view.activity.ShowSuccessActivity;
 import com.example.mandelamoney.view.activity.ShowFailedActivity;
 import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,8 +38,8 @@ public class DepositFundsController {
 
     private int transactionId;
     private float transactionAmount;
-    private String rawAccountNumber;  // sanitized digits used to build masked view
-    private User toUserDetails;       // current (logged-in) user
+    private String rawAccountNumber;
+    private User toUserDetails;
     private IConfirmDepositView confirmDepositView;
 
     private static final String[] VALID_BANKS = {
@@ -58,7 +59,6 @@ public class DepositFundsController {
             viewDepositFunds.hideInvalidFieldError();
         }
 
-        // --- VALIDATION with early returns ---
         if (amount == null) {
             Log.w(TAG, "Validation failed: amount is null");
             if (viewDepositFunds != null) viewDepositFunds.showMissingFieldError(context.getString(R.string.enter_amount));
@@ -114,7 +114,6 @@ public class DepositFundsController {
             return;
         }
 
-        // --- DB call on background thread ---
         depositFundsExecutor.execute(() -> {
             try {
                 User current = UserSession.getUser();
@@ -149,11 +148,10 @@ public class DepositFundsController {
 
                 ContextCompat.getMainExecutor(context).execute(() -> {
                     if (success) {
-                        // inside the success branch of handleDepositFunds(...)
                         this.transactionId     = (txnId != null ? txnId : 0);
                         this.transactionAmount = amount;
                         this.rawAccountNumber  = sanitizedCard;
-                        this.fromAccountName   = name.trim();   // <-- NEW: keep the display name
+                        this.fromAccountName   = name.trim();
                         this.toUserDetails     = MySQLConnector.getUserDetailsByEmail(current.getUserEmail(), context);
 
                         Log.d(TAG, "UI: Data ready, sending via DataShare and launching ConfirmDepositActivity. "
@@ -234,7 +232,6 @@ public class DepositFundsController {
             confirmDepositView.displayToUserNumber("");
         }
 
-        // ----- THIS is the important bit -----
         String masked = maskAccount(rawAccountNumber);
         String displayName = (fromAccountName != null && !fromAccountName.trim().isEmpty())
                 ? fromAccountName.trim()
@@ -244,15 +241,13 @@ public class DepositFundsController {
         confirmDepositView.displayFromUserNumber(masked);
     }
 
-    public void handleConfirmDeposit() {
+    public void  handleConfirmDeposit() {
         Log.i(TAG, "handleConfirmDeposit() txnId=" + transactionId);
         depositFundsExecutor.execute(() -> {
             try {
-                // 1) DB: mark success (this also stamps date/time and credits balance per proc above)
                 MySQLConnector.updateTransactionStatus(transactionId, "success", context);
                 Log.i(TAG, "BG: updateTransactionStatus -> success");
 
-                // 2) App: refresh session balance so UI shows the new total
                 Executors.newSingleThreadExecutor().execute(() -> {
                     float updated = UserSession.updateBalance(context);
                     User u = UserSession.getUser();
@@ -260,9 +255,7 @@ public class DepositFundsController {
                     Log.d(TAG, "Session balance refreshed to: " + updated);
                 });
 
-                // 3) Go to success screen (and pass this controller for display)
                 ContextCompat.getMainExecutor(context).execute(() -> {
-                    // make sure ShowSuccessActivity can render deposit details
                     DataShare.send(this);
 
                     Intent intent = new Intent(context, ShowSuccessActivity.class);
@@ -329,10 +322,27 @@ public class DepositFundsController {
     private static String maskCard(String cardNumber) {
         if (cardNumber == null) return "(null)";
         String d = cardNumber.replaceAll("\\D", "");
-        if (d.length() <= 4) return "**** " + d;
-        String last4 = d.substring(d.length() - 4);
-        return "**** **** **** " + last4;
+        int n = d.length();
+        if (n == 0) return "";
+        if (n <= 4) return groupBy4(d);
+
+        String last4 = d.substring(n - 4);
+        char[] a=new char[n-4];
+        Arrays.fill(a,'*');
+        String maskedPrefix=new String(a);
+
+        return groupBy4(maskedPrefix + last4);
     }
+
+    private static String groupBy4(String s) {
+        StringBuilder out = new StringBuilder(s.length() + s.length() / 4);
+        for (int i = 0; i < s.length(); i++) {
+            if (i > 0 && i % 4 == 0) out.append(' ');
+            out.append(s.charAt(i));
+        }
+        return out.toString();
+    }
+
 
     private static String safe(String s) { return s == null ? "(null)" : s.trim(); }
 
@@ -349,7 +359,6 @@ public class DepositFundsController {
     }
 
     private void maybeAddNewTaskFlag(Intent intent) {
-        // If context is NOT an Activity, we must add NEW_TASK to avoid ActivityNotFound/BadToken edge cases
         if (!(context instanceof Activity)) {
             Log.w(TAG, "Context is not an Activity; adding FLAG_ACTIVITY_NEW_TASK");
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -426,7 +435,6 @@ public class DepositFundsController {
             transactionStatusDisplayView.displayToUserNumber("");
         }
 
-        // "From" = cardholder name + masked account
         String displayName = (fromAccountName != null && !fromAccountName.trim().isEmpty())
                 ? fromAccountName.trim()
                 : "Cardholder";

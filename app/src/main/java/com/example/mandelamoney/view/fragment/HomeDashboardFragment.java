@@ -132,7 +132,11 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     }
 
     private void congifureWithdrawButton(Button btnWithdraw) {
-
+        if (btnWithdraw != null) {
+            btnWithdraw.setOnClickListener((view) -> {
+                controller.DashboardHomeController.handleWithdraw();
+            });
+        }
     }
 
     @Override

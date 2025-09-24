@@ -1,7 +1,10 @@
 package com.example.mandelamoney.view.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -10,34 +13,27 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
-import com.example.mandelamoney.controller.DepositFundsController;
+import com.example.mandelamoney.controller.WithdrawFundsController;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.UserSession;
-import com.example.mandelamoney.view.Iface.IDepositFundsView;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
+import com.example.mandelamoney.view.Iface.IWithdrawFundsView;
 
-public class DepositFundsActivity extends AppCompatActivity implements IDepositFundsView {
-    private DepositFundsController controller;
-    TextView txtDepositFundsError;
+public class WithdrawFundsActivity extends AppCompatActivity implements IWithdrawFundsView {
+    private WithdrawFundsController controller;
+    TextView txtWithdrawFundsError;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Object payload = DataShare.receive();
         if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
             UserSession.setUser((com.example.mandelamoney.model.User) payload);
-            Log.d("DepositFundsActivity", "Restored user from DataShare.");
+            Log.d("WithdrawFundsActivity", "Restored user from DataShare.");
         }
 
         if (UserSession.getUser() == null) {
-            Log.w("DepositFundsActivity", "No session; routing to LoginActivity");
+            Log.w("WithdrawFundsActivity", "No session; routing to LoginActivity");
             startActivity(new Intent(this, com.example.mandelamoney.view.activity.LoginActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();
@@ -45,7 +41,7 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
         }
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_deposit_funds);
+        setContentView(R.layout.activity_withdraw_funds);
 
         WindowInsetsControllerCompat insetsController =
                 new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
@@ -54,40 +50,37 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
         setController();
         connectToUI();
     }
-
     private void setController() {
-        controller = new com.example.mandelamoney.controller.DepositFundsController(this, this);
+        controller = new com.example.mandelamoney.controller.WithdrawFundsController(this, this);
     }
-
     private void connectToUI() {
-        TextView btnCancel = findViewById(R.id.btn_cancel_deposit_funds);
-        EditText tbxAmount = findViewById(R.id.tbx_amount_deposit_funds);
-        EditText tbxBankName = findViewById(R.id.tbx_bank_name_deposit_funds);
-        EditText tbxBranchCode = findViewById(R.id.tbx_branch_code_deposit_funds);
-        EditText tbxCardNumber = findViewById(R.id.tbx_card_number_deposit_funds);
-        EditText tbxName = findViewById(R.id.tbx_name_deposit_funds);
-        Button btnDepositFunds = findViewById(R.id.btn_deposit_funds);
-        txtDepositFundsError = findViewById(R.id.txt_error_deposit_funds);
+        TextView btnCancel = findViewById(R.id.btn_cancel_withdraw_funds);
+        EditText tbxAmount = findViewById(R.id.tbx_amount_withdraw_funds);
+        EditText tbxBankName = findViewById(R.id.tbx_bank_name_withdraw_funds);
+        EditText tbxBranchCode = findViewById(R.id.tbx_branch_code_withdraw_funds);
+        EditText tbxCardNumber = findViewById(R.id.tbx_card_number_withdraw_funds);
+        EditText tbxName = findViewById(R.id.tbx_name_withdraw_funds);
+        Button btnWithdrawFunds = findViewById(R.id.btn_withdraw_funds);
+        txtWithdrawFundsError = findViewById(R.id.txt_error_withdraw_funds);
         configureCancelButton(btnCancel);
-        configureDepositFundsButton(btnDepositFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxCardNumber, tbxName);
+        configureWithdrawFundsButton(btnWithdrawFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxCardNumber, tbxName);
     }
-
-    private void configureDepositFundsButton(
-            Button btnDepositFunds,
+    private void configureWithdrawFundsButton(
+            Button btnWithdrawFunds,
             EditText tbxAmount,
             EditText tbxBankName,
             EditText tbxBranchCode,
             EditText tbxCardNumber,
             EditText tbxName
     ) {
-        btnDepositFunds.setOnClickListener(v -> {
+        btnWithdrawFunds.setOnClickListener(v -> {
             Float amount = null;
             String amtTxt = tbxAmount.getText().toString().trim();
             if (!amtTxt.isEmpty()) {
                 try { amount = Float.parseFloat(amtTxt); } catch (NumberFormatException ignored) { /* keep null */ }
             }
 
-            controller.handleDepositFunds(
+            controller.handleWithdrawFunds(
                     amount,
                     tbxBankName.getText().toString(),
                     tbxBranchCode.getText().toString(),
@@ -96,41 +89,35 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
             );
         });
     }
-
-
     private void configureCancelButton(TextView btnCancel) {
-        btnCancel.setOnClickListener((view) -> controller.handleCancelDepositFunds());
+        btnCancel.setOnClickListener((view) -> controller.handleCancelWithdrawFunds());
     }
-
-
     @Override
     public void showMissingFieldError(String message) {
-        txtDepositFundsError.setVisibility(View.VISIBLE);
-        txtDepositFundsError.setText(message);
+        txtWithdrawFundsError.setVisibility(View.VISIBLE);
+        txtWithdrawFundsError.setText(message);
 
     }
 
     @Override
     public void hideMissingFieldError() {
-        txtDepositFundsError.setVisibility(View.GONE);
-
+        txtWithdrawFundsError.setVisibility(View.GONE);
     }
 
     @Override
     public void showInvalidFieldError(String message) {
-        txtDepositFundsError.setVisibility(View.VISIBLE);
-        txtDepositFundsError.setText(message);
+        txtWithdrawFundsError.setVisibility(View.VISIBLE);
+        txtWithdrawFundsError.setText(message);
+    }
 
+    @Override
+    public void hideInvalidFieldError() {
+        txtWithdrawFundsError.setVisibility(View.GONE);
     }
 
     @Override
     public void finishActivity() {
         finish();
-    }
-
-    @Override
-    public void hideInvalidFieldError() {
-        txtDepositFundsError.setVisibility(View.GONE);
     }
     private static class DateSlashTextWatcher implements TextWatcher {
         private final EditText editText;
