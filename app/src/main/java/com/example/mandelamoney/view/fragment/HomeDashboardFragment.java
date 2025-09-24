@@ -93,7 +93,9 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
         TextView btnTransactionHistory = rootView.findViewById(R.id.txt_transaction_history_dashboard);
         configureTransactionHistoryButton(btnTransactionHistory);
         Button btnPayNow = rootView.findViewById(R.id.btn_pay_now);
+        Button btnWithdraw = rootView.findViewById(R.id.btn_withdraw);
         configurePayNowButton(btnPayNow);
+        configureWithdrawButton(btnWithdraw);
         recyclerView = rootView.findViewById(R.id.recyclerView_dashboard_transactionHistory);
         setupRecycler();
     }
@@ -123,7 +125,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     private void connectToUITablet(View rootView) {
         txtBalance = rootView.findViewById(R.id.txt_user_account_balance);
         Button btnWithdraw = rootView.findViewById(R.id.btn_withdraw);
-        congifureWithdrawButton(btnWithdraw);
+        configureWithdrawButton(btnWithdraw);
         Button btnPayNow = rootView.findViewById(R.id.btn_pay_now);
         configurePayNowButton(btnPayNow);
         tbxRequestPayAmount = rootView.findViewById(R.id.tbx_amount_request_payment);
@@ -131,7 +133,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
         configureGenerateQRCodeButton(btnGenerateQR);
     }
 
-    private void congifureWithdrawButton(Button btnWithdraw) {
+    private void configureWithdrawButton(Button btnWithdraw) {
         if (btnWithdraw != null) {
             btnWithdraw.setOnClickListener((view) -> {
                 controller.DashboardHomeController.handleWithdraw();

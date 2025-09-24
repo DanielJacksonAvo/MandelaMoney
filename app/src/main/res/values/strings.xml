@@ -143,4 +143,5 @@
     <string name="withdraw_funds">WITHDRAW FUNDS</string>
     <string name="withdraw_failed_try_again">Withdrawal failed. Please try again.</string>
     <string name="confirm_withdraw">CONFIRM WITHDRAWAL</string>
+    <string name="insufficient_funds">Insufficient Funds</string>
 </resources>

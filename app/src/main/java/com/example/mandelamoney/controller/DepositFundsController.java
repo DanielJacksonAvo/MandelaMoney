@@ -412,7 +412,7 @@ public class DepositFundsController {
     }
     private static String maskAccount(String value) {
         if (value == null) return "(null)";
-        String d = value.replaceAll("\\D", ""); // keep digits only
+        String d = value.replaceAll("\\D", "");
         if (d.length() <= 4) return "**** " + d;
         return "**** **** **** " + d.substring(d.length() - 4);
     }
