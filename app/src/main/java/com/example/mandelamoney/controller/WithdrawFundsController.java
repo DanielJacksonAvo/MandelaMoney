@@ -143,17 +143,13 @@ public class WithdrawFundsController {
                        this.transactionId     = (txnId != null ? txnId : 0);
                        this.transactionAmount = amount;
                        this.rawAccountNumber  = sanitizedCard;
-                       this.toAccountName = name.trim();
+                       this.toAccountName     = name.trim();
                        this.fromUserDetails   = MySQLConnector.getUserDetailsByEmail(current.getUserEmail(), context);
 
-                       Log.d(TAG, "UI: Data ready, sending via DataShare and launching ConfirmWithdrawActivity. "
-                               + "transactionId=" + this.transactionId
-                               + ", amount=" + this.transactionAmount
-                               + ", fromUser=" + (fromUserDetails != null ? fromUserDetails.getUserEmail() : "null"));
+                       Log.d(TAG, "UI: Data ready, launching ConfirmWithdrawActivity. txnId=" + this.transactionId);
 
                        DataShare.send(this);
-
-                       Intent intent= new Intent(context, ConfirmWithdrawActivity.class);
+                       Intent intent = new Intent(context, ConfirmWithdrawActivity.class);
                        maybeAddNewTaskFlag(intent);
                        try {
                            context.startActivity(intent);
@@ -162,21 +158,32 @@ public class WithdrawFundsController {
                            Log.e(TAG, "UI: Failed to start ConfirmWithdrawActivity", startEx);
                            Toast.makeText(context, "Unable to open confirmation screen.", Toast.LENGTH_SHORT).show();
                        }
-                       if(viewWithdrawFunds != null){
+
+                       if (viewWithdrawFunds != null) {
                            viewWithdrawFunds.finishActivity();
                            Log.d(TAG, "UI: viewWithdrawFunds.finishActivity() requested");
-                       }else{
-                           String msg;
-                           if("ACCOUNT_META_MISMATCH".equals(errCode)){
-                               msg = context.getString(R.string.bank_account_meta_mismatch);
-                           }else{
-                               msg = context.getString(R.string.withdraw_failed_try_again);
-                           }
-                           Log.w(TAG, "UI: withdraw failed; errCode=" + errCode + ", showing message");
-                           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidFieldError(msg);
+                       }
+                   } else {
+                       String msg;
+                       if ("ACCOUNT_META_MISMATCH".equals(errCode)) {
+                           msg = context.getString(R.string.bank_account_meta_mismatch);
+                       } else if ("INSUFFICIENT_FUNDS".equals(errCode)) {
+                           msg = context.getString(R.string.insufficient_funds);
+                       } else if ("INVALID_BRANCH".equals(errCode)) {
+                           msg = context.getString(R.string.invalid_branch_code);
+                       } else {
+                           msg = context.getString(R.string.withdraw_failed_try_again);
+                       }
+
+                       Log.w(TAG, "UI: withdraw failed; errCode=" + errCode + ", txnId=" + txnId + " (showing message)");
+                       if (viewWithdrawFunds != null) {
+                           viewWithdrawFunds.showInvalidFieldError(msg);
+                       } else {
+                           Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
                        }
                    }
                });
+
 
 
            }catch (Throwable t){
