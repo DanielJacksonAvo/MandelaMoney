@@ -7,72 +7,68 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
-import com.example.mandelamoney.controller.DepositFundsController;
-import com.example.mandelamoney.controller.MakePaymentController;
 import com.example.mandelamoney.util.DataShare;
-import com.example.mandelamoney.view.Iface.IConfirmDepositView;
+import com.example.mandelamoney.view.Iface.IConfirmWithdrawView;
+import com.example.mandelamoney.controller.WithdrawFundsController;
 
-public class ConfirmDepositActivity extends AppCompatActivity implements IConfirmDepositView {
-    private DepositFundsController controller;
+public class ConfirmWithdrawActivity extends AppCompatActivity implements IConfirmWithdrawView {
+    private WithdrawFundsController controller;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_confirm_deposit);
+        setContentView(R.layout.activity_confirm_withdraw);
 
         WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
-        controller = (DepositFundsController) DataShare.receive();
+        controller = (WithdrawFundsController) DataShare.receive();
         connectToUI();
-        controller.setConfirmDepositView(this);
+        controller.setConfirmWithdrawView(this);
         controller.handleLoadUsersUI();
     }
     private void connectToUI() {
-        Button btnConfirm = findViewById(R.id.btn_confirmdeposit);
-        TextView btnCancel = findViewById(R.id.btn_confirmdeposit_cancel);
+        Button btnConfirm = findViewById(R.id.btn_confirmwithdraw);
+        TextView btnCancel = findViewById(R.id.btn_confirmwithdraw_cancel);
         configureConfirmButton(btnConfirm);
         configureCancelButton(btnCancel);
     }
     private void configureConfirmButton(Button btnConfirm) {
-        btnConfirm.setOnClickListener((view) -> controller.handleConfirmDeposit());
+        btnConfirm.setOnClickListener((view) -> controller.handleConfirmWithdraw());
     }
     private void configureCancelButton(TextView btnCancel) {
-        btnCancel.setOnClickListener((view) -> controller.handleCancelConfirmDeposit());
+        btnCancel.setOnClickListener((view) -> controller.handleCancelConfirmWithdraw());
     }
     @Override
     public void displayToUserName(String name) {
-        TextView tbx = findViewById(R.id.txt_toname_confirmdeposit);
+        TextView tbx = findViewById(R.id.txt_toname_confirmwithdraw);
         tbx.setText(name);
     }
 
     @Override
     public void displayFromUserName(String name) {
-        TextView tbx = findViewById(R.id.txt_fromname_confirmdeposit);
+        TextView tbx = findViewById(R.id.txt_fromname_confirmwithdraw);
         tbx.setText(name);
     }
 
     @Override
     public void displayToUserNumber(String number) {
-        TextView tbx = findViewById(R.id.txt_tonumber_confirmdeposit);
+        TextView tbx = findViewById(R.id.txt_tonumber_confirmwithdraw);
         tbx.setText(number);
     }
 
     @Override
     public void displayFromUserNumber(String number) {
-        TextView tbx = findViewById(R.id.txt_fromnumber_confirmdeposit);
+        TextView tbx = findViewById(R.id.txt_fromnumber_confirmwithdraw);
         tbx.setText(number);
     }
 
     @Override
     public void displayAmount(double amount) {
-        TextView tbx = findViewById(R.id.txt_amount_confirmdeposit);
+        TextView tbx = findViewById(R.id.txt_amount_confirmwithdraw);
         @SuppressLint("DefaultLocale") String stringAmount = "R" + String.format("%.2f",amount);
         tbx.setText(stringAmount);
     }
@@ -81,4 +77,6 @@ public class ConfirmDepositActivity extends AppCompatActivity implements IConfir
     public void finishActivity() {
         finish();
     }
+
+
 }
