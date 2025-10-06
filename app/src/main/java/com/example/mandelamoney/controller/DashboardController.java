@@ -22,6 +22,8 @@ import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.IProfileView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.DepositFundsActivity;
+import com.example.mandelamoney.view.activity.EditBusinessProfileActivity;
+import com.example.mandelamoney.view.activity.EditStudentProfileActivity;
 import com.example.mandelamoney.view.activity.LoginActivity;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
@@ -281,7 +283,13 @@ public class DashboardController {
         }
 
         public void handleEditButton() {
-            /// edit profile activity
+            if (UserSession.getUser() instanceof Student) {
+                Intent intent = new Intent(context, EditStudentProfileActivity.class);
+                context.startActivity(intent);
+            } else if (UserSession.getUser() instanceof Business) {
+                Intent intent = new Intent(context, EditBusinessProfileActivity.class);
+                context.startActivity(intent);
+            }
         }
 
         public void handleDepositButton() {
