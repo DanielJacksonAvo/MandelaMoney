@@ -77,7 +77,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <Switch
-                        android:id="@+id/switch3"
+                        android:id="@+id/swch_fingerprint_settings"
                         android:thumbTint="@color/switch_thumb_color"
                         android:trackTint="@color/switch_track_color"
                         android:layout_width="wrap_content"
@@ -127,7 +127,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <Switch
-                        android:id="@+id/switch2"
+                        android:id="@+id/swch_faceid_settings"
                         android:thumbTint="@color/switch_thumb_color"
                         android:trackTint="@color/switch_track_color"
                         android:layout_width="wrap_content"
@@ -248,7 +248,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/top_center_line5" />
 
                 <TextView
-                    android:id="@+id/txt_email_profile"
+                    android:id="@+id/txt_connectionstatus_settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/dm_sans_medium"
@@ -262,7 +262,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/top_center_line7" />
 
                 <TextView
-                    android:id="@+id/txt_studentnumber_profile"
+                    android:id="@+id/txt_connectionquality_settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/dm_sans_medium"
@@ -276,7 +276,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/top_center_line6" />
 
                 <TextView
-                    android:id="@+id/txt_balance_profile"
+                    android:id="@+id/txt_camerapermission_settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/dm_sans_medium"
