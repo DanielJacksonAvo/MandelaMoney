@@ -269,21 +269,16 @@ public class MySQLConnector {
             Context context
     ) {
         Connection conn = getConnection(context);
-        // [success(Boolean), transactionId(Integer), errorCode(String always null now)]
         Object[] out = new Object[]{false, null, null};
         if (conn == null) return out;
 
-        // Updated proc: 6 IN + 2 OUT  => 8 placeholders
         final String SQL = "{CALL MandelaMoneyDB.createDepositBankAndPendingTransaction(?, ?, ?, ?, ?, ?, ?, ?)}";
 
         try (CallableStatement stmt = conn.prepareCall(SQL)) {
             int i = 1;
-
-            // IN params
             stmt.setString(i++, userEmail);
 
-            // Your proc expects DECIMAL(12,2). Avoid float rounding surprises:
-            // BigDecimal.valueOf(double) is safer than new BigDecimal(float).
+
             java.math.BigDecimal decAmount = java.math.BigDecimal.valueOf(
                     Math.round((double) amount * 100.0) / 100.0
             );
@@ -294,9 +289,6 @@ public class MySQLConnector {
             stmt.setString(i++, baName);
             stmt.setString(i++, baBank);
 
-            // OUT params (7 = success, 8 = transactionId)
-            // MySQL maps BOOLEAN to TINYINT(1); Types.BOOLEAN works with Connector/J 8+,
-            // but Types.TINYINT also works if you ever see driver quirks.
             stmt.registerOutParameter(i++, java.sql.Types.BOOLEAN);
             stmt.registerOutParameter(i++, java.sql.Types.INTEGER);
 
@@ -308,7 +300,7 @@ public class MySQLConnector {
 
             out[0] = success;
             out[1] = txnObj;
-            out[2] = null; // no errorCode in the new proc
+            out[2] = null;
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "createDepositBankAndPendingTransaction failed: " + e.getMessage(), e);

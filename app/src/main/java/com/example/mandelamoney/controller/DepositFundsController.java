@@ -37,8 +37,8 @@ public class DepositFundsController {
 
     private int transactionId;
     private float transactionAmount;
-    private String rawAccountNumber;  // sanitized digits used to build masked view
-    private User toUserDetails;       // current (logged-in) user
+    private String rawAccountNumber;
+    private User toUserDetails;
     private IConfirmDepositView confirmDepositView;
 
     private static final String[] VALID_BANKS = {
@@ -54,67 +54,71 @@ public class DepositFundsController {
     public void handleDepositFunds(Float amount, String bankName, String branchCode, String cardNumber, String name) {
 
         if (viewDepositFunds != null) {
-            viewDepositFunds.hideMissingFieldError();
-            viewDepositFunds.hideInvalidFieldError();
-        }
+            viewDepositFunds.hideMissingAmountError();
+            viewDepositFunds.hideInvalidAmountError();
+            viewDepositFunds.hideMissingBankNameError();
+            viewDepositFunds.hideInvalidBankNameError();
+            viewDepositFunds.hideInvalidBranchCodeError();
+            viewDepositFunds.hideMissingBranchCodeError();
+            viewDepositFunds.hideMissingAccountNumberError();
+            viewDepositFunds.hideInvalidAccountNumberError();
+            viewDepositFunds.hideMissingAccountHolderError();
+            viewDepositFunds.hideInvalidAccountHolderError();
 
-        // --- VALIDATION with early returns ---
+        }
+        boolean hasMissingOrInvalidField = false;
+
         if (amount == null) {
             Log.w(TAG, "Validation failed: amount is null");
-            if (viewDepositFunds != null) viewDepositFunds.showMissingFieldError(context.getString(R.string.enter_amount));
-            return;
-        }
-        if (!isValidAmount(amount)) {
+            if (viewDepositFunds != null) viewDepositFunds.showMissingAmountError(context.getString(R.string.enter_amount));
+            hasMissingOrInvalidField = true;
+        }else if (!isValidAmount(amount)) {
             Log.w(TAG, "Validation failed: invalid amount " + amount);
-            if (viewDepositFunds != null) viewDepositFunds.showInvalidFieldError(context.getString(R.string.invalid_amount));
-            return;
+            if (viewDepositFunds != null) viewDepositFunds.showInvalidAmountError(context.getString(R.string.invalid_amount));
+            hasMissingOrInvalidField = true;
         }
 
         if (checkEmpty(bankName)) {
             Log.w(TAG, "Validation failed: bank name empty");
-            if (viewDepositFunds != null) viewDepositFunds.showMissingFieldError(context.getString(R.string.enter_bank_name));
-            return;
-        }
-        if (!isValidBankName(bankName)) {
+            if (viewDepositFunds != null) viewDepositFunds.showMissingBankNameError(context.getString(R.string.enter_bank_name));
+           hasMissingOrInvalidField = true;
+        }else if (!isValidBankName(bankName)) {
             Log.w(TAG, "Validation failed: bank not in allowlist: " + safe(bankName));
-            if (viewDepositFunds != null) viewDepositFunds.showInvalidFieldError(context.getString(R.string.invalid_bank_name));
-            return;
+            if (viewDepositFunds != null) viewDepositFunds.showInvalidBankNameError(context.getString(R.string.invalid_bank_name));
+            hasMissingOrInvalidField=true;
         }
 
         if (checkEmpty(branchCode)) {
             Log.w(TAG, "Validation failed: branchCode empty");
-            if (viewDepositFunds != null) viewDepositFunds.showMissingFieldError(context.getString(R.string.enter_branch_code));
-            return;
-        }
-        if (!isValidBranchCode(branchCode)) {
+            if (viewDepositFunds != null) viewDepositFunds.showMissingBranchCodeError(context.getString(R.string.enter_branch_code));
+            hasMissingOrInvalidField = true;
+        }else if (!isValidBranchCode(branchCode)) {
             Log.w(TAG, "Validation failed: branchCode invalid format: " + safeBranch(branchCode));
-            if (viewDepositFunds != null) viewDepositFunds.showInvalidFieldError(context.getString(R.string.invalid_branch_code));
-            return;
+            if (viewDepositFunds != null) viewDepositFunds.showInvalidBranchCodeError(context.getString(R.string.invalid_branch_code));
+            hasMissingOrInvalidField = true;
         }
 
         if (checkEmpty(cardNumber)) {
             Log.w(TAG, "Validation failed: cardNumber empty");
-            if (viewDepositFunds != null) viewDepositFunds.showMissingFieldError(context.getString(R.string.enter_card_number));
-            return;
-        }
-        if (!isValidCardNumber(cardNumber)) {
+            if (viewDepositFunds != null) viewDepositFunds.showMissingAccountNumberError(context.getString(R.string.enter_card_number));
+            hasMissingOrInvalidField = true;
+        }else if (!isValidCardNumber(cardNumber)) {
             Log.w(TAG, "Validation failed: cardNumber invalid: " + maskCard(cardNumber));
-            if (viewDepositFunds != null) viewDepositFunds.showInvalidFieldError(context.getString(R.string.invalid_card_number));
-            return;
+            if (viewDepositFunds != null) viewDepositFunds.showInvalidAccountNumberError(context.getString(R.string.invalid_card_number));
+            hasMissingOrInvalidField = true;
         }
 
         if (checkEmpty(name)) {
             Log.w(TAG, "Validation failed: name empty");
-            if (viewDepositFunds != null) viewDepositFunds.showMissingFieldError(context.getString(R.string.enter_name));
-            return;
-        }
-        if (!isValidName(name)) {
+            if (viewDepositFunds != null) viewDepositFunds.showMissingAccountHolderError(context.getString(R.string.enter_name));
+            hasMissingOrInvalidField = true;
+        }else if (!isValidName(name)) {
             Log.w(TAG, "Validation failed: name invalid: " + safeName(name));
-            if (viewDepositFunds != null) viewDepositFunds.showInvalidFieldError(context.getString(R.string.invalid_name));
-            return;
+            if (viewDepositFunds != null) viewDepositFunds.showInvalidAccountHolderError(context.getString(R.string.invalid_name));
+            hasMissingOrInvalidField = true;
         }
+        if(hasMissingOrInvalidField) return;
 
-        // --- DB call on background thread ---
         depositFundsExecutor.execute(() -> {
             try {
                 User current = UserSession.getUser();
@@ -122,8 +126,10 @@ public class DepositFundsController {
 
                 if (current == null) {
                     ContextCompat.getMainExecutor(context).execute(() -> {
-                        Log.w(TAG, "BG->UI: session expired, notifying view");
-                        if (viewDepositFunds != null) viewDepositFunds.showInvalidFieldError(context.getString(R.string.session_expired));
+                        Log.w(TAG, "BG->UI: session expired, showing toast");
+                        Toast.makeText(context.getApplicationContext(),
+                                context.getString(R.string.session_expired),
+                                Toast.LENGTH_LONG).show();
                     });
                     return;
                 }
@@ -135,10 +141,10 @@ public class DepositFundsController {
                 Object[] res = MySQLConnector.createDepositBankAndPendingTransaction(
                         current.getUserEmail(),
                         amount,
-                        sanitizedCard,           // baNumber
-                        branchCode.trim(),       // baBranchCode
-                        name.trim(),             // baName
-                        bankName.trim(),         // baBank
+                        sanitizedCard,
+                        branchCode.trim(),
+                        name.trim(),
+                        bankName.trim(),
                         context
                 );
                 boolean success = res != null && res.length > 0 && (res[0] instanceof Boolean) && (Boolean) res[0];
@@ -149,11 +155,10 @@ public class DepositFundsController {
 
                 ContextCompat.getMainExecutor(context).execute(() -> {
                     if (success) {
-                        // inside the success branch of handleDepositFunds(...)
                         this.transactionId     = (txnId != null ? txnId : 0);
                         this.transactionAmount = amount;
                         this.rawAccountNumber  = sanitizedCard;
-                        this.fromAccountName   = name.trim();   // <-- NEW: keep the display name
+                        this.fromAccountName   = name.trim();
                         this.toUserDetails     = MySQLConnector.getUserDetailsByEmail(current.getUserEmail(), context);
 
                         Log.d(TAG, "UI: Data ready, sending via DataShare and launching ConfirmDepositActivity. "
@@ -178,15 +183,14 @@ public class DepositFundsController {
                             Log.d(TAG, "UI: viewDepositFunds.finishActivity() requested");
                         }
                     } else {
-                        String msg;
-                        if ("ACCOUNT_META_MISMATCH".equals(errCode)) {
-                            msg = context.getString(R.string.bank_account_meta_mismatch);
-                        } else {
-                            msg = context.getString(R.string.deposit_failed_try_again);
-                        }
-                        Log.w(TAG, "UI: deposit failed; errCode=" + errCode + ", showing message");
-                        if (viewDepositFunds != null) viewDepositFunds.showInvalidFieldError(msg);
+                        String msg = "ACCOUNT_META_MISMATCH".equals(errCode)
+                                ? context.getString(R.string.bank_account_meta_mismatch)
+                                : context.getString(R.string.deposit_failed_try_again);
+
+                        Log.w(TAG, "UI: deposit failed; errCode=" + errCode + ", showing toast");
+                        Toast.makeText(context.getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                     }
+
                 });
             } catch (Throwable t) {
                 Log.e(TAG, "BG: Unexpected error during deposit flow", t);
@@ -233,8 +237,6 @@ public class DepositFundsController {
             confirmDepositView.displayToUserName(toUserDetails.getUserEmail());
             confirmDepositView.displayToUserNumber("");
         }
-
-        // ----- THIS is the important bit -----
         String masked = maskAccount(rawAccountNumber);
         String displayName = (fromAccountName != null && !fromAccountName.trim().isEmpty())
                 ? fromAccountName.trim()
@@ -248,11 +250,9 @@ public class DepositFundsController {
         Log.i(TAG, "handleConfirmDeposit() txnId=" + transactionId);
         depositFundsExecutor.execute(() -> {
             try {
-                // 1) DB: mark success (this also stamps date/time and credits balance per proc above)
                 MySQLConnector.updateTransactionStatus(transactionId, "success", context);
                 Log.i(TAG, "BG: updateTransactionStatus -> success");
 
-                // 2) App: refresh session balance so UI shows the new total
                 Executors.newSingleThreadExecutor().execute(() -> {
                     float updated = UserSession.updateBalance(context);
                     User u = UserSession.getUser();
@@ -260,9 +260,7 @@ public class DepositFundsController {
                     Log.d(TAG, "Session balance refreshed to: " + updated);
                 });
 
-                // 3) Go to success screen (and pass this controller for display)
                 ContextCompat.getMainExecutor(context).execute(() -> {
-                    // make sure ShowSuccessActivity can render deposit details
                     DataShare.send(this);
 
                     Intent intent = new Intent(context, ShowSuccessActivity.class);
@@ -349,7 +347,6 @@ public class DepositFundsController {
     }
 
     private void maybeAddNewTaskFlag(Intent intent) {
-        // If context is NOT an Activity, we must add NEW_TASK to avoid ActivityNotFound/BadToken edge cases
         if (!(context instanceof Activity)) {
             Log.w(TAG, "Context is not an Activity; adding FLAG_ACTIVITY_NEW_TASK");
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -403,7 +400,7 @@ public class DepositFundsController {
     }
     private static String maskAccount(String value) {
         if (value == null) return "(null)";
-        String d = value.replaceAll("\\D", ""); // keep digits only
+        String d = value.replaceAll("\\D", "");
         if (d.length() <= 4) return "**** " + d;
         return "**** **** **** " + d.substring(d.length() - 4);
     }
@@ -426,7 +423,6 @@ public class DepositFundsController {
             transactionStatusDisplayView.displayToUserNumber("");
         }
 
-        // "From" = cardholder name + masked account
         String displayName = (fromAccountName != null && !fromAccountName.trim().isEmpty())
                 ? fromAccountName.trim()
                 : "Cardholder";

@@ -10,34 +10,34 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DepositFundsController;
 import com.example.mandelamoney.util.DataShare;
+import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IDepositFundsView;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
 
 public class DepositFundsActivity extends AppCompatActivity implements IDepositFundsView {
     private DepositFundsController controller;
-    TextView txtDepositFundsError;
+    TextView txtDepositAmountError;
+    TextView txtDepositBankNameError;
+    TextView txtDepositBranchCodeError;
+    TextView txtDepositAccountNumberError;
+    TextView txtDepositAccountHolderError;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Try restore user via DataShare (if provided)
         Object payload = DataShare.receive();
         if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
             UserSession.setUser((com.example.mandelamoney.model.User) payload);
             Log.d("DepositFundsActivity", "Restored user from DataShare.");
         }
 
-        // Session gate
         if (UserSession.getUser() == null) {
             Log.w("DepositFundsActivity", "No session; routing to LoginActivity");
             startActivity(new Intent(this, com.example.mandelamoney.view.activity.LoginActivity.class)
@@ -53,13 +53,7 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
                 new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
-
-        setController();   // see next step
+        setController();
         connectToUI();
     }
 
@@ -72,12 +66,16 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
         EditText tbxAmount = findViewById(R.id.tbx_amount_deposit_funds);
         EditText tbxBankName = findViewById(R.id.tbx_bank_name_deposit_funds);
         EditText tbxBranchCode = findViewById(R.id.tbx_branch_code_deposit_funds);
-        EditText tbxCardNumber = findViewById(R.id.tbx_card_number_deposit_funds);
-        EditText tbxName = findViewById(R.id.tbx_name_deposit_funds);
+        EditText tbxAccountNumber = findViewById(R.id.tbx_card_number_deposit_funds);
+        EditText tbxAccountHolder = findViewById(R.id.tbx_name_deposit_funds);
         Button btnDepositFunds = findViewById(R.id.btn_deposit_funds);
-        txtDepositFundsError = findViewById(R.id.txt_error_deposit_funds);
+        txtDepositAmountError = findViewById(R.id.txt_error_amount_deposit_funds);
+        txtDepositBankNameError = findViewById(R.id.txt_error_bank_name_deposit_funds);
+        txtDepositBranchCodeError = findViewById(R.id.txt_error_branch_code_deposit_funds);
+        txtDepositAccountNumberError = findViewById(R.id.txt_error_account_number_deposit_funds);
+        txtDepositAccountHolderError = findViewById(R.id.txt_error_account_holder_deposit_funds);
         configureCancelButton(btnCancel);
-        configureDepositFundsButton(btnDepositFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxCardNumber, tbxName);
+        configureDepositFundsButton(btnDepositFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxAccountNumber, tbxAccountHolder);
     }
 
     private void configureDepositFundsButton(
@@ -92,7 +90,7 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
             Float amount = null;
             String amtTxt = tbxAmount.getText().toString().trim();
             if (!amtTxt.isEmpty()) {
-                try { amount = Float.parseFloat(amtTxt); } catch (NumberFormatException ignored) { /* keep null */ }
+                try { amount = Float.parseFloat(amtTxt); } catch (NumberFormatException ignored) { }
             }
 
             controller.handleDepositFunds(
@@ -112,34 +110,161 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
 
 
     @Override
-    public void showMissingFieldError(String message) {
-        txtDepositFundsError.setVisibility(View.VISIBLE);
-        txtDepositFundsError.setText(message);
+    public void showMissingAmountError(String message) {
+        EditText tbxAmount = findViewById(R.id.tbx_amount_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxAmount);
+        txtDepositAmountError.setVisibility(View.VISIBLE);
+        txtDepositAmountError.setText(message);
 
     }
 
     @Override
-    public void hideMissingFieldError() {
-        txtDepositFundsError.setVisibility(View.GONE);
+    public void hideMissingAmountError() {
+        EditText tbxAmount = findViewById(R.id.tbx_amount_deposit_funds);
+        ErrorBorder.removeStroke(tbxAmount);
+        txtDepositAmountError.setVisibility(View.GONE);
 
     }
 
     @Override
-    public void showInvalidFieldError(String message) {
-        txtDepositFundsError.setVisibility(View.VISIBLE);
-        txtDepositFundsError.setText(message);
+    public void showInvalidAmountError(String message) {
+        EditText tbxAmount = findViewById(R.id.tbx_amount_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxAmount);
+        txtDepositAmountError.setVisibility(View.VISIBLE);
+        txtDepositAmountError.setText(message);
 
     }
+    @Override
+    public void hideInvalidAmountError() {
+        EditText tbxAmount = findViewById(R.id.tbx_amount_deposit_funds);
+        ErrorBorder.removeStroke(tbxAmount);
+        txtDepositAmountError.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showMissingBankNameError(String message) {
+        EditText tbxBankName = findViewById(R.id.tbx_bank_name_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxBankName);
+        txtDepositBankNameError.setVisibility(View.VISIBLE);
+        txtDepositBankNameError.setText(message);
+    }
+
+    @Override
+    public void hideMissingBankNameError() {
+        EditText tbxBankName = findViewById(R.id.tbx_bank_name_deposit_funds);
+        ErrorBorder.removeStroke(tbxBankName);
+        txtDepositBankNameError.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showInvalidBankNameError(String message) {
+        EditText tbxBankName = findViewById(R.id.tbx_bank_name_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxBankName);
+        txtDepositBankNameError.setVisibility(View.VISIBLE);
+        txtDepositBankNameError.setText(message);
+    }
+
+    @Override
+    public void hideInvalidBankNameError() {
+        EditText tbxBankName = findViewById(R.id.tbx_bank_name_deposit_funds);
+        ErrorBorder.removeStroke(tbxBankName);
+        txtDepositBankNameError.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showMissingBranchCodeError(String message) {
+        EditText tbxBranchCode = findViewById(R.id.tbx_branch_code_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxBranchCode);
+        txtDepositBranchCodeError.setVisibility(View.VISIBLE);
+        txtDepositBranchCodeError.setText(message);
+    }
+
+    @Override
+    public void hideMissingBranchCodeError() {
+        EditText tbxBranchCode = findViewById(R.id.tbx_branch_code_deposit_funds);
+        ErrorBorder.removeStroke(tbxBranchCode);
+        txtDepositBranchCodeError.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showInvalidBranchCodeError(String message) {
+        EditText tbxBranchCode = findViewById(R.id.tbx_branch_code_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxBranchCode);
+        txtDepositBranchCodeError.setVisibility(View.VISIBLE);
+        txtDepositBranchCodeError.setText(message);
+    }
+
+    @Override
+    public void hideInvalidBranchCodeError() {
+        EditText tbxBranchCode = findViewById(R.id.tbx_branch_code_deposit_funds);
+        ErrorBorder.removeStroke(tbxBranchCode);
+        txtDepositBranchCodeError.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showMissingAccountNumberError(String message) {
+        EditText tbxAccountNumber = findViewById(R.id.tbx_card_number_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxAccountNumber);
+        txtDepositAccountNumberError.setVisibility(View.VISIBLE);
+        txtDepositAccountNumberError.setText(message);
+    }
+
+    @Override
+    public void hideMissingAccountNumberError() {
+        EditText tbxAccountNumber = findViewById(R.id.tbx_card_number_deposit_funds);
+        ErrorBorder.removeStroke(tbxAccountNumber);
+        txtDepositAccountNumberError.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showInvalidAccountNumberError(String message) {
+        EditText tbxAccountNumber = findViewById(R.id.tbx_card_number_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxAccountNumber);
+        txtDepositAccountNumberError.setVisibility(View.VISIBLE);
+        txtDepositAccountNumberError.setText(message);
+    }
+
+    @Override
+    public void hideInvalidAccountNumberError() {
+        EditText tbxAccountNumber = findViewById(R.id.tbx_card_number_deposit_funds);
+        ErrorBorder.removeStroke(tbxAccountNumber);
+        txtDepositAccountNumberError.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showMissingAccountHolderError(String message) {
+        EditText tbxAccountHolder = findViewById(R.id.tbx_name_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxAccountHolder);
+        txtDepositAccountHolderError.setVisibility(View.VISIBLE);
+        txtDepositAccountHolderError.setText(message);
+    }
+    @Override
+    public void hideMissingAccountHolderError() {
+        EditText tbxAccountHolder = findViewById(R.id.tbx_name_deposit_funds);
+        ErrorBorder.removeStroke(tbxAccountHolder);
+        txtDepositAccountHolderError.setVisibility(View.GONE);
+    }
+    @Override
+    public void showInvalidAccountHolderError(String message) {
+        EditText tbxAccountHolder = findViewById(R.id.tbx_name_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxAccountHolder);
+        txtDepositAccountHolderError.setVisibility(View.VISIBLE);
+        txtDepositAccountHolderError.setText(message);
+    }
+    @Override
+    public void hideInvalidAccountHolderError() {
+        EditText tbxAccountHolder = findViewById(R.id.tbx_name_deposit_funds);
+        ErrorBorder.removeStroke(tbxAccountHolder);
+        txtDepositAccountHolderError.setVisibility(View.GONE);
+    }
+
 
     @Override
     public void finishActivity() {
         finish();
     }
 
-    @Override
-    public void hideInvalidFieldError() {
-        txtDepositFundsError.setVisibility(View.GONE);
-    }
+
     private static class DateSlashTextWatcher implements TextWatcher {
         private final EditText editText;
         private boolean selfChange;
@@ -158,7 +283,6 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
             String raw = s.toString();
             int cursor = editText.getSelectionStart();
 
-            // Keep only digits, max MMYYYY (6 digits)
             String digits = raw.replaceAll("\\D", "");
             if (digits.length() > 6) digits = digits.substring(0, 6);
 
@@ -167,16 +291,14 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
             boolean insertingSlashNow = false;
 
             if (digits.length() < 2) {
-                // 0–1 digits: just show them
+
                 formatted = digits;
             } else if (digits.length() == 2) {
-                // Exactly MM -> auto-insert slash
+
                 formatted = digits + "/";
-                insertingSlashNow = !rawHadSlash; // we're adding it now
-            } else { // 3–6 digits
-                // MM/YYYY
+                insertingSlashNow = !rawHadSlash;
+            } else {
                 formatted = digits.substring(0, 2) + "/" + digits.substring(2);
-                // If raw had no slash yet, this is the moment we insert it
                 insertingSlashNow = !rawHadSlash;
             }
 
