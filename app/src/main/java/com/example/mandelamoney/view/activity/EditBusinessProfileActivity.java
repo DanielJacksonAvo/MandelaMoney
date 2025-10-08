@@ -35,8 +35,8 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
 //            return insets;
 //        });
-        controller = new EditProfileController(this, this);
         connectToUi();
+        controller = new EditProfileController(this, this);
         configureSaveButton();
         configureCancelButton();
 

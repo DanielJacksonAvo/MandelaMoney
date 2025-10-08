@@ -37,8 +37,8 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
 //            return insets;
 //        });
-        controller = new EditProfileController(this, this);
         connectToUi();
+        controller = new EditProfileController(this, this);
         configureSaveButton();
         configureCancelButton();
     }
