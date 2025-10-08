@@ -81,6 +81,7 @@ public class EditProfileController {
     }
 
     private void onFailure() {
+        view.showError("Error Saving");
         view.hideLoadingScreen();
     }
     public void handleCancelButton() {
