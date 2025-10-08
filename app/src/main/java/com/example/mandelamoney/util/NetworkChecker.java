@@ -1,30 +1,23 @@
 package com.example.mandelamoney.util;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 public class NetworkChecker {
-    private static final String urlString = "https://www.jacksonserver.ddns.net";
+    private static final String host = "www.jacksonserver.ddns.net";
+    private static final int port = 3306; // MySQL default port
 
     public static String checkConnection() {
         try {
-            URL url = new URL(urlString);
             long startTime = System.currentTimeMillis();
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("HEAD");
-            connection.setConnectTimeout(5000); // 5 seconds
-            connection.setReadTimeout(5000);
-            connection.connect();
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(host, port), 5000); // 5 seconds timeout
+            socket.close();
 
-            int responseCode = connection.getResponseCode();
             long endTime = System.currentTimeMillis();
             long duration = endTime - startTime;
-
-            if (responseCode >= 400) {
-                return "Bad"; // Server responded with error
-            }
 
             if (duration < 100) {
                 return "Good";
@@ -34,10 +27,8 @@ public class NetworkChecker {
                 return "Bad";
             }
 
-        } catch (
-                IOException e) {
-            return "Disconnected"; // Could not reach the server
+        } catch (IOException e) {
+            return "Disconnected"; // Could not reach the server or timed out
         }
     }
-
 }
