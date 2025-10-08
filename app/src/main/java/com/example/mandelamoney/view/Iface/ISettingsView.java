@@ -1,4 +1,6 @@
 package com.example.mandelamoney.view.Iface;
 
 public interface ISettingsView {
+    void displayUserName(String name);
+
 }
