@@ -92,7 +92,7 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
 
     @Override
     public void setFingerprintSwitchStatus(Boolean on) {
-        setFingerprintSwitchStatus(on);
+        swchFingerprint.setChecked(on);
     }
 
 
