@@ -5,7 +5,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class NetworkChecker {
-    private static final String host = "www.jacksonserver.ddns.net";
+    private static final String host = "jacksonserver.ddns.net";
     private static final int port = 3306; // MySQL default port
 
     public static String checkConnection() {
