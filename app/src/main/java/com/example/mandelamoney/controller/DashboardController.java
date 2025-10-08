@@ -13,6 +13,7 @@ import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.NetworkChecker;
 import com.example.mandelamoney.util.TransactionManager;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.util.DataShare;
@@ -20,12 +21,14 @@ import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.IProfileView;
+import com.example.mandelamoney.view.Iface.ISettingsView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
 import com.example.mandelamoney.view.activity.DepositFundsActivity;
 import com.example.mandelamoney.view.activity.LoginActivity;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
 import com.example.mandelamoney.view.activity.UnlockActivity;
+import com.example.mandelamoney.view.fragment.SettingsDashboardFragment;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -43,6 +46,8 @@ public class DashboardController {
     public DashboardHomeController DashboardHomeController;
     public TransactionHistoryController TransactionHistoryController;
     public DashboardProfileController DashboardProfileController;
+    public DashboardSettingsController DashboardSettingsController;
+
 
 
     public DashboardController(Context context, IDashboardView view) {
@@ -124,6 +129,10 @@ public class DashboardController {
 
     public void createDashboardProfileController(IProfileView view) {
         DashboardProfileController = new DashboardProfileController(view);
+    }
+
+    public void createDashboardSettingsController(ISettingsView view) {
+        DashboardSettingsController = new DashboardSettingsController(view);
     }
 
 
@@ -247,7 +256,31 @@ public class DashboardController {
 
     }
 
-    private class DashboardSettingsController {
+    public class DashboardSettingsController {
+        private final ISettingsView view;
+
+        public DashboardSettingsController(ISettingsView view) {
+            this.view = view;
+        }
+
+        public void loadUserToUI() {
+            if (UserSession.getUser() instanceof Student) {
+                view.displayUserName(((Student) UserSession.getUser()).getStudentFullName());
+            } else {
+                view.displayUserName(((Business) UserSession.getUser()).getBusinessName());
+            }
+        }
+
+        private void displayNetworkStatus() {
+            String status = NetworkChecker.checkConnection();
+            view.displayConnectionQuality(status);
+            if (status.equals("Disconnected")) {
+                view.displayConnectionStatus(status);
+            } else {
+                view.displayConnectionStatus("Connected");
+            }
+
+        }
     }
 
     public class DashboardProfileController {
