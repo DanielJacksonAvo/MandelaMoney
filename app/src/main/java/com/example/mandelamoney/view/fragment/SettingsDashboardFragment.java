@@ -14,6 +14,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.view.Iface.ISettingsView;
 
 public class SettingsDashboardFragment extends Fragment implements ISettingsView {
@@ -21,6 +22,7 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
     private TextView txtUserName, txtConnectionStatus, txtConnectionQuality, txtCameraPermission;
     private Switch swchFaceID, swchFingerprint;
     private View rootView;
+    private DashboardController controller;
 
 
     public SettingsDashboardFragment() {
@@ -37,10 +39,21 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rootView = view;
+        connectToUI();
+        controller.DashboardSettingsController.loadUserToUI();
+        controller.DashboardSettingsController.displayNetworkStatus();
+        controller.DashboardSettingsController.displayCameraPermission();
+    }
+
+    public void setController(DashboardController controller) {
+        this.controller = controller;
+        if (this.controller != null) {
+            this.controller.createDashboardSettingsController(this);
+        }
     }
 
     private void connectToUI() {
-        txtUserName = rootView.findViewById(R.id.txt_user_name_dashboard);
+        txtUserName = rootView.findViewById(R.id.txt_user_name_settings);
         txtConnectionStatus = rootView.findViewById(R.id.txt_connectionstatus_settings);
         txtConnectionQuality = rootView.findViewById(R.id.txt_connectionquality_settings);
         txtCameraPermission = rootView.findViewById(R.id.txt_camerapermission_settings);
