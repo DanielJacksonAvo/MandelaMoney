@@ -1,12 +1,16 @@
 package com.example.mandelamoney.controller;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Looper;
 import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
@@ -271,15 +275,34 @@ public class DashboardController {
             }
         }
 
-        private void displayNetworkStatus() {
-            String status = NetworkChecker.checkConnection();
-            view.displayConnectionQuality(status);
-            if (status.equals("Disconnected")) {
-                view.displayConnectionStatus(status);
-            } else {
-                view.displayConnectionStatus("Connected");
-            }
+        public void displayNetworkStatus() {
+            view.displayConnectionQuality("Checking...");
+            view.displayConnectionStatus("Checking...");
+            new Thread(() -> {
+                String status = NetworkChecker.checkConnection();
+                if (view instanceof SettingsDashboardFragment) {
+                    Activity activity = ((SettingsDashboardFragment) view).getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(() -> {
+                            view.displayConnectionQuality(status);
+                            if (status.equals("Disconnected")) {
+                                view.displayConnectionStatus(status);
+                            } else {
+                                view.displayConnectionStatus("Connected");
+                            }
+                        });
+                    }
+                }
+            }).start();
+        }
 
+
+        public void displayCameraPermission() {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                view.displayCameraPermission("Allowed");
+            } else {
+                view.displayCameraPermission("Denied");
+            }
         }
     }
 
