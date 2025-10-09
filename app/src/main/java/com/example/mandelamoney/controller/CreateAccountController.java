@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat; // For getting main executor
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.util.DataShare;
+import com.example.mandelamoney.util.Hasher;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.ICreateBusinessAccountView;
 import com.example.mandelamoney.view.Iface.ICreateStudentAccountView;
@@ -121,7 +122,7 @@ public class CreateAccountController {
                 errorMessage = context.getString(R.string.email_already_in_use);
             } else {
                 // Database call: Create student account
-                accountCreated = MySQLConnector.createStudentAccount(userEmail, userPassword, userFirstName, userLastName, userStudentNumber, context);
+                accountCreated = MySQLConnector.createStudentAccount(userEmail, Hasher.getHash(userPassword), userFirstName, userLastName, userStudentNumber, context);
                 if (!accountCreated) {
                     errorMessage = "Account Failed to Create!"; // More specific error if needed
                 }
@@ -209,7 +210,7 @@ public class CreateAccountController {
                 errorMessage = context.getString(R.string.email_already_in_use);
             } else {
                 // Database call: Create business account
-                accountCreated = MySQLConnector.createBusinessAccount(userEmail, userPassword, userBusinessName, userBusinessPhone, userBusinessVAT, context);
+                accountCreated = MySQLConnector.createBusinessAccount(userEmail, Hasher.getHash(userPassword), userBusinessName, userBusinessPhone, userBusinessVAT, context);
                 if (!accountCreated) {
                     errorMessage = "Account Failed to Create!"; // More specific error if needed
                 }
