@@ -6,6 +6,8 @@ public class User implements Serializable {
     private final String userEmail;
     private String userPassword;
     private float userBalance;
+    private boolean strongAuth;
+    private boolean weakAuth;
 
     public User(String userEmail) {
        this.userEmail = userEmail;
@@ -28,6 +30,22 @@ public class User implements Serializable {
     }
     public float getUserBalance() {
         return userBalance;
+    }
+
+    public boolean getStrongAuth() {
+        return strongAuth;
+    }
+
+    public void setStrongAuth(boolean strongAuth) {
+        this.strongAuth = strongAuth;
+    }
+
+    public boolean getWeakAuth() {
+        return weakAuth;
+    }
+
+    public void setWeakAuth(boolean weakAuth) {
+        this.weakAuth = weakAuth;
     }
 
 
