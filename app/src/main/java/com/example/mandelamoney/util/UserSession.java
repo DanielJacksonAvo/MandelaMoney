@@ -34,6 +34,8 @@ public class UserSession {
 
     public static void setUser(User user) {
         currentUser = user;
+        currentUser.setStrongAuth(true);
+        currentUser.setWeakAuth(true);
     }
 
     public static void deleteSession(Context context) {
@@ -140,4 +142,5 @@ public class UserSession {
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         );
     }
+
 }
