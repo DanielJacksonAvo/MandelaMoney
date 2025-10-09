@@ -319,6 +319,25 @@ public class DashboardController {
 
             }
         }
+
+        public void displayCurrentAuthenticationSettings() {
+            if (UserSession.getUser().getStrongAuth()) {
+                if (BiometricsManager.hasStrongAuthentication(context)) {
+                    view.setFingerprintSwitchStatus(true);
+                }
+            }
+            else {
+                view.setFingerprintSwitchStatus(false);
+            }
+
+            if (UserSession.getUser().getWeakAuth()) {
+                if (BiometricsManager.hasWeakAuthentication(context)) {
+                    view.setFaceIDSwitchStatus(true);
+                }
+            } else {
+                view.setFaceIDSwitchStatus(false);
+            }
+        }
     }
 
     public class DashboardProfileController {

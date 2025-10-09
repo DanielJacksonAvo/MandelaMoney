@@ -44,6 +44,7 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
         controller.DashboardSettingsController.displayNetworkStatus();
         controller.DashboardSettingsController.displayCameraPermission();
         controller.DashboardSettingsController.displayAvailableAuthenticationSettings();
+        controller.DashboardSettingsController.displayCurrentAuthenticationSettings();
     }
 
     public void setController(DashboardController controller) {
