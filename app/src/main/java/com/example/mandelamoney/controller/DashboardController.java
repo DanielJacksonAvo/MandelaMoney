@@ -17,6 +17,7 @@ import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.BiometricsManager;
 import com.example.mandelamoney.util.NetworkChecker;
 import com.example.mandelamoney.util.TransactionManager;
 import com.example.mandelamoney.util.UserSession;
@@ -302,6 +303,20 @@ public class DashboardController {
                 view.displayCameraPermission("Allowed");
             } else {
                 view.displayCameraPermission("Denied");
+            }
+        }
+
+        public void displayAvailableAuthenticationSettings() {
+            if (BiometricsManager.hasStrongAuthentication(context)) {
+                view.updateFingerprintSwitchFunctionality(true);
+            } else {
+                view.updateFingerprintSwitchFunctionality(false);
+            }
+            if (BiometricsManager.hasWeakAuthentication(context) || BiometricsManager.hasDeviceCredAuthentication(context)) {
+                view.updateFaceIDSwitchFunctionality(true);
+            } else {
+                view.updateFaceIDSwitchFunctionality(false);
+
             }
         }
     }
