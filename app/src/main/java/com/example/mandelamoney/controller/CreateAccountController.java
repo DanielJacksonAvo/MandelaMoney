@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat; // For getting main executor
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.util.DataShare;
+import com.example.mandelamoney.util.Hasher;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.ICreateBusinessAccountView;
 import com.example.mandelamoney.view.Iface.ICreateStudentAccountView;
