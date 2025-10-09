@@ -68,4 +68,24 @@ public class BiometricsManager {
 
         biometricPrompt.authenticate(promptInfo);
     }
+
+    public static boolean hasWeakAuthentication(@NonNull Context context) {
+        BiometricManager biometricManager = BiometricManager.from(context);
+        int result = biometricManager.canAuthenticate(
+                BiometricManager.Authenticators.BIOMETRIC_WEAK
+        );
+        return result == BiometricManager.BIOMETRIC_SUCCESS;
+    }
+
+    public static boolean hasStrongAuthentication(@NonNull Context context) {
+        BiometricManager biometricManager = BiometricManager.from(context);
+        int result = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG);
+        return result == BiometricManager.BIOMETRIC_SUCCESS;
+    }
+
+    public static boolean hasDeviceCredAuthentication(@NonNull Context context) {
+        BiometricManager biometricManager = BiometricManager.from(context);
+        int result = biometricManager.canAuthenticate(BiometricManager.Authenticators.DEVICE_CREDENTIAL);
+        return result == BiometricManager.BIOMETRIC_SUCCESS;
+    }
 }
