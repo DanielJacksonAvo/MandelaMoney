@@ -88,4 +88,5 @@ public class BiometricsManager {
         int result = biometricManager.canAuthenticate(BiometricManager.Authenticators.DEVICE_CREDENTIAL);
         return result == BiometricManager.BIOMETRIC_SUCCESS;
     }
+
 }
