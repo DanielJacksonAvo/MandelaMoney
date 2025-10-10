@@ -42,9 +42,11 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
         connectToUI();
         configureFaceIDSwitch();
         configureFingerprintSwitch();
-        controller.DashboardSettingsController.loadUserToUI();
-        controller.DashboardSettingsController.displayNetworkStatus();
-        controller.DashboardSettingsController.displayCameraPermission();
+        if (!this.getResources().getBoolean(R.bool.is_tablet_landscape)) {
+            controller.DashboardSettingsController.loadUserToUI();
+            controller.DashboardSettingsController.displayNetworkStatus();
+            controller.DashboardSettingsController.displayCameraPermission();
+        }
         controller.DashboardSettingsController.displayAvailableAuthenticationSettings();
     }
 
@@ -56,10 +58,12 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
     }
 
     private void connectToUI() {
-        txtUserName = rootView.findViewById(R.id.txt_user_name_settings);
-        txtConnectionStatus = rootView.findViewById(R.id.txt_connectionstatus_settings);
-        txtConnectionQuality = rootView.findViewById(R.id.txt_connectionquality_settings);
-        txtCameraPermission = rootView.findViewById(R.id.txt_camerapermission_settings);
+        if (!this.getResources().getBoolean(R.bool.is_tablet_landscape)) {
+            txtUserName = rootView.findViewById(R.id.txt_user_name_settings);
+            txtConnectionStatus = rootView.findViewById(R.id.txt_connectionstatus_settings);
+            txtConnectionQuality = rootView.findViewById(R.id.txt_connectionquality_settings);
+            txtCameraPermission = rootView.findViewById(R.id.txt_camerapermission_settings);
+        }
         swchFaceID = rootView.findViewById(R.id.swch_faceid_settings);
         swchFingerprint = rootView.findViewById(R.id.swch_fingerprint_settings);
 
