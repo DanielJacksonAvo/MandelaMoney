@@ -40,6 +40,8 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
         super.onViewCreated(view, savedInstanceState);
         rootView = view;
         connectToUI();
+        configureFaceIDSwitch();
+        configureFingerprintSwitch();
         controller.DashboardSettingsController.loadUserToUI();
         controller.DashboardSettingsController.displayNetworkStatus();
         controller.DashboardSettingsController.displayCameraPermission();
@@ -62,6 +64,18 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
         swchFaceID = rootView.findViewById(R.id.swch_faceid_settings);
         swchFingerprint = rootView.findViewById(R.id.swch_fingerprint_settings);
 
+    }
+
+    private void configureFaceIDSwitch() {
+        swchFaceID.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            controller.DashboardSettingsController.handleWeakAuthenticationChange(isChecked);
+        });
+    }
+
+    private void configureFingerprintSwitch() {
+        swchFingerprint.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            controller.DashboardSettingsController.handleStrongAuthenticationChange(isChecked);
+        });
     }
 
     @Override
