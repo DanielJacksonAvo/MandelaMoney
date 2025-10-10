@@ -59,29 +59,33 @@ public class BiometricsManager {
                     }
             );
 
-            BiometricPrompt.PromptInfo promptInfo = null;
+        BiometricPrompt.PromptInfo promptInfo = null;
+        if (UserSession.getUser().getWeakAuth() && hasWeakAuthentication(activity)) { // Use else if
+            promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                    .setTitle("Biometric Authentication")
+                    .setSubtitle("Use your fingerprint, face, or screen lock to authenticate")
+                    .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+                    .build();
+        } else {
             if (UserSession.getUser().getStrongAuth() && hasStrongAuthentication(activity)) {
                 promptInfo = new BiometricPrompt.PromptInfo.Builder()
                         .setTitle("Biometric Authentication")
                         .setSubtitle("Use your fingerprint to authenticate")
                         .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                        // Add this line to fix the crash
+                        .setNegativeButtonText("Cancel")
                         .build();
             }
+        }
 
-            if (UserSession.getUser().getWeakAuth() && hasWeakAuthentication(activity)) {
-                promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                        .setTitle("Biometric Authentication")
-                        .setSubtitle("Use your fingerprint, face, or screen lock to authenticate")
-                        .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
-                        .build();
-            }
 
-            if (promptInfo != null) {
-                biometricPrompt.authenticate(promptInfo);
-            } else {
-                onFailure.run();
-                return;
-            }
+
+        if (promptInfo != null) {
+            biometricPrompt.authenticate(promptInfo);
+        } else {
+            onFailure.run();
+        }
+
 
     }
 
