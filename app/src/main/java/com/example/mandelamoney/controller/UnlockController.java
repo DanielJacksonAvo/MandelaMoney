@@ -80,6 +80,14 @@ public class UnlockController {
         );
     }
 
+    public void configureBiometrics() {
+        if (BiometricsManager.hasWeakAuthentication(context) || BiometricsManager.hasStrongAuthentication(context)) {
+            view.enabledBiometrics();
+        } else {
+            view.disabledBiometrics();
+        }
+    }
+
 
     private void onSuccess() {
         view.hideLoadingSpinner();
@@ -92,6 +100,7 @@ public class UnlockController {
     private void onFailure() {
         view.hideLoadingSpinner();
     }
+
 
 
 }
