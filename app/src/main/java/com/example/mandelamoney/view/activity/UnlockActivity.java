@@ -26,6 +26,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
     private UnlockController unlockController;
     private TextView txtError;
     private ConstraintLayout loadingSpinner;
+    private Button btnBiometrics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
         EditText tbxUserPassword = findViewById(R.id.tbx_password_unlock);
         txtError = findViewById(R.id.txt_error_unlock_application);
         ImageView imgPasswordIcon = findViewById(R.id.img_password_unlock);
-        Button btnBiometrics = findViewById(R.id.btn_biometrics_unlock);
+        btnBiometrics = findViewById(R.id.btn_biometrics_unlock);
         TextView btnLogOut = findViewById(R.id.btn_logout_unlock);
         loadingSpinner = findViewById(R.id.unlock_loading_spinner);
 
@@ -174,5 +175,15 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
     @Override
     public void showLoadingSpinner() {
         loadingSpinner.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void enabledBiometrics() {
+        btnBiometrics.setEnabled(true);
+    }
+
+    @Override
+    public void disabledBiometrics() {
+        btnBiometrics.setEnabled(false);
     }
 }
