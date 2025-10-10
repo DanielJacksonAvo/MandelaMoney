@@ -307,20 +307,28 @@ public class DashboardController {
         }
 
         public void displayAvailableAuthenticationSettings() {
-            view.updateFingerprintSwitchFunctionality(BiometricsManager.hasStrongAuthentication(context));
-            view.updateFaceIDSwitchFunctionality(BiometricsManager.hasWeakAuthentication(context));
+            if (BiometricsManager.hasWeakAuthentication(context)) {
+                view.updateBiometricsSwitchFunctionality(true);
+                view.updateWeakBiometricsSwitchFunctionality(true);
+                view.setBiometricsSwitchStatus(UserSession.getUser().getStrongAuth());
+                view.setWeakBiometricsSwitchStatus(UserSession.getUser().getWeakAuth());
+
+            } else {
+                view.updateBiometricsSwitchFunctionality(false);
+                view.updateWeakBiometricsSwitchFunctionality(false);
+                view.setBiometricsSwitchStatus(false);
+                view.setWeakBiometricsSwitchStatus(false);
+            }
         }
 
-        public void displayCurrentAuthenticationSettings() {
-            view.setFingerprintSwitchStatus(UserSession.getUser().getStrongAuth() && BiometricsManager.hasStrongAuthentication(context));
-            view.setFaceIDSwitchStatus(UserSession.getUser().getWeakAuth() && BiometricsManager.hasWeakAuthentication(context));
-        }
+
+
 
         public void handleStrongAuthenticationChange(Boolean enabled) {
             UserSession.getUser().setStrongAuth(enabled);
             if (!enabled) {
                 handleWeakAuthenticationChange(false);
-                view.setFaceIDSwitchStatus(false);
+                view.setWeakBiometricsSwitchStatus(false);
             }
             UserSession.saveSession(context);
         }
@@ -329,7 +337,7 @@ public class DashboardController {
             UserSession.getUser().setWeakAuth(enabled);
             if (enabled) {
                 handleStrongAuthenticationChange(true);
-                view.setFingerprintSwitchStatus(true);
+                view.setBiometricsSwitchStatus(true);
             }
             UserSession.saveSession(context);
 

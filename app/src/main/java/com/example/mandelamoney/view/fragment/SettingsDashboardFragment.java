@@ -46,7 +46,6 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
         controller.DashboardSettingsController.displayNetworkStatus();
         controller.DashboardSettingsController.displayCameraPermission();
         controller.DashboardSettingsController.displayAvailableAuthenticationSettings();
-        controller.DashboardSettingsController.displayCurrentAuthenticationSettings();
     }
 
     public void setController(DashboardController controller) {
@@ -99,28 +98,29 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
     }
 
     @Override
-    public void updateFaceIDSwitchFunctionality(Boolean enabled) {
-        if (!enabled) {
-            setFaceIDSwitchStatus(false);
-        }
-        swchFaceID.setEnabled(enabled);
+    public void updateWeakBiometricsSwitchFunctionality(Boolean available) {
+        //enable or disable the switch
+        swchFaceID.setEnabled(available);
     }
 
     @Override
-    public void updateFingerprintSwitchFunctionality(Boolean enabled) {
-        if (!enabled) {
-            setFingerprintSwitchStatus(false);
+    public void updateBiometricsSwitchFunctionality(Boolean available) {
+        //enable or disable the switch
+        if (!available) {
+            updateWeakBiometricsSwitchFunctionality(false);
         }
-        swchFingerprint.setEnabled(enabled);
+        swchFingerprint.setEnabled(available);
     }
 
     @Override
-    public void setFaceIDSwitchStatus(Boolean on) {
+    public void setWeakBiometricsSwitchStatus(Boolean on) {
+        //turn the switch on or off
         swchFaceID.setChecked(on);
     }
 
     @Override
-    public void setFingerprintSwitchStatus(Boolean on) {
+    public void setBiometricsSwitchStatus(Boolean on) {
+        //turn the switch on or off
         swchFingerprint.setChecked(on);
     }
 

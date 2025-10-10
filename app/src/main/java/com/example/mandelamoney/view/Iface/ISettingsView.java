@@ -5,9 +5,9 @@ public interface ISettingsView {
     void displayConnectionStatus(String status);
     void displayConnectionQuality(String status);
     void displayCameraPermission(String status);
-    void updateFaceIDSwitchFunctionality(Boolean enabled);
-    void updateFingerprintSwitchFunctionality(Boolean enabled);
-    void setFaceIDSwitchStatus(Boolean on);
-    void setFingerprintSwitchStatus(Boolean on);
+    void updateWeakBiometricsSwitchFunctionality(Boolean enabled);
+    void updateBiometricsSwitchFunctionality(Boolean enabled);
+    void setWeakBiometricsSwitchStatus(Boolean on);
+    void setBiometricsSwitchStatus(Boolean on);
 
 }
