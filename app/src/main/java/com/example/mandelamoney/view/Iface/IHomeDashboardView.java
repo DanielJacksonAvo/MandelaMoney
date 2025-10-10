@@ -13,9 +13,10 @@ import java.util.List;
 public interface IHomeDashboardView {
     void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState);
 
-    void displayBalance(double balance);
+    void displayBalance(float balance);
 
     void displayUserName(String name);
 
     void displayTransactions(List<Transaction> transactionDetails);
+
 }

@@ -14,6 +14,7 @@ import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.fragment.HomeDashboardFragment;
 import com.example.mandelamoney.view.fragment.ProfileDashboardFragment;
+import com.example.mandelamoney.view.fragment.SecondProfileHomeDashboardFragment;
 import com.example.mandelamoney.view.fragment.SettingsDashboardFragment;
 import com.example.mandelamoney.view.fragment.TransactionHistoryFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -37,18 +38,17 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, v.getPaddingBottom());
-            return insets;
-        });
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, v.getPaddingBottom());
+//            return insets;
+//        });
 
         dashboardController = new DashboardController(this, this);
         if (checkTablet()) {
             connectToUITablet();
             displayHome();
             displayUserName();
-            displayTabletTransactionHistoryScreen();
         } else {
             connectToPhoneUI();
             displayHome();
@@ -110,6 +110,11 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         if (selectedFragment != null) {
             loadFragment(selectedFragment);
         }
+        if (checkTablet()) {
+            displayTabletTransactionHistoryScreen();
+
+        }
+
 
     }
 
@@ -125,10 +130,15 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
 
     @Override
     public void displayProfile() {
+        if (checkTablet()) {
+            selectedFragmentExtra = new SecondProfileHomeDashboardFragment();
+            loadFragmentExtra(selectedFragmentExtra);
+        }
         selectedFragment = new ProfileDashboardFragment();
         if (selectedFragment != null) {
             loadFragment(selectedFragment);
         }
+
 
     }
 

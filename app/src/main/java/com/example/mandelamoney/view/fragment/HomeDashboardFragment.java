@@ -42,7 +42,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     private EditText tbxRequestPayAmount;
     private TransactionAdapter adapter;
     private RecyclerView recyclerView;
-
+    private View rootView;
     private boolean isTabletLandscape = false;
 
     public HomeDashboardFragment() {
@@ -76,6 +76,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        rootView = view;
         if (checkTablet()) {
             connectToUITablet(view);
         } else {
@@ -135,7 +136,7 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     }
 
     @Override
-    public void displayBalance(double balance) {
+    public void displayBalance(float balance) {
         String display = "R " + String.format(Locale.getDefault(), "%.2f", balance);
         txtBalance.setText(display);
     }

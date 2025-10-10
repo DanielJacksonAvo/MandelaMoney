@@ -95,7 +95,7 @@ public class DashboardController {
 
     private void manageControllers() {
         if (DashboardHomeController != null) {
-            if (currentFragment == 0) {
+            if ((currentFragment == 0) || (currentFragment == 3)) {
                 DashboardHomeController.startPolling();
             } else {
                 DashboardHomeController.stopPolling();
@@ -169,8 +169,8 @@ public class DashboardController {
         public void handleBalanceRefresh() {
             if (UserSession.getUser() != null) {
                 Executors.newSingleThreadExecutor().execute(() -> {
-                    double previousBalance = UserSession.getUser().getUserBalance();
-                    double updatedBalance = UserSession.updateBalance(context);
+                    float previousBalance = UserSession.getUser().getUserBalance();
+                    float updatedBalance = UserSession.updateBalance(context);
                     if (updatedBalance != previousBalance) {
                         UserSession.getUser().setUserBalance(updatedBalance);
                         mainThreadHandler.post(() -> {
@@ -256,29 +256,51 @@ public class DashboardController {
         IProfileView view;
         public DashboardProfileController(IProfileView view) {
             this.view = view;
-            loadUserToUi();
         }
 
         public void loadUserToUi() {
-            if (UserSession.getUser() instanceof Student) {
-                view.setWelcomeName(((Student) UserSession.getUser()).getStudentFullName());
-                view.setFirstNameLabel(context.getString(R.string.first_name_));
-                view.setFirstName(((Student) UserSession.getUser()).getStudentFirstName());
-                view.setLastNameLabel(context.getString(R.string.last_name_));
-                view.setLastName(((Student) UserSession.getUser()).getStudentLastName());
-                view.setStudentNumberLabel(context.getString(R.string.student_number_));
-                view.setStudentNumber(((Student) UserSession.getUser()).getStudentNumber());
-            } else if (UserSession.getUser() instanceof Business) {
-                view.setWelcomeName((((Business) UserSession.getUser()).getBusinessName()));
-                view.setFirstNameLabel(context.getString(R.string.business_name_));
-                view.setFirstName((((Business) UserSession.getUser()).getBusinessName()));
-                view.setLastNameLabel(context.getString(R.string.vat_number_));
-                view.setLastName(((Business) UserSession.getUser()).getBusinessVAT());
-                view.setStudentNumberLabel(context.getString(R.string.phone_number_));
-                view.setStudentNumber(((Business) UserSession.getUser()).getBusinessPhoneNumber());
+            boolean isTabletLandscape = context.getResources().getBoolean(R.bool.is_tablet_landscape);
+            if (isTabletLandscape) {
+                if (UserSession.getUser() instanceof Student) {
+                    view.setFirstNameLabel(context.getString(R.string.first_name_));
+                    view.setFirstName(((Student) UserSession.getUser()).getStudentFirstName());
+                    view.setLastNameLabel(context.getString(R.string.last_name_));
+                    view.setLastName(((Student) UserSession.getUser()).getStudentLastName());
+                    view.setStudentNumberLabel(context.getString(R.string.student_number_));
+                    view.setStudentNumber(((Student) UserSession.getUser()).getStudentNumber());
+                } else if (UserSession.getUser() instanceof Business) {
+                    view.setFirstNameLabel(context.getString(R.string.business_name_));
+                    view.setFirstName((((Business) UserSession.getUser()).getBusinessName()));
+                    view.setLastNameLabel(context.getString(R.string.vat_number_));
+                    view.setLastName(((Business) UserSession.getUser()).getBusinessVAT());
+                    view.setStudentNumberLabel(context.getString(R.string.phone_number_));
+                    view.setStudentNumber(((Business) UserSession.getUser()).getBusinessPhoneNumber());
+                }
+                view.setEmail(UserSession.getUser().getUserEmail());
+                view.setBalance((float) UserSession.getUser().getUserBalance());
+
+            } else {
+                if (UserSession.getUser() instanceof Student) {
+                    view.setWelcomeName(((Student) UserSession.getUser()).getStudentFullName());
+                    view.setFirstNameLabel(context.getString(R.string.first_name_));
+                    view.setFirstName(((Student) UserSession.getUser()).getStudentFirstName());
+                    view.setLastNameLabel(context.getString(R.string.last_name_));
+                    view.setLastName(((Student) UserSession.getUser()).getStudentLastName());
+                    view.setStudentNumberLabel(context.getString(R.string.student_number_));
+                    view.setStudentNumber(((Student) UserSession.getUser()).getStudentNumber());
+                } else if (UserSession.getUser() instanceof Business) {
+                    view.setWelcomeName((((Business) UserSession.getUser()).getBusinessName()));
+                    view.setFirstNameLabel(context.getString(R.string.business_name_));
+                    view.setFirstName((((Business) UserSession.getUser()).getBusinessName()));
+                    view.setLastNameLabel(context.getString(R.string.vat_number_));
+                    view.setLastName(((Business) UserSession.getUser()).getBusinessVAT());
+                    view.setStudentNumberLabel(context.getString(R.string.phone_number_));
+                    view.setStudentNumber(((Business) UserSession.getUser()).getBusinessPhoneNumber());
+                }
+                view.setEmail(UserSession.getUser().getUserEmail());
+                view.setBalance((float) UserSession.getUser().getUserBalance());
             }
-            view.setEmail(UserSession.getUser().getUserEmail());
-            view.setBalance((float) UserSession.getUser().getUserBalance());
+
 
         }
 
