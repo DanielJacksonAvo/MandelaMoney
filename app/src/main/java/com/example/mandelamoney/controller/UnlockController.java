@@ -21,6 +21,7 @@ public class UnlockController {
     public UnlockController(Context context, IUnlockView view) {
         this.context = context;
         this.view = view;
+        UserSession.loadSession(context);
     }
 
     public void handleBiometrics() {
@@ -30,14 +31,12 @@ public class UnlockController {
                 () -> {
                     view.showLoadingSpinner();
                     Toast.makeText(context, "Authenticated successfully!", Toast.LENGTH_SHORT).show();
-                    UserSession.loadSession(context);
-                    User user = UserSession.getUser();
-                    if (user == null) {
+                    if (UserSession.getUser() == null) {
                         Toast.makeText(context, "Session Expired", Toast.LENGTH_LONG).show();
                         handleLogout();
                         return;
                     }
-                    LoginManager.login(context, user.getUserEmail(), user.getUserPassword(),
+                    LoginManager.login(context, UserSession.getUser().getUserEmail(), UserSession.getUser().getUserPassword(),
                             this::onSuccess,
                             this::onFailure
                     );
