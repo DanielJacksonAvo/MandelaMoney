@@ -3,12 +3,15 @@ package com.example.mandelamoney.view.activity;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,6 +19,8 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.UnlockController;
@@ -26,7 +31,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
     private UnlockController unlockController;
     private TextView txtError;
     private ConstraintLayout loadingSpinner;
-    private Button btnBiometrics;
+    private Button btnBiometrics, btnUnlock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +55,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
 
     }
     public void connectToUI() {
-        Button btnUnlock = findViewById(R.id.btn_unlock);
+        btnUnlock = findViewById(R.id.btn_unlock);
         EditText tbxUserPassword = findViewById(R.id.tbx_password_unlock);
         txtError = findViewById(R.id.txt_error_unlock_application);
         ImageView imgPasswordIcon = findViewById(R.id.img_password_unlock);
@@ -178,13 +183,19 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
         loadingSpinner.setVisibility(VISIBLE);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void enabledBiometrics() {
+        btnBiometrics.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.mandelaYellow)));
+        btnUnlock.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.white)));
         btnBiometrics.setEnabled(true);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void disabledBiometrics() {
+        btnBiometrics.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.grey20)));
+        btnUnlock.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.mandelaYellow)));
         btnBiometrics.setEnabled(false);
     }
 }
