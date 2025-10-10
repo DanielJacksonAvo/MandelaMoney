@@ -1,6 +1,7 @@
 package com.example.mandelamoney.util;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
 import androidx.biometric.BiometricManager;
@@ -60,14 +61,16 @@ public class BiometricsManager {
             );
 
         BiometricPrompt.PromptInfo promptInfo = null;
-        if (UserSession.getUser().getWeakAuth() && hasWeakAuthentication(activity)) { // Use else if
+        boolean hasWeak = hasWeakAuthentication(activity);
+
+        if (hasWeak && UserSession.getUser().getWeakAuth()) { // Use else if
             promptInfo = new BiometricPrompt.PromptInfo.Builder()
                     .setTitle("Biometric Authentication")
                     .setSubtitle("Use your fingerprint, face, or screen lock to authenticate")
                     .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_WEAK | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
                     .build();
         } else {
-            if (UserSession.getUser().getStrongAuth() && hasStrongAuthentication(activity)) {
+            if (hasWeak && UserSession.getUser().getStrongAuth()) {
                 promptInfo = new BiometricPrompt.PromptInfo.Builder()
                         .setTitle("Biometric Authentication")
                         .setSubtitle("Use your fingerprint to authenticate")
@@ -91,9 +94,7 @@ public class BiometricsManager {
 
     public static boolean hasWeakAuthentication(@NonNull Context context) {
         BiometricManager biometricManager = BiometricManager.from(context);
-        int result = biometricManager.canAuthenticate(
-                BiometricManager.Authenticators.BIOMETRIC_WEAK
-        );
+        int result = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK);
         return result == BiometricManager.BIOMETRIC_SUCCESS;
     }
 
@@ -103,10 +104,7 @@ public class BiometricsManager {
         return result == BiometricManager.BIOMETRIC_SUCCESS;
     }
 
-    public static boolean hasDeviceCredAuthentication(@NonNull Context context) {
-        BiometricManager biometricManager = BiometricManager.from(context);
-        int result = biometricManager.canAuthenticate(BiometricManager.Authenticators.DEVICE_CREDENTIAL);
-        return result == BiometricManager.BIOMETRIC_SUCCESS;
-    }
+
+
 
 }
