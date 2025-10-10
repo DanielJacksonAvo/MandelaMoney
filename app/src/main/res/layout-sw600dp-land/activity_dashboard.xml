@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.1" />
+        app:layout_constraintGuide_percent="0.14" />
 
     <ImageView
         android:id="@+id/imageView7"
@@ -84,18 +84,16 @@
     <ImageView
         android:id="@+id/imageView9"
         android:layout_width="599dp"
-        android:layout_height="98dp"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:scaleType="fitEnd"
-        app:layout_constraintBottom_toBottomOf="@+id/dashboardNavView"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/txt_user_name_dashboard"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toTopOf="@+id/txt_user_name_dashboard"
         app:srcCompat="@drawable/img_mandelamoneylogo" />
 
     <FrameLayout
@@ -108,7 +106,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline12"
-        app:layout_constraintTop_toBottomOf="@+id/dashboardNavView">
+        app:layout_constraintTop_toTopOf="@+id/guideline5">
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

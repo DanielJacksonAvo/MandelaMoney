@@ -17,6 +17,7 @@ import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.view.Iface.IConfirmDepositView;
 import com.example.mandelamoney.view.activity.ConfirmDepositActivity;
+import com.example.mandelamoney.view.activity.DepositFundsActivity;
 import com.example.mandelamoney.view.activity.ShowSuccessActivity;
 import com.example.mandelamoney.view.activity.ShowFailedActivity;
 import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
@@ -50,15 +51,7 @@ public class DepositFundsController {
         this.viewDepositFunds = viewDepositFunds;
     }
 
-    public void handleDepositFunds(Float amount, String bankName, String branchCode, String cardNumber, String name, String expiryDate, String cvv) {
-        Log.d(TAG, "handleDepositFunds() called with: " +
-                "amount=" + amount +
-                ", bankName=" + safe(bankName) +
-                ", branchCode=" + safeBranch(branchCode) +
-                ", cardNumber=" + maskCard(cardNumber) +
-                ", name=" + safeName(name) +
-                ", expiryDate=" + safe(expiryDate) +
-                ", cvv=" + maskCvv(cvv));
+    public void handleDepositFunds(Float amount, String bankName, String branchCode, String cardNumber, String name) {
 
         if (viewDepositFunds != null) {
             viewDepositFunds.hideMissingFieldError();
@@ -118,28 +111,6 @@ public class DepositFundsController {
         if (!isValidName(name)) {
             Log.w(TAG, "Validation failed: name invalid: " + safeName(name));
             if (viewDepositFunds != null) viewDepositFunds.showInvalidFieldError(context.getString(R.string.invalid_name));
-            return;
-        }
-
-        if (checkEmpty(expiryDate)) {
-            Log.w(TAG, "Validation failed: expiryDate empty");
-            if (viewDepositFunds != null) viewDepositFunds.showMissingFieldError(context.getString(R.string.enter_expiry_date));
-            return;
-        }
-        if (!isValidExpiryDate(expiryDate)) {
-            Log.w(TAG, "Validation failed: expiryDate invalid: " + safe(expiryDate));
-            if (viewDepositFunds != null) viewDepositFunds.showInvalidFieldError(context.getString(R.string.invalid_expiry_date));
-            return;
-        }
-
-        if (checkEmpty(cvv)) {
-            Log.w(TAG, "Validation failed: cvv empty");
-            if (viewDepositFunds != null) viewDepositFunds.showMissingFieldError(context.getString(R.string.enter_cvv));
-            return;
-        }
-        if (!isValidCvv(cvv)) {
-            Log.w(TAG, "Validation failed: cvv invalid length");
-            if (viewDepositFunds != null) viewDepositFunds.showInvalidFieldError(context.getString(R.string.invalid_cvv));
             return;
         }
 
@@ -283,7 +254,7 @@ public class DepositFundsController {
 
                 // 2) App: refresh session balance so UI shows the new total
                 Executors.newSingleThreadExecutor().execute(() -> {
-                    double updated = UserSession.updateBalance(context);
+                    float updated = UserSession.updateBalance(context);
                     User u = UserSession.getUser();
                     if (u != null) u.setUserBalance(updated);
                     Log.d(TAG, "Session balance refreshed to: " + updated);
@@ -339,9 +310,18 @@ public class DepositFundsController {
                 Log.w(TAG, "BG: updateTransactionStatus failed silently in cancel");
             }
             ContextCompat.getMainExecutor(context).execute(() -> {
-                DataShare.send(this);
+                Intent intent = new Intent(context, DepositFundsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                maybeAddNewTaskFlag(intent);
+                try {
+                    context.startActivity(intent);
+                    Log.i(TAG, "UI: startActivity(DepositFundsActivity) called");
+                } catch (Exception startEx) {
+                    Log.e(TAG, "UI: Failed to start DepositFundsActivity", startEx);
+                    Toast.makeText(context, "Could not return to deposit screen.", Toast.LENGTH_SHORT).show();
+                }
                 Log.d(TAG, "UI: finishing confirm screen on cancel");
-                if (viewDepositFunds != null) viewDepositFunds.finishActivity();
+                if (confirmDepositView != null) confirmDepositView.finishActivity();
             });
         });
     }
@@ -352,11 +332,6 @@ public class DepositFundsController {
         if (d.length() <= 4) return "**** " + d;
         String last4 = d.substring(d.length() - 4);
         return "**** **** **** " + last4;
-    }
-
-    private static String maskCvv(String cvv) {
-        if (cvv == null || cvv.isEmpty()) return "(empty)";
-        return "***";
     }
 
     private static String safe(String s) { return s == null ? "(null)" : s.trim(); }
@@ -381,36 +356,6 @@ public class DepositFundsController {
         }
     }
 
-    // ----------------- validators -----------------
-
-    private boolean isValidCvv(String cvv) {
-        boolean ok = cvv != null && cvv.trim().matches("^\\d{3,4}$");
-        Log.d(TAG, "validate cvv -> " + ok);
-        return ok;
-    }
-
-    private boolean isValidExpiryDate(String value) {
-        if (value == null) { Log.d(TAG, "validate expiry -> false (null)"); return false; }
-        if (!value.matches("^(0[1-9]|1[0-2])/(\\d{4})$")) { Log.d(TAG, "validate expiry -> false (format)"); return false; }
-        String[] parts = value.split("/");
-        int month = Integer.parseInt(parts[0]);
-        int year  = Integer.parseInt(parts[1]);
-        try {
-            java.time.YearMonth entered = java.time.YearMonth.of(year, month);
-            java.time.YearMonth now = java.time.YearMonth.now(java.time.ZoneId.systemDefault());
-            boolean ok = !entered.isBefore(now);
-            Log.d(TAG, "validate expiry -> " + ok + " (entered=" + entered + ", now=" + now + ")");
-            return ok;
-        } catch (Throwable t) {
-            java.util.Calendar cal = java.util.Calendar.getInstance();
-            int curYear = cal.get(java.util.Calendar.YEAR);
-            int curMonth = cal.get(java.util.Calendar.MONTH) + 1;
-            boolean ok = !(year < curYear || (year == curYear && month < curMonth));
-            Log.d(TAG, "validate expiry (fallback) -> " + ok + " (y=" + year + ", m=" + month + ")");
-            return ok;
-        }
-    }
-
     private boolean isValidName(String name) {
         boolean ok = name != null && name.trim().length() >= 2 &&
                 name.trim().matches("^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$");
@@ -420,10 +365,11 @@ public class DepositFundsController {
 
     private boolean isValidCardNumber(String cardNumber) {
         boolean ok = cardNumber != null &&
-                cardNumber.replaceAll("\\s+", "").replaceAll("-", "").matches("\\d{16}");
+                cardNumber.replaceAll("\\s+", "").replaceAll("-", "").matches("\\d{6,}");
         Log.d(TAG, "validate card -> " + ok);
         return ok;
     }
+
 
     private boolean isValidBranchCode(String branchCode) {
         boolean ok = branchCode != null && branchCode.matches("^\\d{6}$");

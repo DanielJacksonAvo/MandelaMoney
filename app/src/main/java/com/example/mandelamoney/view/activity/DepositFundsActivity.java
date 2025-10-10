@@ -17,7 +17,6 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DepositFundsController;
-import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IDepositFundsView;
@@ -54,11 +53,11 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
                 new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
 
         setController();   // see next step
         connectToUI();
@@ -74,16 +73,11 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
         EditText tbxBankName = findViewById(R.id.tbx_bank_name_deposit_funds);
         EditText tbxBranchCode = findViewById(R.id.tbx_branch_code_deposit_funds);
         EditText tbxCardNumber = findViewById(R.id.tbx_card_number_deposit_funds);
-        EditText tbxExpiryDate = findViewById(R.id.tbx_expiry_date_deposit_funds);
-        EditText tbxCVV = findViewById(R.id.tbx_cvv_deposit_funds);
         EditText tbxName = findViewById(R.id.tbx_name_deposit_funds);
         Button btnDepositFunds = findViewById(R.id.btn_deposit_funds);
         txtDepositFundsError = findViewById(R.id.txt_error_deposit_funds);
-        tbxExpiryDate.setKeyListener(DigitsKeyListener.getInstance("0123456789/"));
-        tbxExpiryDate.setFilters(new InputFilter[]{ new InputFilter.LengthFilter(7) });
-        tbxExpiryDate.addTextChangedListener(new DateSlashTextWatcher(tbxExpiryDate));
         configureCancelButton(btnCancel);
-        configureDepositFundsButton(btnDepositFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxCardNumber, tbxExpiryDate, tbxCVV, tbxName);
+        configureDepositFundsButton(btnDepositFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxCardNumber, tbxName);
     }
 
     private void configureDepositFundsButton(
@@ -92,8 +86,6 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
             EditText tbxBankName,
             EditText tbxBranchCode,
             EditText tbxCardNumber,
-            EditText tbxExpiryDate,
-            EditText tbxCVV,
             EditText tbxName
     ) {
         btnDepositFunds.setOnClickListener(v -> {
@@ -108,9 +100,7 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
                     tbxBankName.getText().toString(),
                     tbxBranchCode.getText().toString(),
                     tbxCardNumber.getText().toString(),
-                    tbxName.getText().toString(),
-                    tbxExpiryDate.getText().toString(),
-                    tbxCVV.getText().toString()
+                    tbxName.getText().toString()
             );
         });
     }
@@ -166,30 +156,43 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
             if (selfChange) return;
 
             String raw = s.toString();
-
-            String digits = raw.replaceAll("[^\\d]", "");
-            if (digits.length() > 6) digits = digits.substring(0, 6); // dd + yyyy
-
-            StringBuilder out = new StringBuilder();
             int cursor = editText.getSelectionStart();
 
-            if (digits.length() <= 2) {
-                out.append(digits);
-            } else {
-                out.append(digits.substring(0, 2)).append('/');
-                out.append(digits.substring(2));
+            // Keep only digits, max MMYYYY (6 digits)
+            String digits = raw.replaceAll("\\D", "");
+            if (digits.length() > 6) digits = digits.substring(0, 6);
+
+            String formatted;
+            boolean rawHadSlash = raw.contains("/");
+            boolean insertingSlashNow = false;
+
+            if (digits.length() < 2) {
+                // 0–1 digits: just show them
+                formatted = digits;
+            } else if (digits.length() == 2) {
+                // Exactly MM -> auto-insert slash
+                formatted = digits + "/";
+                insertingSlashNow = !rawHadSlash; // we're adding it now
+            } else { // 3–6 digits
+                // MM/YYYY
+                formatted = digits.substring(0, 2) + "/" + digits.substring(2);
+                // If raw had no slash yet, this is the moment we insert it
+                insertingSlashNow = !rawHadSlash;
             }
 
-            String formatted = out.toString();
             if (!formatted.equals(raw)) {
                 selfChange = true;
                 editText.setText(formatted);
-                int newPos = cursor;
-                if (digits.length() == 2 && !raw.contains("/")) {
+
+                int newPos;
+                if (digits.length() == 2 && !rawHadSlash) {
                     newPos = 3;
+                } else if (insertingSlashNow && cursor >= 2) {
+                    newPos = Math.min(formatted.length(), cursor + 1);
                 } else {
-                    newPos = Math.min(formatted.length(), Math.max(0, newPos));
+                    newPos = Math.min(formatted.length(), Math.max(0, cursor));
                 }
+
                 editText.setSelection(newPos);
                 selfChange = false;
             }

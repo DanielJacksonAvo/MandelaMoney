@@ -114,7 +114,7 @@
     <string name="expiry_date">EXPIRY DATE</string>
     <string name="cvv">CVV</string>
     <string name="deposit_funds">DEPOSIT FUNDS</string>
-    <string name="bank_name">BANK</string>
+    <string name="bank_name">BANK NAME</string>
     <string name="branch_code">BRANCH CODE</string>
     <string name="enter_amount">Enter an amount.</string>
     <string name="invalid_amount">Please enter a valid amount.</string>
@@ -138,6 +138,7 @@
     <string name="bank_account_meta_mismatch">Bank account exists with different details. Using saved account info.\n</string>
     <string name="confirm_deposit">Confirm Deposit</string>
     <string name="bank_account">Bank Account</string>
+    <string name="account_number">ACCOUNT NUMBER</string>
     <string name="cardholder_name_fallback">Account Holder</string>
     <string name="save">Save</string>
 </resources>

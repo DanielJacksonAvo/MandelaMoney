@@ -31,7 +31,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.050000012"
         app:srcCompat="@drawable/img_mandelamoney_text" />
 
 
@@ -327,6 +326,8 @@
                     android:layout_height="45dp"
                     android:autofillHints="@string/email"
                     android:hint="@string/email"
+                    android:maxLines="1"
+                    android:paddingHorizontal="40dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
