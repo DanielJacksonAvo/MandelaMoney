@@ -35,6 +35,16 @@ public class LoginManager {
                 return;
             }
             User user = (User) result[0];
+            if (UserSession.getUser() != null) {
+                try {
+                    user.setWeakAuth(UserSession.getUser().getWeakAuth());
+                    user.setStrongAuth(UserSession.getUser().getStrongAuth());
+                } catch (Exception ignored) {
+                }
+            } else {
+                user.setWeakAuth(true);
+                user.setStrongAuth(true);
+            }
             UserSession.setUser(user);
             UserSession.updateTransactions(context);
             UserSession.saveSession(context);

@@ -307,48 +307,30 @@ public class DashboardController {
         }
 
         public void displayAvailableAuthenticationSettings() {
-            if (BiometricsManager.hasStrongAuthentication(context)) {
-                view.updateFingerprintSwitchFunctionality(true);
-            } else {
-                view.updateFingerprintSwitchFunctionality(false);
-            }
-            if (BiometricsManager.hasWeakAuthentication(context) || BiometricsManager.hasDeviceCredAuthentication(context)) {
-                view.updateFaceIDSwitchFunctionality(true);
-            } else {
-                view.updateFaceIDSwitchFunctionality(false);
-
-            }
+            view.updateFingerprintSwitchFunctionality(BiometricsManager.hasStrongAuthentication(context));
+            view.updateFaceIDSwitchFunctionality(BiometricsManager.hasWeakAuthentication(context));
         }
 
         public void displayCurrentAuthenticationSettings() {
-            if (UserSession.getUser().getStrongAuth()) {
-                if (BiometricsManager.hasStrongAuthentication(context)) {
-                    view.setFingerprintSwitchStatus(true);
-                }
-            }
-            else {
-                view.setFingerprintSwitchStatus(false);
-            }
-
-            if (UserSession.getUser().getWeakAuth()) {
-                if (BiometricsManager.hasWeakAuthentication(context)) {
-                    view.setFaceIDSwitchStatus(true);
-                }
-            } else {
-                view.setFaceIDSwitchStatus(false);
-            }
+            view.setFingerprintSwitchStatus(UserSession.getUser().getStrongAuth() && BiometricsManager.hasStrongAuthentication(context));
+            view.setFaceIDSwitchStatus(UserSession.getUser().getWeakAuth() && BiometricsManager.hasWeakAuthentication(context));
         }
 
         public void handleStrongAuthenticationChange(Boolean enabled) {
-            view.setFingerprintSwitchStatus(enabled);
             UserSession.getUser().setStrongAuth(enabled);
+            if (!enabled) {
+                handleWeakAuthenticationChange(false);
+                view.setFaceIDSwitchStatus(false);
+            }
             UserSession.saveSession(context);
-
         }
 
         public void handleWeakAuthenticationChange(Boolean enabled) {
-            view.setFaceIDSwitchStatus(enabled);
             UserSession.getUser().setWeakAuth(enabled);
+            if (enabled) {
+                handleStrongAuthenticationChange(true);
+                view.setFingerprintSwitchStatus(true);
+            }
             UserSession.saveSession(context);
 
         }
@@ -417,7 +399,7 @@ public class DashboardController {
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 return;
             }
-            com.example.mandelamoney.util.DataShare.send(u);   // <-- send user
+            com.example.mandelamoney.util.DataShare.send(u);
             Intent intent = new Intent(context, com.example.mandelamoney.view.activity.DepositFundsActivity.class);
             context.startActivity(intent);
         }
