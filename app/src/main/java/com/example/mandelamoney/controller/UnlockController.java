@@ -80,10 +80,11 @@ public class UnlockController {
     }
 
     public void configureBiometricsStatus() {
+        view.disabledBiometrics();
         if (BiometricsManager.hasWeakAuthentication(context) || BiometricsManager.hasStrongAuthentication(context)) {
-            view.enabledBiometrics();
-        } else {
-            view.disabledBiometrics();
+            if (UserSession.getUser().getStrongAuth() || UserSession.getUser().getWeakAuth()) {
+                view.enabledBiometrics();
+            }
         }
     }
 
