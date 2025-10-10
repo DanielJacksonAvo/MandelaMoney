@@ -71,7 +71,6 @@ public class UnlockController {
                     } else {
                         onSuccess();
                     }
-
                 },
                 () -> {
                     onFailure();
@@ -80,7 +79,7 @@ public class UnlockController {
         );
     }
 
-    public void configureBiometrics() {
+    public void configureBiometricsStatus() {
         if (BiometricsManager.hasWeakAuthentication(context) || BiometricsManager.hasStrongAuthentication(context)) {
             view.enabledBiometrics();
         } else {

@@ -73,13 +73,14 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
     }
 
     private void configureBiometricsButton(Button btnBiometrics) {
-        if(btnBiometrics != null){
+        if (btnBiometrics != null) {
+            unlockController.configureBiometricsStatus();
             btnBiometrics.setOnClickListener((view)-> unlockController.handleBiometrics());
         }
     }
 
     private void configureLogoutButton(TextView btnLogOut) {
-        if(btnLogOut != null){
+        if (btnLogOut != null){
            btnLogOut.setOnClickListener((view)-> unlockController.handleLogout());
         }
     }
