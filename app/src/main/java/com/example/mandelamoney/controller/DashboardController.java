@@ -338,6 +338,20 @@ public class DashboardController {
                 view.setFaceIDSwitchStatus(false);
             }
         }
+
+        public void handleStrongAuthenticationChange(Boolean enabled) {
+            view.setFingerprintSwitchStatus(enabled);
+            UserSession.getUser().setStrongAuth(enabled);
+            UserSession.saveSession(context);
+
+        }
+
+        public void handleWeakAuthenticationChange(Boolean enabled) {
+            view.setFaceIDSwitchStatus(enabled);
+            UserSession.getUser().setWeakAuth(enabled);
+            UserSession.saveSession(context);
+
+        }
     }
 
     public class DashboardProfileController {
