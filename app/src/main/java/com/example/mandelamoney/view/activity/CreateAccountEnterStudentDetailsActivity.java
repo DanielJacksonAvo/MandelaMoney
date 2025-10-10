@@ -57,12 +57,12 @@ public class CreateAccountEnterStudentDetailsActivity extends AppCompatActivity 
     }
 
     private void connectToUI() {
-        TextView btnCancel = findViewById(R.id.btn_cancel_editstudentprofile);
-        EditText tbxEmail = findViewById(R.id.tbx_email_editstudentprofile);
+        TextView btnCancel = findViewById(R.id.btn_cancel_editbusinessprofile);
+        EditText tbxEmail = findViewById(R.id.tbx_email_editbusinessprofile);
         EditText tbxFirstName = findViewById(R.id.tbx_firstname_editstudentprofile);
         EditText tbxLastName = findViewById(R.id.tbx_lastname_editstudentprofile);
         EditText tbxStudentNumber = findViewById(R.id.tbx_studentnumber_editstudentprofile);
-        Button btnCreateAccount = findViewById(R.id.btn_save_editstudentprofile);
+        Button btnCreateAccount = findViewById(R.id.btn_save_editbusinessprofile);
         EditText tbxPassword = findViewById(R.id.tbx_password_createstudentaccount);
         EditText tbxPasswordReenter = findViewById(R.id.tbx_password_reenter_createstudentaccount);
         ImageView imgPasswordIcon = findViewById(R.id.img_password_icon_createstudentaccount);
