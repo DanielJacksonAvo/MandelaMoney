@@ -27,7 +27,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/btn_cancel_editstudentprofile"
+                android:id="@+id/btn_cancel_editbusinessprofile"
                 style="@style/HyperLinkButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/blurView_login2" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_save_editstudentprofile"
+                android:id="@+id/btn_save_editbusinessprofile"
                 style="@style/PrimaryButton"
                 android:layout_width="wrap_content"
                 android:layout_height="43dp"
@@ -319,7 +319,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <EditText
-                            android:id="@+id/tbx_email_editstudentprofile"
+                            android:id="@+id/tbx_email_editbusinessprofile"
                             style="@style/TextBox"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"

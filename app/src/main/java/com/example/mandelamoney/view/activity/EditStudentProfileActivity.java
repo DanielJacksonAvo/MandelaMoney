@@ -8,9 +8,6 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.EditProfileController;
@@ -44,13 +41,13 @@ public class EditStudentProfileActivity extends AppCompatActivity implements IEd
     }
 
     private void connectToUi() {
-        tbxEmail = findViewById(R.id.tbx_email_editstudentprofile);
+        tbxEmail = findViewById(R.id.tbx_email_editbusinessprofile);
         tbxFirstName = findViewById(R.id.tbx_firstname_editstudentprofile);
         tbxLastName = findViewById(R.id.tbx_lastname_editstudentprofile);
         tbxStudentNumber = findViewById(R.id.tbx_studentnumber_editstudentprofile);
         txtError = findViewById(R.id.txt_error_details_editstudentprofile);
-        btnCancel = findViewById(R.id.btn_cancel_editstudentprofile);
-        btnSave = findViewById(R.id.btn_save_editstudentprofile);
+        btnCancel = findViewById(R.id.btn_cancel_editbusinessprofile);
+        btnSave = findViewById(R.id.btn_save_editbusinessprofile);
         loadingSpinner = findViewById(R.id.editstudentprofile_loading_spinner);
     }
 
