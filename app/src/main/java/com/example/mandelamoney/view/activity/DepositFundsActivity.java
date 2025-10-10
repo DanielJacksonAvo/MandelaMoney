@@ -30,21 +30,22 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
     TextView txtDepositFundsError;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /// security vulnerability - serious - get rid of it
         // Try restore user via DataShare (if provided)
-        Object payload = DataShare.receive();
-        if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
-            UserSession.setUser((com.example.mandelamoney.model.User) payload);
-            Log.d("DepositFundsActivity", "Restored user from DataShare.");
-        }
+//        Object payload = DataShare.receive();
+//        if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
+//            UserSession.setUser((com.example.mandelamoney.model.User) payload);
+//            Log.d("DepositFundsActivity", "Restored user from DataShare.");
+//        }
 
         // Session gate
-        if (UserSession.getUser() == null) {
-            Log.w("DepositFundsActivity", "No session; routing to LoginActivity");
-            startActivity(new Intent(this, com.example.mandelamoney.view.activity.LoginActivity.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-            finish();
-            return;
-        }
+//        if (UserSession.getUser() == null) {
+//            Log.w("DepositFundsActivity", "No session; routing to LoginActivity");
+//            startActivity(new Intent(this, com.example.mandelamoney.view.activity.LoginActivity.class)
+//                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+//            finish();
+//            return;
+//        }
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_deposit_funds);
