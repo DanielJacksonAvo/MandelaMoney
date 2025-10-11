@@ -12,8 +12,10 @@
         style="@style/BlurPanel"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -101,17 +103,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="2dp"
                 android:fontFamily="@font/dm_sans_light"
                 android:text="Version:"
                 android:textColor="@color/white"
-                android:textSize="12dp"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line5"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/top_center_line2"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line2" />
 
             <View
                 android:id="@+id/top_center_line7"
@@ -131,83 +131,73 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="2dp"
                 android:fontFamily="@font/dm_sans_light"
                 android:text="Update:"
                 android:textColor="@color/white"
-                android:textSize="12dp"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/top_center_line7"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/top_center_line5"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line5" />
 
             <TextView
                 android:id="@+id/txt_emaillabel_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
                 android:fontFamily="@font/dm_sans_light"
                 android:text="Cloud Status:"
                 android:textColor="@color/white"
-                android:textSize="12dp"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/top_center_line7"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line7" />
 
             <TextView
                 android:id="@+id/txt_balancelabel_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="2dp"
                 android:fontFamily="@font/dm_sans_light"
                 android:text="Camera Permission:"
                 android:textColor="@color/white"
-                android:textSize="12dp"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/top_center_line8"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line8" />
 
             <TextView
                 android:id="@+id/txt_studentnumberlabel_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
                 android:fontFamily="@font/dm_sans_light"
                 android:text="Network Connection:"
                 android:textColor="@color/white"
-                android:textSize="12dp"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toTopOf="@+id/top_center_line8"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/top_center_line6"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line6" />
 
             <View
                 android:id="@+id/top_center_line2"
                 android:layout_width="0dp"
                 android:layout_height="2dp"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="64dp"
                 android:layout_marginEnd="4dp"
                 android:background="@color/white10"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                app:layout_constraintTop_toBottomOf="@+id/imageView26"
                 app:layout_constraintVertical_bias="0.0" />
 
             <View
@@ -259,20 +249,16 @@
                 android:background="@color/white10"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:fontFamily="@font/dm_sans_medium"
-                android:text="App Status"
-                android:textColor="@color/white"
-                android:textSize="20sp"
+            <ImageView
+                android:id="@+id/imageView26"
+                android:layout_width="290dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="64dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/img_appstatus_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
