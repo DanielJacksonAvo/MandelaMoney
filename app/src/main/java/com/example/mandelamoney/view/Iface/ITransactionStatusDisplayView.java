@@ -10,7 +10,7 @@ public interface ITransactionStatusDisplayView {
     void setFromUserLabelAsBank();
     void setToUserLabelAsBank();
 
-  //  void setToUserLabelAsMandelaMoney();
+    void setToUserLabelAsMandelaMoney();
 
     void setFromUserLabelAsMandelaMoney();
 }
