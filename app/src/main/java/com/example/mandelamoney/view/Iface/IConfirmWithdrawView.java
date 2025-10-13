@@ -6,5 +6,8 @@ public interface IConfirmWithdrawView {
     void displayToUserNumber(String number);
     void displayFromUserNumber(String number);
     void displayAmount(double amount);
+    void showLoadingSpinner();
+
+    void hideLoadingSpinner();
     void finishActivity();
 }

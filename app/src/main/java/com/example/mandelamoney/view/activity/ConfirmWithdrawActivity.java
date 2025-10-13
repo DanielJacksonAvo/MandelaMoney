@@ -2,11 +2,13 @@ package com.example.mandelamoney.view.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
@@ -16,6 +18,8 @@ import com.example.mandelamoney.controller.WithdrawFundsController;
 
 public class ConfirmWithdrawActivity extends AppCompatActivity implements IConfirmWithdrawView {
     private WithdrawFundsController controller;
+    private ConstraintLayout loadingSpinner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +39,8 @@ public class ConfirmWithdrawActivity extends AppCompatActivity implements IConfi
         TextView btnCancel = findViewById(R.id.btn_confirmwithdraw_cancel);
         configureConfirmButton(btnConfirm);
         configureCancelButton(btnCancel);
+        loadingSpinner = findViewById(R.id.confirm_withdraw_loading_spinner);
+
     }
     private void configureConfirmButton(Button btnConfirm) {
         btnConfirm.setOnClickListener((view) -> controller.handleConfirmWithdraw());
@@ -71,6 +77,23 @@ public class ConfirmWithdrawActivity extends AppCompatActivity implements IConfi
         TextView tbx = findViewById(R.id.txt_amount_confirmwithdraw);
         @SuppressLint("DefaultLocale") String stringAmount = "R" + String.format("%.2f",amount);
         tbx.setText(stringAmount);
+    }
+    @Override
+    public void showLoadingSpinner() {
+        runOnUiThread(() -> {
+            if (loadingSpinner != null) {
+                loadingSpinner.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        runOnUiThread(() -> {
+            if (loadingSpinner != null) {
+                loadingSpinner.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override

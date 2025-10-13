@@ -48,64 +48,74 @@ public class WithdrawFundsController {
        this.context = context;
        this.viewWithdrawFunds = viewWithdrawFunds;
    }
-   public void handleWithdrawFunds(Float amount, String bankName, String branchCode, String cardNumber, String name){
+   public void handleWithdrawFunds(String amount, String bankName, String branchCode, String cardNumber, String name){
        if(viewWithdrawFunds != null){
-           viewWithdrawFunds.hideMissingFieldError();
-           viewWithdrawFunds.hideInvalidFieldError();
+           viewWithdrawFunds.hideMissingAmountError();
+           viewWithdrawFunds.hideInvalidAmountError();
+           viewWithdrawFunds.hideMissingBankNameError();
+           viewWithdrawFunds.hideInvalidBankNameError();
+           viewWithdrawFunds.hideMissingBranchCodeError();
+           viewWithdrawFunds.hideInvalidBranchCodeError();
+           viewWithdrawFunds.hideMissingAccountNumberError();
+           viewWithdrawFunds.hideInvalidAccountNumberError();
+           viewWithdrawFunds.hideMissingAccountHolderError();
+           viewWithdrawFunds.hideInvalidAccountHolderError();
        }
+       boolean hasMissingOrInvalidField = false;
        if(amount == null){
            Log.w(TAG, "Validation failed: amount is null");
-           if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingFieldError(context.getString(R.string.enter_amount));
-           return;
-       }
-       if (!isValidAmount(amount)) {
+           if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingAmountError(context.getString(R.string.enter_amount));
+           hasMissingOrInvalidField = true;
+       }else if (!isValidAmount(amount)) {
            Log.w(TAG, "Validation failed: invalid amount " + amount);
-           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidFieldError(context.getString(R.string.invalid_amount));
-           return;
+           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidAmountError(context.getString(R.string.invalid_amount));
+           hasMissingOrInvalidField = true;
        }
+
        if (checkEmpty(bankName)) {
            Log.w(TAG, "Validation failed: bank name empty");
-           if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingFieldError(context.getString(R.string.enter_bank_name));
-           return;
-       }
-       if (!isValidBankName(bankName)) {
+           if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingBankNameError(context.getString(R.string.enter_bank_name));
+          hasMissingOrInvalidField = true;
+       }else if (!isValidBankName(bankName)) {
            Log.w(TAG, "Validation failed: bank not in allowlist: " + safe(bankName));
-           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidFieldError(context.getString(R.string.invalid_bank_name));
-           return;
+           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidBankNameError(context.getString(R.string.invalid_bank_name));
+          hasMissingOrInvalidField = true;
        }
 
        if (checkEmpty(branchCode)) {
            Log.w(TAG, "Validation failed: branchCode empty");
-           if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingFieldError(context.getString(R.string.enter_branch_code));
-           return;
-       }
-       if (!isValidBranchCode(branchCode)) {
+           if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingBranchCodeError(context.getString(R.string.enter_branch_code));
+        hasMissingOrInvalidField = true;
+       }else if (!isValidBranchCode(branchCode)) {
            Log.w(TAG, "Validation failed: branchCode invalid format: " + safeBranch(branchCode));
-           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidFieldError(context.getString(R.string.invalid_branch_code));
-           return;
+           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidBranchCodeError(context.getString(R.string.invalid_branch_code));
+          hasMissingOrInvalidField = true;
        }
 
        if (checkEmpty(cardNumber)) {
            Log.w(TAG, "Validation failed: cardNumber empty");
-           if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingFieldError(context.getString(R.string.enter_card_number));
-           return;
-       }
-       if (!isValidCardNumber(cardNumber)) {
+           if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingAccountNumberError(context.getString(R.string.enter_card_number));
+        hasMissingOrInvalidField = true;
+       }else if (!isValidCardNumber(cardNumber)) {
            Log.w(TAG, "Validation failed: cardNumber invalid: " + maskCard(cardNumber));
-           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidFieldError(context.getString(R.string.invalid_card_number));
+           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidAccountNumberError(context.getString(R.string.invalid_card_number));
            return;
        }
 
        if (checkEmpty(name)) {
            Log.w(TAG, "Validation failed: name empty");
-           if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingFieldError(context.getString(R.string.enter_name));
-           return;
-       }
-       if (!isValidName(name)) {
+           if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingAccountHolderError(context.getString(R.string.enter_name));
+           hasMissingOrInvalidField = true;
+       }else if (!isValidName(name)) {
            Log.w(TAG, "Validation failed: name invalid: " + safeName(name));
-           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidFieldError(context.getString(R.string.invalid_name));
-           return;
+           if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidAccountHolderError(context.getString(R.string.invalid_name));
+          hasMissingOrInvalidField = true;
        }
+       if(hasMissingOrInvalidField) return;
+       if (viewWithdrawFunds != null) {
+           viewWithdrawFunds.showLoadingSpinner();
+       }
+
        withdrawFundsExecutor.execute(() -> {
            try {
                User current = UserSession.getUser();
@@ -114,18 +124,20 @@ public class WithdrawFundsController {
                if(current == null){
                    ContextCompat.getMainExecutor(context).execute(() -> {
                        Log.w(TAG, "BG->UI: session expired, notifying view");
-                       if (viewWithdrawFunds != null)
-                           viewWithdrawFunds.showInvalidFieldError(context.getString(R.string.session_expired));
+                       Toast.makeText(context.getApplicationContext(),
+                               context.getString(R.string.session_expired),
+                               Toast.LENGTH_LONG).show();
                    });
                    return;
                }
+
                String sanitizedCard = cardNumber.replaceAll("[\\s-]", "");
                Log.d(TAG, "BG: sanitized card ready (masked)=" + maskCard(sanitizedCard));
 
                Log.i(TAG, "BG: calling MySQLConnector.createWithdrawBankAndPendingTransaction...");
                Object[] res = MySQLConnector.createWithdrawBankAndPendingTransaction(
                        current.getUserEmail(),
-                       amount,
+                       Float.parseFloat(amount),
                        sanitizedCard,
                        branchCode.trim(),
                        name.trim(),
@@ -139,12 +151,15 @@ public class WithdrawFundsController {
                Log.i(TAG, "BG: DB returned -> success=" + success + ", txnId=" + txnId + ", errCode=" + errCode);
 
                ContextCompat.getMainExecutor(context).execute(() -> {
+                   if(viewWithdrawFunds != null){
+                       viewWithdrawFunds.hideLoadingSpinner();
+                   }
                    if (success) {
                        this.transactionId     = (txnId != null ? txnId : 0);
-                       this.transactionAmount = amount;
+                       this.transactionAmount = Float.parseFloat(amount);
                        this.rawAccountNumber  = sanitizedCard;
                        this.toAccountName     = name.trim();
-                       this.fromUserDetails   = MySQLConnector.getUserDetailsByEmail(current.getUserEmail(), context);
+                       this.fromUserDetails   = UserSession.getUser();
 
                        Log.d(TAG, "UI: Data ready, launching ConfirmWithdrawActivity. txnId=" + this.transactionId);
 
@@ -160,6 +175,7 @@ public class WithdrawFundsController {
                        }
 
                        if (viewWithdrawFunds != null) {
+                           viewWithdrawFunds.hideLoadingSpinner();
                            viewWithdrawFunds.finishActivity();
                            Log.d(TAG, "UI: viewWithdrawFunds.finishActivity() requested");
                        }
@@ -176,8 +192,15 @@ public class WithdrawFundsController {
                        }
 
                        Log.w(TAG, "UI: withdraw failed; errCode=" + errCode + ", txnId=" + txnId + " (showing message)");
-                       if (viewWithdrawFunds != null) {
-                           viewWithdrawFunds.showInvalidFieldError(msg);
+                       if (current == null) {
+
+                           ContextCompat.getMainExecutor(context).execute(() -> {
+                               if (viewWithdrawFunds != null) viewWithdrawFunds.hideLoadingSpinner();
+                               Toast.makeText(context.getApplicationContext(),
+                                       context.getString(R.string.session_expired),
+                                       Toast.LENGTH_LONG).show();
+                           });
+                           return;
                        } else {
                            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
                        }
@@ -188,9 +211,10 @@ public class WithdrawFundsController {
 
            }catch (Throwable t){
                Log.e(TAG, "BG: Unexpected error during withdraw flow", t);
-               ContextCompat.getMainExecutor(context).execute(() ->
-                       Toast.makeText(context, "Unexpected error. Please try again.", Toast.LENGTH_SHORT).show()
-               );
+               ContextCompat.getMainExecutor(context).execute(() -> {
+                   if(viewWithdrawFunds!=null) viewWithdrawFunds.hideLoadingSpinner();
+                   Toast.makeText(context, "Unexpected error. Please try again.", Toast.LENGTH_SHORT).show();
+               });
            }
        });
    }
@@ -232,55 +256,127 @@ public class WithdrawFundsController {
        confirmWithdrawView.displayToUserName(displayName);
        confirmWithdrawView.displayToUserNumber(masked);
    }
-   public void handleConfirmWithdraw(){
-       Log.i(TAG, "handleConfirmWithdraw() txnId=" + transactionId);
+    public void handleConfirmWithdraw() {
+        Log.i(TAG, "handleConfirmWithdraw() txnId=" + transactionId);
 
-       withdrawFundsExecutor.execute(()->{
-           try{
-               MySQLConnector.updateTransactionStatus(transactionId, "success", context);
-               Log.i(TAG, "BG: updateTransactionStatus -> success");
+        if (confirmWithdrawView != null) {
+            confirmWithdrawView.showLoadingSpinner();
+        }
 
-               Executors.newSingleThreadExecutor().execute(()->{
-                   float updated = UserSession.updateBalance(context);
-                   User u = UserSession.getUser();
-                   if(u != null) u.setUserBalance(updated);
-                   Log.d(TAG, "Session balance refreshed to: " + updated);
-               });
-               ContextCompat.getMainExecutor(context).execute(()->{
-                   DataShare.send(this);
-                   Intent intent = new Intent(context, ShowSuccessActivity.class);
-                   intent.putExtra("TRANSACTION_ID", transactionId);
-                   maybeAddNewTaskFlag(intent);
-                   try{
-                       context.startActivity(intent);
-                       Log.i(TAG, "UI: startActivity(ShowSuccessActivity) called");
-                   }catch (Exception startEx){
-                       Log.e(TAG, "UI: Failed to start ShowSuccessActivity", startEx);
-                       Toast.makeText(context, "Could not open success screen.", Toast.LENGTH_SHORT).show();
-                   }
-                   if(confirmWithdrawView != null) confirmWithdrawView.finishActivity();
+        withdrawFundsExecutor.execute(() -> {
+            try {
+                User current = UserSession.getUser();
+                if (current == null) {
+                    Log.w(TAG, "BG: no session in handleConfirmWithdraw");
+                    ContextCompat.getMainExecutor(context).execute(() -> {
+                        if (confirmWithdrawView != null) confirmWithdrawView.hideLoadingSpinner();
+                        Toast.makeText(context.getApplicationContext(),
+                                context.getString(R.string.session_expired),
+                                Toast.LENGTH_LONG).show();
+                        if (confirmWithdrawView != null) confirmWithdrawView.finishActivity();
+                    });
+                    return;
+                }
+                boolean hasFunds = MySQLConnector.hasSufficientFunds(
+                        current.getUserEmail(),
+                        transactionId,
+                        context
+                );
+                Log.i(TAG, "BG: hasSufficientFunds -> " + hasFunds);
 
-               });
-           }catch(Exception e){
-               Log.e(TAG, "BG: updateTransactionStatus threw, showing failure screen", e);
-               ContextCompat.getMainExecutor(context).execute(() -> {
-                   Intent intent = new Intent(context, ShowFailedActivity.class);
-                   intent.putExtra("TRANSACTION_ID", transactionId);
-                   intent.putExtra("ERROR_REASON", "Unexpected error confirming deposit");
-                   maybeAddNewTaskFlag(intent);
-                   try {
-                       context.startActivity(intent);
-                       Log.i(TAG, "UI: startActivity(ShowFailedActivity) called");
-                   } catch (Exception startEx) {
-                       Log.e(TAG, "UI: Failed to start ShowFailedActivity", startEx);
-                       Toast.makeText(context, "Could not open failure screen.", Toast.LENGTH_SHORT).show();
-                   }
-                   if (confirmWithdrawView != null) confirmWithdrawView.finishActivity();
-               });
-           }
-       });
-   }
-   public void handleCancelConfirmWithdraw(){
+                if (!hasFunds) {
+
+                    try {
+                        MySQLConnector.updateTransactionStatus(transactionId, "failed", context);
+                        Log.i(TAG, "BG: updateTransactionStatus -> failed (insufficient funds)");
+                    } catch (Exception ufEx) {
+                        Log.e(TAG, "BG: failed to mark transaction as FAILED after insufficient funds", ufEx);
+                    }
+
+                    ContextCompat.getMainExecutor(context).execute(() -> {
+                        if (confirmWithdrawView != null) confirmWithdrawView.hideLoadingSpinner();
+                        DataShare.send(this);
+                        Intent intent = new Intent(context, ShowFailedActivity.class);
+                        intent.putExtra("TRANSACTION_ID", transactionId);
+                        intent.putExtra("ERROR_REASON", context.getString(R.string.insufficient_funds));
+                        maybeAddNewTaskFlag(intent);
+
+                        try {
+                            context.startActivity(intent);
+                            Log.i(TAG, "UI: startActivity(ShowFailedActivity) due to insufficient funds");
+                        } catch (Exception startEx) {
+                            Log.e(TAG, "UI: Failed to start ShowFailedActivity", startEx);
+                            Toast.makeText(context, "Could not open failure screen.", Toast.LENGTH_SHORT).show();
+                        }
+
+                        if (confirmWithdrawView != null) confirmWithdrawView.finishActivity();
+                    });
+                    return;
+                }
+
+                MySQLConnector.updateTransactionStatus(transactionId, "success", context);
+                Log.i(TAG, "BG: updateTransactionStatus -> success");
+
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    float updated = UserSession.updateBalance(context);
+                    User u = UserSession.getUser();
+                    if (u != null){
+                        u.setUserBalance(updated);
+                        UserSession.updateTransactions(context);
+                    }
+                    Log.d(TAG, "Session balance refreshed to: " + updated);
+                });
+
+                ContextCompat.getMainExecutor(context).execute(() -> {
+                    if (confirmWithdrawView != null) confirmWithdrawView.hideLoadingSpinner();
+
+                    DataShare.send(this);
+
+                    Intent intent = new Intent(context, ShowSuccessActivity.class);
+                    intent.putExtra("TRANSACTION_ID", transactionId);
+                    maybeAddNewTaskFlag(intent);
+                    try {
+                        context.startActivity(intent);
+                        Log.i(TAG, "UI: startActivity(ShowSuccessActivity) called");
+                    } catch (Exception startEx) {
+                        Log.e(TAG, "UI: Failed to start ShowSuccessActivity", startEx);
+                        Toast.makeText(context, "Could not open success screen.", Toast.LENGTH_SHORT).show();
+                    }
+
+                    if (confirmWithdrawView != null) confirmWithdrawView.finishActivity();
+                });
+
+            } catch (Exception e) {
+                Log.e(TAG, "BG: handleConfirmWithdraw threw", e);
+
+                try {
+                    MySQLConnector.updateTransactionStatus(transactionId, "failed", context);
+                    Log.i(TAG, "BG: updateTransactionStatus -> failed (exception)");
+                } catch (Exception ignore) {
+                    Log.w(TAG, "BG: could not set FAILED after exception");
+                }
+
+                ContextCompat.getMainExecutor(context).execute(() -> {
+                    if (confirmWithdrawView != null) confirmWithdrawView.hideLoadingSpinner();
+
+                    Intent intent = new Intent(context, ShowFailedActivity.class);
+                    intent.putExtra("TRANSACTION_ID", transactionId);
+                    intent.putExtra("ERROR_REASON", "Unexpected error confirming withdrawal");
+                    maybeAddNewTaskFlag(intent);
+                    try {
+                        context.startActivity(intent);
+                        Log.i(TAG, "UI: startActivity(ShowFailedActivity) called");
+                    } catch (Exception startEx) {
+                        Log.e(TAG, "UI: Failed to start ShowFailedActivity", startEx);
+                        Toast.makeText(context, "Could not open failure screen.", Toast.LENGTH_SHORT).show();
+                    }
+                    if (confirmWithdrawView != null) confirmWithdrawView.finishActivity();
+                });
+            }
+        });
+    }
+
+    public void handleCancelConfirmWithdraw(){
        Log.i(TAG, "handleCancelConfirmWithdraw() txnId=" + transactionId);
        withdrawFundsExecutor.execute(() -> {
            try {
@@ -381,8 +477,12 @@ public class WithdrawFundsController {
         return false;
     }
 
-    private boolean isValidAmount(Float amount) {
-        boolean ok = amount != null && amount > 0f;
+    private boolean isValidAmount(String amount) {
+        Float amountf = null;
+        if (!amount.isEmpty()) {
+            try { amountf = Float.parseFloat(amount); } catch (NumberFormatException ignored) { }
+        }
+        boolean ok = amountf != null && amountf > 0f;
         Log.d(TAG, "validate amount -> " + ok);
         return ok;
     }
@@ -416,7 +516,8 @@ public class WithdrawFundsController {
             transactionStatusDisplayView.displayFromUserName(fromUserDetails.getUserEmail());
             transactionStatusDisplayView.displayFromUserNumber("");
         }
-
+        transactionStatusDisplayView.setFromUserLabelAsMandelaMoney();
+        transactionStatusDisplayView.setToUserLabelAsBank();
         String displayName = (toAccountName != null && !toAccountName.trim().isEmpty())
                 ? toAccountName.trim()
                 : "Cardholder";
@@ -425,5 +526,27 @@ public class WithdrawFundsController {
     }
 
 
-
+    public void loadTransactionStatusDataForFailed() {
+        if(transactionStatusDisplayView == null)return;
+        transactionStatusDisplayView.displayAmount(transactionAmount);
+        if (fromUserDetails instanceof Student) {
+            Student s = (Student) fromUserDetails;
+            transactionStatusDisplayView.displayFromUserName(s.getStudentFullName());
+            transactionStatusDisplayView.displayFromUserNumber(s.getStudentNumber());
+        } else if (fromUserDetails instanceof Business) {
+            Business b = (Business) fromUserDetails;
+            transactionStatusDisplayView.displayFromUserName(b.getBusinessName());
+            transactionStatusDisplayView.displayFromUserNumber(b.getBusinessVAT());
+        } else if (fromUserDetails != null) {
+            transactionStatusDisplayView.displayFromUserName(fromUserDetails.getUserEmail());
+            transactionStatusDisplayView.displayFromUserNumber("");
+        }
+        transactionStatusDisplayView.setFromUserLabelAsMandelaMoney();
+        transactionStatusDisplayView.setToUserLabelAsBank();
+        String displayName = (toAccountName != null && !toAccountName.trim().isEmpty())
+                ? toAccountName.trim()
+                : "Cardholder";
+        transactionStatusDisplayView.displayToUserName(displayName);
+        transactionStatusDisplayView.displayToUserNumber(maskAccount(rawAccountNumber));
+    }
 }
