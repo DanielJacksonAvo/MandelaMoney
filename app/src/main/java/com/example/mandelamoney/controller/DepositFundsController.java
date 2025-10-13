@@ -22,6 +22,7 @@ import com.example.mandelamoney.view.activity.ShowSuccessActivity;
 import com.example.mandelamoney.view.activity.ShowFailedActivity;
 import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -237,6 +238,7 @@ public class DepositFundsController {
             confirmDepositView.displayToUserName(toUserDetails.getUserEmail());
             confirmDepositView.displayToUserNumber("");
         }
+
         String masked = maskAccount(rawAccountNumber);
         String displayName = (fromAccountName != null && !fromAccountName.trim().isEmpty())
                 ? fromAccountName.trim()
@@ -246,7 +248,7 @@ public class DepositFundsController {
         confirmDepositView.displayFromUserNumber(masked);
     }
 
-    public void handleConfirmDeposit() {
+    public void  handleConfirmDeposit() {
         Log.i(TAG, "handleConfirmDeposit() txnId=" + transactionId);
         depositFundsExecutor.execute(() -> {
             try {
@@ -327,10 +329,27 @@ public class DepositFundsController {
     private static String maskCard(String cardNumber) {
         if (cardNumber == null) return "(null)";
         String d = cardNumber.replaceAll("\\D", "");
-        if (d.length() <= 4) return "**** " + d;
-        String last4 = d.substring(d.length() - 4);
-        return "**** **** **** " + last4;
+        int n = d.length();
+        if (n == 0) return "";
+        if (n <= 4) return groupBy4(d);
+
+        String last4 = d.substring(n - 4);
+        char[] a=new char[n-4];
+        Arrays.fill(a,'*');
+        String maskedPrefix=new String(a);
+
+        return groupBy4(maskedPrefix + last4);
     }
+
+    private static String groupBy4(String s) {
+        StringBuilder out = new StringBuilder(s.length() + s.length() / 4);
+        for (int i = 0; i < s.length(); i++) {
+            if (i > 0 && i % 4 == 0) out.append(' ');
+            out.append(s.charAt(i));
+        }
+        return out.toString();
+    }
+
 
     private static String safe(String s) { return s == null ? "(null)" : s.trim(); }
 
