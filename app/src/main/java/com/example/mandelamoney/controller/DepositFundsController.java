@@ -527,9 +527,29 @@ public class DepositFundsController {
     private static String maskAccount(String value) {
         if (value == null) return "(null)";
         String d = value.replaceAll("\\D", "");
-        if (d.length() <= 4) return "**** " + d;
-        return "**** **** **** " + d.substring(d.length() - 4);
+        int n = d.length();
+        if (n == 0) return "";
+        if (n <= 4) return d;
+
+        String last4 = d.substring(n - 4);
+        char[] stars = new char[n - 4];
+        Arrays.fill(stars, '∗');
+        String masked = new String(stars) + last4;
+
+        return groupBy4FromRight(masked);
     }
+
+    private static String groupBy4FromRight(String s) {
+        StringBuilder out = new StringBuilder(s.length() + s.length() / 4);
+        int count = 0;
+        for (int i = s.length() - 1; i >= 0; i--) {
+            out.append(s.charAt(i));
+            count++;
+            if (count % 4 == 0 && i != 0) out.append(' ');
+        }
+        return out.reverse().toString();
+    }
+
     public void setTransactionStatusDisplayView(ITransactionStatusDisplayView transactionStatusDisplayView){
         this.transactionStatusDisplayView = transactionStatusDisplayView;
     }
