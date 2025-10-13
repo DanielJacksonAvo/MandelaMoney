@@ -52,7 +52,7 @@ public class DepositFundsController {
         this.viewDepositFunds = viewDepositFunds;
     }
 
-    public void handleDepositFunds(Float amount, String bankName, String branchCode, String cardNumber, String name) {
+    public void handleDepositFunds(String amount, String bankName, String branchCode, String cardNumber, String name,String cvv, String expiryDate) {
 
         if (viewDepositFunds != null) {
             viewDepositFunds.hideMissingAmountError();
@@ -65,6 +65,10 @@ public class DepositFundsController {
             viewDepositFunds.hideInvalidAccountNumberError();
             viewDepositFunds.hideMissingAccountHolderError();
             viewDepositFunds.hideInvalidAccountHolderError();
+            viewDepositFunds.hideMissingCvvError();
+            viewDepositFunds.hideInvalidCvvError();
+            viewDepositFunds.hideMissingExpiryDateError();
+            viewDepositFunds.hideInvalidExpiryDateError();
 
         }
         boolean hasMissingOrInvalidField = false;
@@ -118,7 +122,28 @@ public class DepositFundsController {
             if (viewDepositFunds != null) viewDepositFunds.showInvalidAccountHolderError(context.getString(R.string.invalid_name));
             hasMissingOrInvalidField = true;
         }
+        if(checkEmpty(cvv)){
+            Log.w(TAG, "Validation failed: cvv empty");
+            if (viewDepositFunds != null) viewDepositFunds.showMissingCvvError(context.getString(R.string.enter_cvv));
+            hasMissingOrInvalidField = true;
+        }else if(!isValidCvv(cvv)){
+            Log.w(TAG, "Validation failed: cvv invalid: " + maskCvv(cvv));
+            if (viewDepositFunds != null) viewDepositFunds.showInvalidCvvError(context.getString(R.string.invalid_cvv));
+            hasMissingOrInvalidField = true;
+        }
+        if(checkEmpty(expiryDate)){
+            Log.w(TAG, "Validation failed: expiryDate empty");
+            if (viewDepositFunds != null) viewDepositFunds.showMissingExpiryDateError(context.getString(R.string.enter_expiry_date));
+            hasMissingOrInvalidField = true;
+        }else if(!isValidExpiryDate(expiryDate)){
+            Log.w(TAG, "Validation failed: expiryDate invalid: " + expiryDate);
+            if (viewDepositFunds != null) viewDepositFunds.showInvalidExpiryDateError(context.getString(R.string.invalid_expiry_date));
+            hasMissingOrInvalidField = true;
+        }
         if(hasMissingOrInvalidField) return;
+        if (viewDepositFunds != null) {
+            viewDepositFunds.showLoadingSpinner();
+        }
 
         depositFundsExecutor.execute(() -> {
             try {
@@ -141,7 +166,7 @@ public class DepositFundsController {
                 Log.i(TAG, "BG: calling MySQLConnector.createDepositBankAndPendingTransaction...");
                 Object[] res = MySQLConnector.createDepositBankAndPendingTransaction(
                         current.getUserEmail(),
-                        amount,
+                        Float.parseFloat(amount),
                         sanitizedCard,
                         branchCode.trim(),
                         name.trim(),
@@ -155,12 +180,15 @@ public class DepositFundsController {
                 Log.i(TAG, "BG: DB returned -> success=" + success + ", txnId=" + txnId + ", errCode=" + errCode);
 
                 ContextCompat.getMainExecutor(context).execute(() -> {
+                    if (viewDepositFunds != null) {
+                        viewDepositFunds.hideLoadingSpinner();
+                    }
                     if (success) {
                         this.transactionId     = (txnId != null ? txnId : 0);
-                        this.transactionAmount = amount;
+                        this.transactionAmount = Float.parseFloat(amount);
                         this.rawAccountNumber  = sanitizedCard;
                         this.fromAccountName   = name.trim();
-                        this.toUserDetails     = MySQLConnector.getUserDetailsByEmail(current.getUserEmail(), context);
+                        this.toUserDetails     = UserSession.getUser();
 
                         Log.d(TAG, "UI: Data ready, sending via DataShare and launching ConfirmDepositActivity. "
                                 + "transactionId=" + this.transactionId
@@ -180,26 +208,88 @@ public class DepositFundsController {
                         }
 
                         if (viewDepositFunds != null) {
+                            viewDepositFunds.hideLoadingSpinner();
                             viewDepositFunds.finishActivity();
                             Log.d(TAG, "UI: viewDepositFunds.finishActivity() requested");
                         }
                     } else {
-                        String msg = "ACCOUNT_META_MISMATCH".equals(errCode)
-                                ? context.getString(R.string.bank_account_meta_mismatch)
-                                : context.getString(R.string.deposit_failed_try_again);
-
                         Log.w(TAG, "UI: deposit failed; errCode=" + errCode + ", showing toast");
-                        Toast.makeText(context.getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                        if (current == null) {
+                            ContextCompat.getMainExecutor(context).execute(() -> {
+                                if (viewDepositFunds != null) viewDepositFunds.hideLoadingSpinner();
+                                Toast.makeText(context.getApplicationContext(),
+                                        context.getString(R.string.session_expired),
+                                        Toast.LENGTH_LONG).show();
+                            });
+                            return;
+                        }
+
                     }
 
                 });
             } catch (Throwable t) {
                 Log.e(TAG, "BG: Unexpected error during deposit flow", t);
-                ContextCompat.getMainExecutor(context).execute(() ->
-                        Toast.makeText(context, "Unexpected error. Please try again.", Toast.LENGTH_SHORT).show()
-                );
+                ContextCompat.getMainExecutor(context).execute(() -> {
+                    if (viewDepositFunds != null) {
+                        viewDepositFunds.hideLoadingSpinner();
+                    }
+                    Toast.makeText(context, "Unexpected error. Please try again.", Toast.LENGTH_SHORT).show();
+                });
             }
+
         });
+    }
+
+    private String maskCvv(String cvv) {
+        if (cvv == null) return "(null)";
+        String digits = cvv.replaceAll("\\D", "");
+        if (digits.isEmpty()) return "(empty)";
+
+        char[] masked = new char[digits.length()];
+        Arrays.fill(masked, '*');
+        return new String(masked);
+    }
+
+
+    private boolean isValidExpiryDate(String expiryDate) {
+        if (expiryDate == null) {
+            Log.d(TAG, "validate expiry -> false (null)");
+            return false;
+        }
+
+        String trimmed = expiryDate.trim();
+        if (!trimmed.matches("^(0[1-9]|1[0-2])/(\\d{2}|\\d{4})$")) {
+            Log.d(TAG, "validate expiry -> false (pattern mismatch: " + trimmed + ")");
+            return false;
+        }
+
+        try {
+            String[] parts = trimmed.split("/");
+            int month = Integer.parseInt(parts[0]);
+            int year = Integer.parseInt(parts[1]);
+            
+            if (year < 100) {
+                year += 2000;
+            }
+            
+            java.util.Calendar now = java.util.Calendar.getInstance();
+            int currentYear = now.get(java.util.Calendar.YEAR);
+            int currentMonth = now.get(java.util.Calendar.MONTH) + 1; // MONTH is 0-based
+
+            boolean ok = (year > currentYear) || (year == currentYear && month >= currentMonth);
+
+            Log.d(TAG, "validate expiry -> " + ok + " (" + month + "/" + year + ")");
+            return ok;
+        } catch (Exception e) {
+            Log.w(TAG, "validate expiry -> false (exception: " + e.getMessage() + ")");
+            return false;
+        }
+    }
+
+    private boolean isValidCvv(String cvv) {
+        boolean isValid = cvv != null && cvv.matches("^\\d{3,4}$");
+        Log.d(TAG, "validate cvv -> " + isValid);
+        return isValid;
     }
 
     public void handleCancelDepositFunds() {
@@ -249,7 +339,12 @@ public class DepositFundsController {
     }
 
     public void  handleConfirmDeposit() {
+
         Log.i(TAG, "handleConfirmDeposit() txnId=" + transactionId);
+        if (confirmDepositView != null) {
+            confirmDepositView.showLoadingSpinner();
+        }
+
         depositFundsExecutor.execute(() -> {
             try {
                 MySQLConnector.updateTransactionStatus(transactionId, "success", context);
@@ -258,11 +353,16 @@ public class DepositFundsController {
                 Executors.newSingleThreadExecutor().execute(() -> {
                     float updated = UserSession.updateBalance(context);
                     User u = UserSession.getUser();
-                    if (u != null) u.setUserBalance(updated);
+                    if (u != null){
+                        u.setUserBalance(updated);
+                        UserSession.updateTransactions(context);
+                    }
                     Log.d(TAG, "Session balance refreshed to: " + updated);
                 });
 
                 ContextCompat.getMainExecutor(context).execute(() -> {
+                    confirmDepositView.hideLoadingSpinner();
+
                     DataShare.send(this);
 
                     Intent intent = new Intent(context, ShowSuccessActivity.class);
@@ -282,6 +382,9 @@ public class DepositFundsController {
             } catch (Exception e) {
                 Log.e(TAG, "BG: updateTransactionStatus threw, showing failure screen", e);
                 ContextCompat.getMainExecutor(context).execute(() -> {
+                    if (confirmDepositView != null) {
+                        confirmDepositView.hideLoadingSpinner();
+                    }
                     Intent intent = new Intent(context, ShowFailedActivity.class);
                     intent.putExtra("TRANSACTION_ID", transactionId);
                     intent.putExtra("ERROR_REASON", "Unexpected error confirming deposit");
@@ -406,8 +509,12 @@ public class DepositFundsController {
         return false;
     }
 
-    private boolean isValidAmount(Float amount) {
-        boolean ok = amount != null && amount > 0f;
+    private boolean isValidAmount(String amount) {
+        Float amountf = null;
+        if (!amount.isEmpty()) {
+            try { amountf = Float.parseFloat(amount); } catch (NumberFormatException ignored) { }
+        }
+        boolean ok = amountf != null && amountf > 0f;
         Log.d(TAG, "validate amount -> " + ok);
         return ok;
     }
@@ -441,6 +548,7 @@ public class DepositFundsController {
             transactionStatusDisplayView.displayToUserName(toUserDetails.getUserEmail());
             transactionStatusDisplayView.displayToUserNumber("");
         }
+        transactionStatusDisplayView.setFromUserLabelAsBank();
 
         String displayName = (fromAccountName != null && !fromAccountName.trim().isEmpty())
                 ? fromAccountName.trim()
@@ -449,4 +557,27 @@ public class DepositFundsController {
         transactionStatusDisplayView.displayFromUserNumber(maskAccount(rawAccountNumber));
     }
 
+    public void loadTransactionStatusDataForFailed() {
+        if(transactionStatusDisplayView == null)return;
+        transactionStatusDisplayView.displayAmount(transactionAmount);
+        if (toUserDetails instanceof Student) {
+            Student s = (Student) toUserDetails;
+            transactionStatusDisplayView.displayToUserName(s.getStudentFullName());
+            transactionStatusDisplayView.displayToUserNumber(s.getStudentNumber());
+        } else if (toUserDetails instanceof Business) {
+            Business b = (Business) toUserDetails;
+            transactionStatusDisplayView.displayToUserName(b.getBusinessName());
+            transactionStatusDisplayView.displayToUserNumber(b.getBusinessVAT());
+        } else if (toUserDetails != null) {
+            transactionStatusDisplayView.displayToUserName(toUserDetails.getUserEmail());
+            transactionStatusDisplayView.displayToUserNumber("");
+        }
+        transactionStatusDisplayView.setFromUserLabelAsBank();
+
+        String displayName = (fromAccountName != null && !fromAccountName.trim().isEmpty())
+                ? fromAccountName.trim()
+                : "Cardholder";
+        transactionStatusDisplayView.displayFromUserName(displayName);
+        transactionStatusDisplayView.displayFromUserNumber(maskAccount(rawAccountNumber));
+    }
 }

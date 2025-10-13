@@ -1,5 +1,6 @@
 package com.example.mandelamoney.view.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -97,9 +98,34 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
         txtFromnumber.setText(number);
     }
 
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
     public void displayAmount(double amount) {
         txtAmount.setText("R " + String.format("%.2f", amount));
+    }
+    @Override
+    public void setFromUserLabelAsBank(){
+        TextView txtFromUserType = findViewById(R.id.txt_transactiontypefrom_success);
+        txtFromUserType.setText(R.string.bank_account);
+    }
+
+    @Override
+    public void setToUserLabelAsBank() {
+        TextView txtToUserType = findViewById(R.id.txt_transactiontypeto_success);
+        txtToUserType.setText(R.string.bank_account);
+
+    }
+
+    @Override
+    public void setToUserLabelAsMandelaMoney() {
+        TextView txtToUserType = findViewById(R.id.txt_transactiontypeto_success);
+        txtToUserType.setText(R.string.mandela_money);
+    }
+
+    @Override
+    public void setFromUserLabelAsMandelaMoney() {
+        TextView txtFromUserType = findViewById(R.id.txt_transactiontypefrom_success);
+        txtFromUserType.setText(R.string.mandela_money);
     }
 
     @Override

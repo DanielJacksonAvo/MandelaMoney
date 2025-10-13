@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
@@ -28,6 +29,10 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
     TextView txtDepositBranchCodeError;
     TextView txtDepositAccountNumberError;
     TextView txtDepositAccountHolderError;
+    TextView txtDepositCvvError;
+    TextView txtDepositExpiryDateError;
+    private ConstraintLayout loadingSpinner;
+
 
 
     @Override
@@ -68,14 +73,20 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
         EditText tbxBranchCode = findViewById(R.id.tbx_branch_code_deposit_funds);
         EditText tbxAccountNumber = findViewById(R.id.tbx_card_number_deposit_funds);
         EditText tbxAccountHolder = findViewById(R.id.tbx_name_deposit_funds);
+        EditText tbxCvv = findViewById(R.id.tbx_cvv_deposit_funds);
+        EditText tbxExpiryDate = findViewById(R.id.tbx_expiry_date_deposit_funds);
         Button btnDepositFunds = findViewById(R.id.btn_deposit_funds);
         txtDepositAmountError = findViewById(R.id.txt_error_amount_deposit_funds);
         txtDepositBankNameError = findViewById(R.id.txt_error_bank_name_deposit_funds);
         txtDepositBranchCodeError = findViewById(R.id.txt_error_branch_code_deposit_funds);
         txtDepositAccountNumberError = findViewById(R.id.txt_error_account_number_deposit_funds);
         txtDepositAccountHolderError = findViewById(R.id.txt_error_account_holder_deposit_funds);
+        txtDepositCvvError = findViewById(R.id.txt_error_cvv_deposit_funds);
+        txtDepositExpiryDateError = findViewById(R.id.txt_error_expiry_date_holder_deposit_funds);
+        tbxExpiryDate.addTextChangedListener(new DateSlashTextWatcher(tbxExpiryDate));
         configureCancelButton(btnCancel);
-        configureDepositFundsButton(btnDepositFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxAccountNumber, tbxAccountHolder);
+        configureDepositFundsButton(btnDepositFunds, tbxAmount, tbxBankName, tbxBranchCode, tbxAccountNumber, tbxAccountHolder,tbxCvv,tbxExpiryDate);
+        loadingSpinner = findViewById(R.id.deposit_funds_loading_spinner);
     }
 
     private void configureDepositFundsButton(
@@ -84,23 +95,19 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
             EditText tbxBankName,
             EditText tbxBranchCode,
             EditText tbxCardNumber,
-            EditText tbxName
+            EditText tbxName,
+            EditText tbxCvv,
+            EditText tbxExpiryDate
     ) {
-        btnDepositFunds.setOnClickListener(v -> {
-            Float amount = null;
-            String amtTxt = tbxAmount.getText().toString().trim();
-            if (!amtTxt.isEmpty()) {
-                try { amount = Float.parseFloat(amtTxt); } catch (NumberFormatException ignored) { }
-            }
-
-            controller.handleDepositFunds(
-                    amount,
-                    tbxBankName.getText().toString(),
-                    tbxBranchCode.getText().toString(),
-                    tbxCardNumber.getText().toString(),
-                    tbxName.getText().toString()
-            );
-        });
+        btnDepositFunds.setOnClickListener(v -> controller.handleDepositFunds(
+                tbxAmount.getText().toString().trim(),
+                tbxBankName.getText().toString(),
+                tbxBranchCode.getText().toString(),
+                tbxCardNumber.getText().toString(),
+                tbxName.getText().toString(),
+                tbxCvv.getText().toString(),
+                tbxExpiryDate.getText().toString()
+        ));
     }
 
 
@@ -257,11 +264,81 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
         ErrorBorder.removeStroke(tbxAccountHolder);
         txtDepositAccountHolderError.setVisibility(View.GONE);
     }
+    @Override
+    public void showMissingExpiryDateError(String message) {
+        EditText tbxExpiryDate = findViewById(R.id.tbx_expiry_date_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxExpiryDate);
+        txtDepositExpiryDateError.setVisibility(View.VISIBLE);
+        txtDepositExpiryDateError.setText(message);
+    }
+    @Override
+    public void hideMissingExpiryDateError() {
+        EditText tbxExpiryDate = findViewById(R.id.tbx_expiry_date_deposit_funds);
+        ErrorBorder.removeStroke(tbxExpiryDate);
+        txtDepositExpiryDateError.setVisibility(View.GONE);
+    }
+    @Override
+    public void showInvalidExpiryDateError(String message) {
+        EditText tbxExpiryDate = findViewById(R.id.tbx_expiry_date_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxExpiryDate);
+        txtDepositExpiryDateError.setVisibility(View.VISIBLE);
+        txtDepositExpiryDateError.setText(message);
+    }
+    @Override
+    public void hideInvalidExpiryDateError() {
+        EditText tbxExpiryDate = findViewById(R.id.tbx_expiry_date_deposit_funds);
+        ErrorBorder.removeStroke(tbxExpiryDate);
+        txtDepositExpiryDateError.setVisibility(View.GONE);
+    }
+    @Override
+    public void showMissingCvvError(String message) {
+        EditText tbxCvv = findViewById(R.id.tbx_cvv_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxCvv);
+        txtDepositCvvError.setVisibility(View.VISIBLE);
+        txtDepositCvvError.setText(message);
+    }
+    @Override
+    public void hideMissingCvvError() {
+        EditText tbxCvv = findViewById(R.id.tbx_cvv_deposit_funds);
+        ErrorBorder.removeStroke(tbxCvv);
+        txtDepositCvvError.setVisibility(View.GONE);
+    }
+    @Override
+    public void showInvalidCvvError(String message) {
+        EditText tbxCvv = findViewById(R.id.tbx_cvv_deposit_funds);
+        ErrorBorder.applyMandelaYellowBorder(tbxCvv);
+        txtDepositCvvError.setVisibility(View.VISIBLE);
+        txtDepositCvvError.setText(message);
+    }
+    @Override
+    public void hideInvalidCvvError() {
+        EditText tbxCvv = findViewById(R.id.tbx_cvv_deposit_funds);
+        ErrorBorder.removeStroke(tbxCvv);
+        txtDepositCvvError.setVisibility(View.GONE);
+    }
 
 
     @Override
     public void finishActivity() {
         finish();
+    }
+    @Override
+    public void showLoadingSpinner() {
+        runOnUiThread(() -> {
+            if (loadingSpinner != null) {
+                loadingSpinner.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        runOnUiThread(() -> {
+            if (loadingSpinner != null) {
+                loadingSpinner.setVisibility(View.GONE);
+            }
+        });
+
     }
 
 
