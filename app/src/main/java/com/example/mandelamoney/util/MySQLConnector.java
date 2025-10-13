@@ -278,6 +278,7 @@ public class MySQLConnector {
             int i = 1;
             stmt.setString(i++, userEmail);
 
+
             java.math.BigDecimal decAmount = java.math.BigDecimal.valueOf(
                     Math.round((double) amount * 100.0) / 100.0
             );
