@@ -73,7 +73,7 @@ public class DepositFundsController {
         }
         boolean hasMissingOrInvalidField = false;
 
-        if (amount == null) {
+        if (checkEmpty(amount)) {
             Log.w(TAG, "Validation failed: amount is null");
             if (viewDepositFunds != null) viewDepositFunds.showMissingAmountError(context.getString(R.string.enter_amount));
             hasMissingOrInvalidField = true;
