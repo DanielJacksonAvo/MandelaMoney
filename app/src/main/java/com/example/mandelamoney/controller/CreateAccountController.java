@@ -259,7 +259,6 @@ public class CreateAccountController {
         }
     }
 
-    // New constructors to properly set the specific view interfaces
     public void setContextViewStudent(Context context, ICreateStudentAccountView viewCreateStudentAccount) {
         this.context = context;
         this.viewCreateStudentAccount = viewCreateStudentAccount;
@@ -286,7 +285,6 @@ public class CreateAccountController {
         return userPassword.length() >= 8;
     }
 
-    // This method will now be called from the background thread
     private boolean checkUniqueEmail(String userEmail) {
         return MySQLConnector.checkUniqueEmail(userEmail, context);
     }
@@ -315,19 +313,5 @@ public class CreateAccountController {
         return phoneNumber != null && phoneNumber.matches("^0\\d{9}$");
     }
 
-    // Cleanup method to shut down the executor
-    public void cleanup() {
-        if (accountCreationExecutor != null && !accountCreationExecutor.isShutdown()) {
-            accountCreationExecutor.shutdown();
-            try {
-                if (!accountCreationExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    accountCreationExecutor.shutdownNow();
-                }
-            } catch (InterruptedException ie) {
-                accountCreationExecutor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
-        }
-        Log.d("CreateAccountController", "Account creation executor cleaned up.");
-    }
+
 }

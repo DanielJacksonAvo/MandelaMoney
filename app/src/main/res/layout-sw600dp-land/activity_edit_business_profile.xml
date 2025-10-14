@@ -41,10 +41,14 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_save_editbusinessprofile"
                 style="@style/PrimaryButton"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="43dp"
                 android:layout_marginTop="-21dp"
-                android:text="@string/create_account"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                android:text="@string/save"
                 app:layout_constraintEnd_toEndOf="@+id/blurView_login2"
                 app:layout_constraintStart_toStartOf="@+id/blurView_login2"
                 app:layout_constraintTop_toBottomOf="@+id/blurView_login2" />
@@ -64,106 +68,38 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/txt_error_details_createstudentaccount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/email_password_invalid"
-                        android:textColor="@color/mandelaYellow"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toTopOf="@+id/constraintLayout_password_createstudentaccount"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
-                        app:layout_constraintVertical_bias="0.25" />
-
-                    <TextView
-                        android:id="@+id/txt_error_password_createstudentaccount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:text="@string/email_password_invalid"
-                        android:textColor="@color/mandelaYellow"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.502"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createstudentaccount"
-                        app:layout_constraintVertical_bias="0.25" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/constraintLayout_password_reenter_createstudentaccount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="25dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginRight="25dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_createstudentaccount"
-                        app:layout_constraintVertical_bias="0.0">
-
-                        <EditText
-                            android:id="@+id/tbx_password_reenter_createstudentaccount"
-                            style="@style/TextBox"
-                            android:layout_width="match_parent"
-                            android:layout_height="45dp"
-                            android:autofillHints="@string/password"
-                            android:hint="@string/confirm_CAPS"
-                            android:inputType="textPassword"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <ImageView
-                            android:id="@+id/img_password_reenter_createstudentaccount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:contentDescription="@string/view_hide"
-                            android:src="@drawable/img_password_icon"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@+id/tbx_password_reenter_createstudentaccount"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toStartOf="@+id/tbx_password_reenter_createstudentaccount"
-                            app:layout_constraintTop_toTopOf="@+id/tbx_password_reenter_createstudentaccount" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="60dp"
                         android:layout_marginRight="25dp"
+                        android:layout_marginBottom="75dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
-                        app:layout_constraintVertical_bias="0.0">
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="1.0">
 
                         <ImageView
-                            android:id="@+id/img_studentnumber_icon_createstudentaccount"
+                            android:id="@+id/img_businessnumber_icon_editbusinessprofile"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:contentDescription="@string/todo"
-                            android:src="@drawable/img_student_icon"
+                            android:src="@drawable/img_vat_icon"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <EditText
-                            android:id="@+id/tbx_studentnumber_editstudentprofile"
+                            android:id="@+id/tbx_vat_editbusinessprofile"
                             style="@style/TextBox"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
-                            android:autofillHints="Student Number"
-                            android:hint="@string/student_number_CAPS"
+                            android:autofillHints="Business Number"
+                            android:hint="VAT NUMBER"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.0"
@@ -178,37 +114,39 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="60dp"
                         android:layout_marginRight="25dp"
+                        android:layout_marginBottom="75dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
-                        app:layout_constraintVertical_bias="0.0">
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.65999997">
 
                         <ImageView
-                            android:id="@+id/img_lastname_icon_createstudentaccount"
+                            android:id="@+id/img_lastname_icon_editbusinessprofile"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:contentDescription="@string/todo"
-                            android:src="@drawable/img_lastname_icon"
+                            android:src="@drawable/img_phone_icon"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <EditText
-                            android:id="@+id/tbx_lastname_editstudentprofile"
+                            android:id="@+id/tbx_phone_editbusinessprofile"
                             style="@style/TextBox"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
                             android:autofillHints="Last Name"
-                            android:hint="@string/last_name"
+                            android:hint="PHONE"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.65999997"
                             tools:ignore="TextFields" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -218,89 +156,74 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="60dp"
                         android:layout_marginRight="25dp"
+                        android:layout_marginBottom="75dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
-                        app:layout_constraintVertical_bias="0.0">
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.32999998">
 
                         <ImageView
-                            android:id="@+id/img_firstname_icon_createstudentaccount"
+                            android:id="@+id/img_firstname_icon_editbusinessprofile"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:contentDescription="@string/todo"
-                            android:src="@drawable/img_firstname_icon"
+                            android:src="@drawable/img_business_icon"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <EditText
-                            android:id="@+id/tbx_firstname_editstudentprofile"
+                            android:id="@+id/tbx_name_editbusinessprofile"
                             style="@style/TextBox"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
-                            android:autofillHints="First Name"
-                            android:hint="@string/first_name"
+                            android:hint="BUSINESS NAME"
                             android:textAllCaps="false"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.32999998"
                             tools:ignore="TextFields" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/constraintLayout_password_createstudentaccount"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/txt_error_details_createstudentaccount"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="25dp"
-                        android:layout_marginRight="25dp"
+                        android:text="@string/email_password_invalid"
+                        android:textColor="@color/mandelaYellow"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/txt_error_password_createstudentaccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/email_password_invalid"
+                        android:textColor="@color/mandelaYellow"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
-                        app:layout_constraintVertical_bias="0.3">
-
-                        <EditText
-                            android:id="@+id/tbx_password_createstudentaccount"
-                            style="@style/TextBox"
-                            android:layout_width="match_parent"
-                            android:layout_height="45dp"
-                            android:autofillHints="@string/password"
-                            android:hint="@string/password"
-                            android:inputType="textPassword"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <ImageView
-                            android:id="@+id/img_password_icon_createstudentaccount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:contentDescription="@string/view_hide"
-                            android:src="@drawable/img_password_icon"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@+id/tbx_password_createstudentaccount"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toStartOf="@+id/tbx_password_createstudentaccount"
-                            app:layout_constraintTop_toTopOf="@+id/tbx_password_createstudentaccount" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                        app:layout_constraintHorizontal_bias="0.502"
+                        app:layout_constraintStart_toStartOf="parent" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="60dp"
                         android:layout_marginRight="25dp"
+                        android:layout_marginBottom="75dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -358,7 +281,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/img_welcome_text" />
+                app:srcCompat="@drawable/img_editprofile_text" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline3"
@@ -386,7 +309,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.85" />
+                app:layout_constraintGuide_percent="0.8" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </eightbitlab.com.blurview.BlurView>

@@ -4,7 +4,8 @@ public interface IUnlockView {
     void showErrorMessage();
     void hideErrorMessage();
     void finishActivity();
-
     void hideLoadingSpinner();
     void showLoadingSpinner();
+    void enabledBiometrics();
+    void disabledBiometrics();
 }
