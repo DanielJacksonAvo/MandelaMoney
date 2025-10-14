@@ -90,7 +90,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <EditText
-                            android:id="@+id/tbx_card_number_deposit_funds"
+                            android:id="@+id/tbx_card_number_withdraw_funds"
                             style="@style/TextBox"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"

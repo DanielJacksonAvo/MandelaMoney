@@ -62,7 +62,7 @@ public class WithdrawFundsController {
            viewWithdrawFunds.hideInvalidAccountHolderError();
        }
        boolean hasMissingOrInvalidField = false;
-       if(amount == null){
+       if(checkEmpty(amount)){
            Log.w(TAG, "Validation failed: amount is null");
            if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingAmountError(context.getString(R.string.enter_amount));
            hasMissingOrInvalidField = true;
@@ -99,9 +99,8 @@ public class WithdrawFundsController {
        }else if (!isValidCardNumber(cardNumber)) {
            Log.w(TAG, "Validation failed: cardNumber invalid: " + maskCard(cardNumber));
            if (viewWithdrawFunds != null) viewWithdrawFunds.showInvalidAccountNumberError(context.getString(R.string.invalid_card_number));
-           return;
+          hasMissingOrInvalidField = true;
        }
-
        if (checkEmpty(name)) {
            Log.w(TAG, "Validation failed: name empty");
            if (viewWithdrawFunds != null) viewWithdrawFunds.showMissingAccountHolderError(context.getString(R.string.enter_name));

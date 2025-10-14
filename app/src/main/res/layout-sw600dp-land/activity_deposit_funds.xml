@@ -76,7 +76,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.5">
+                        app:layout_constraintVertical_bias="0.49999999999999999999999">
 
                         <ImageView
                             android:id="@+id/img_card_number_card_icon"
@@ -93,7 +93,7 @@
                             android:id="@+id/tbx_card_number_deposit_funds"
                             style="@style/TextBox"
                             android:layout_width="match_parent"
-                            android:layout_height="45dp"
+                            android:layout_height="40dp"
                             android:autofillHints="@string/account_number"
                             android:hint="@string/account_number"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -104,10 +104,12 @@
                             tools:ignore="TextFields" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <TextView
                         android:id="@+id/txt_error_account_number_deposit_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="0.5dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
@@ -115,7 +117,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout_account_number_deposit_funds"
-                        app:layout_constraintVertical_bias="0.19999999" />
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout_branch_code_deposit_funds"
@@ -146,7 +148,7 @@
                             android:id="@+id/tbx_branch_code_deposit_funds"
                             style="@style/TextBox"
                             android:layout_width="match_parent"
-                            android:layout_height="45dp"
+                            android:layout_height="40dp"
                             android:autofillHints="@string/branch_code"
                             android:hint="@string/branch_code"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -157,10 +159,12 @@
                             tools:ignore="TextFields" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <TextView
                         android:id="@+id/txt_error_branch_code_deposit_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="0.5dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
@@ -168,7 +172,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout_branch_code_deposit_funds"
-                        app:layout_constraintVertical_bias="0.19999999" />
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout_bank_name_deposit_funds"
@@ -199,7 +203,7 @@
                             android:id="@+id/tbx_bank_name_deposit_funds"
                             style="@style/TextBox"
                             android:layout_width="match_parent"
-                            android:layout_height="45dp"
+                            android:layout_height="40dp"
                             android:autofillHints="@string/bank_name"
                             android:hint="@string/bank_name"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -210,10 +214,12 @@
                             tools:ignore="TextFields" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <TextView
                         android:id="@+id/txt_error_bank_name_deposit_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="0.5dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
@@ -221,13 +227,14 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout_bank_name_deposit_funds"
-                        app:layout_constraintVertical_bias="0.19999999" />
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout_account_holder_deposit_funds"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginRight="25dp"
                         android:layout_marginBottom="40dp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -240,7 +247,7 @@
                             android:id="@+id/tbx_name_deposit_funds"
                             style="@style/TextBox"
                             android:layout_width="match_parent"
-                            android:layout_height="45dp"
+                            android:layout_height="40dp"
                             android:autofillHints="@string/account_holder"
                             android:hint="@string/account_holder"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -308,14 +315,15 @@
                         android:id="@+id/txt_error_cvv_deposit_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="0.5dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
                         app:layout_constraintBottom_toTopOf="@+id/constraintLayout_expiry_date_deposit_funds"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_cvv_deposit_funds" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_cvv_deposit_funds"
+                        app:layout_constraintVertical_bias="0.0" />
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout_expiry_date_deposit_funds"
                         android:layout_width="match_parent"
@@ -360,7 +368,7 @@
                         android:id="@+id/txt_error_expiry_date_holder_deposit_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
+                        android:layout_marginTop="0.5dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
@@ -377,6 +385,7 @@
                         android:layout_marginLeft="25dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginRight="25dp"
+                        android:layout_marginBottom="40dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -398,7 +407,7 @@
                             android:id="@+id/tbx_amount_deposit_funds"
                             style="@style/TextBox"
                             android:layout_width="match_parent"
-                            android:layout_height="45dp"
+                            android:layout_height="40dp"
                             android:autofillHints="@string/amount"
                             android:hint="@string/amount"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -410,10 +419,12 @@
                             tools:ignore="TextFields" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <TextView
                         android:id="@+id/txt_error_amount_deposit_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="0.5dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
@@ -421,12 +432,13 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout_amount_deposit_funds"
-                        app:layout_constraintVertical_bias="0.19999999" />
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <TextView
                         android:id="@+id/txt_error_account_holder_deposit_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="0.5dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
@@ -434,7 +446,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout_account_holder_deposit_funds"
-                        app:layout_constraintVertical_bias="0.23000002" />
+                        app:layout_constraintVertical_bias="0.0" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -471,14 +483,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.2" />
+                app:layout_constraintGuide_percent="0.16" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.86" />
+                app:layout_constraintGuide_percent="0.89" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </eightbitlab.com.blurview.BlurView>
