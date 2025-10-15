@@ -40,11 +40,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements IResetPa
         WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main),(v, insets)->{
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
         String userEmail = getIntent().getStringExtra("userEmail");
         String recoveryCode = getIntent().getStringExtra("recoveryCode");
         getController();
