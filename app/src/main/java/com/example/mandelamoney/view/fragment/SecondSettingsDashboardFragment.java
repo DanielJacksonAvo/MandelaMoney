@@ -37,9 +37,11 @@ public class SecondSettingsDashboardFragment extends Fragment implements ISettin
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
-        setController();
+        controller.DashboardSettingsController.setTabletView(this);
         connectToUI();
         controller.DashboardSettingsController.loadUserToUI();
+        controller.DashboardSettingsController.displayNetworkStatus();
+        controller.DashboardSettingsController.displayCameraPermission();
     }
 
     private void connectToUI() {
@@ -51,9 +53,9 @@ public class SecondSettingsDashboardFragment extends Fragment implements ISettin
 
     }
 
-    public void setController() {
-        this.controller = (DashboardController) DataShare.receive();
-        if (this.controller != null && this.controller.DashboardSettingsController != null) {
+    public void setController(DashboardController controller) {
+        this.controller = controller;
+        if (this.controller != null && this.controller.DashboardSettingsController == null) {
             this.controller.createDashboardSettingsController(this);
         }
     }
