@@ -29,7 +29,7 @@ public class LoginManager {
             @NonNull Runnable onFailure
     ) {
         new Thread(() -> {
-            Object[] result = MySQLConnector.validateEmailPassword(email, password, context);
+            Object[] result = MySQLConnector.validateEmailPassword(email, Hasher.getHash(password), context);
             if (result == null || !(boolean) result[1] || !(result[0] instanceof User)) {
                 runOnMainThread(context, onFailure);
                 return;

@@ -37,13 +37,11 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        /// security vulnerability - serious - get rid of it
-        // Try restore user via DataShare (if provided)
-//        Object payload = DataShare.receive();
-//        if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
-//            UserSession.setUser((com.example.mandelamoney.model.User) payload);
-//            Log.d("DepositFundsActivity", "Restored user from DataShare.");
-//        }
+        Object payload = DataShare.receive();
+        if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
+            UserSession.setUser((com.example.mandelamoney.model.User) payload);
+            Log.d("DepositFundsActivity", "Restored user from DataShare.");
+        }
 
         // Session gate
 //        if (UserSession.getUser() == null) {
