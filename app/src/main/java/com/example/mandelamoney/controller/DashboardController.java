@@ -21,7 +21,6 @@ import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.IProfileView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
-import com.example.mandelamoney.view.activity.DepositFundsActivity;
 import com.example.mandelamoney.view.activity.LoginActivity;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
@@ -320,7 +319,15 @@ public class DashboardController {
 
 
         public void handleChangePasswordButton() {
-            ///  change password activity
+            User u = UserSession.getUser();
+            if (u == null) {
+                context.startActivity(new Intent(context, LoginActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                return;
+            }
+            com.example.mandelamoney.util.DataShare.send(u);
+            Intent intent = new Intent(context, com.example.mandelamoney.view.activity.ChangePasswordActivity.class);
+            context.startActivity(intent);
         }
 
         public void handleLogoutButton() {
