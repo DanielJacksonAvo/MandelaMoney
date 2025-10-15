@@ -147,4 +147,6 @@
     <string name="insufficient_funds">Insufficient Funds</string>
     <string name="save">Save</string>
     <string name="incorrect_password">Incorrect Password</string>
+    <string name="new_password">NEW PASSWORD</string>
+    <string name="incorrect_password_error">Incorrect password.</string>
 </resources>
