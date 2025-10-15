@@ -188,6 +188,7 @@ public class ForgotPasswordController {
             try {
                 resetSuccess = MySQLConnector.resetPassword(userEmail, recoveryCode, Hasher.getHash(password), context);
             }catch(Exception e){
+                resetPasswordView.hideLoadingSpinner();
                 resetSuccess = false;
             }
             final boolean finalSuccess = resetSuccess;
@@ -196,10 +197,12 @@ public class ForgotPasswordController {
 
                 if(finalSuccess) {
                     Toast.makeText(context, "Password reset successful! Please log in.", Toast.LENGTH_LONG).show();
+                    resetPasswordView.hideLoadingSpinner();
                     Intent intent = new Intent(context, LoginActivity.class);
                     context.startActivity(intent);
                     resetPasswordView.finishActivity();
                 }else{
+                    resetPasswordView.hideLoadingSpinner();
                     Toast.makeText(context, context.getString(R.string.invalid_recovery_code), Toast.LENGTH_LONG).show();
 
                 }
