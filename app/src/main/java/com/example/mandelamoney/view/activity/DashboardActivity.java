@@ -15,6 +15,7 @@ import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.fragment.HomeDashboardFragment;
 import com.example.mandelamoney.view.fragment.ProfileDashboardFragment;
 import com.example.mandelamoney.view.fragment.SecondProfileHomeDashboardFragment;
+import com.example.mandelamoney.view.fragment.SecondSettingsDashboardFragment;
 import com.example.mandelamoney.view.fragment.SettingsDashboardFragment;
 import com.example.mandelamoney.view.fragment.TransactionHistoryFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -121,7 +122,11 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         if (selectedFragment != null) {
             loadFragment(selectedFragment);
         }
-
+        if (checkTablet()) {
+            selectedFragmentExtra = new SecondSettingsDashboardFragment();
+            ((SecondSettingsDashboardFragment)selectedFragmentExtra).setController(dashboardController);
+            loadFragmentExtra(selectedFragmentExtra);
+        }
     }
 
     @Override

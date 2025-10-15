@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mandelaBlue"
+    tools:context=".view.fragment.SecondSettingsDashboardFragment">
+
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blurView_dashboard_balance"
+        style="@style/BlurPanel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="-84dp">
+
+            <TextView
+                android:id="@+id/txt_firstname_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:text="V1.0.0 Alpha"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line5"
+                app:layout_constraintEnd_toEndOf="@+id/top_center_line2"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/txt_firstnamelabel_profile"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line2" />
+
+            <TextView
+                android:id="@+id/txt_lastname_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:text="You're on the latest version"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line7"
+                app:layout_constraintEnd_toEndOf="@+id/top_center_line2"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/txt_lastnamelabel_profile"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line5" />
+
+            <TextView
+                android:id="@+id/txt_connectionstatus_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:text="Checking..."
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line6"
+                app:layout_constraintEnd_toEndOf="@+id/top_center_line2"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/txt_emaillabel_profile"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line7" />
+
+            <TextView
+                android:id="@+id/txt_connectionquality_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:text="Checking..."
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line8"
+                app:layout_constraintEnd_toEndOf="@+id/top_center_line2"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/txt_studentnumberlabel_profile"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line6" />
+
+            <TextView
+                android:id="@+id/txt_camerapermission_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_medium"
+                android:text="Denied"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line4"
+                app:layout_constraintEnd_toEndOf="@+id/top_center_line2"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/txt_balancelabel_profile"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line8" />
+
+            <TextView
+                android:id="@+id/txt_firstnamelabel_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                android:fontFamily="@font/dm_sans_light"
+                android:text="Version:"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line2" />
+
+            <View
+                android:id="@+id/top_center_line7"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginEnd="64dp"
+                android:background="@color/white10"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line2"
+                app:layout_constraintVertical_bias="0.4" />
+
+            <TextView
+                android:id="@+id/txt_lastnamelabel_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                android:fontFamily="@font/dm_sans_light"
+                android:text="Update:"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/top_center_line7"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line5" />
+
+            <TextView
+                android:id="@+id/txt_emaillabel_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                android:fontFamily="@font/dm_sans_light"
+                android:text="Cloud Status:"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line6"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line7" />
+
+            <TextView
+                android:id="@+id/txt_balancelabel_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                android:fontFamily="@font/dm_sans_light"
+                android:text="Camera Permission:"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line8" />
+
+            <TextView
+                android:id="@+id/txt_studentnumberlabel_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                android:fontFamily="@font/dm_sans_light"
+                android:text="Network Connection:"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line6" />
+
+            <View
+                android:id="@+id/top_center_line2"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="64dp"
+                android:layout_marginEnd="64dp"
+                android:background="@color/white10"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView26"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <View
+                android:id="@+id/top_center_line5"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginEnd="64dp"
+                android:background="@color/white10"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line2"
+                app:layout_constraintVertical_bias="0.19999999" />
+
+            <View
+                android:id="@+id/top_center_line6"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginEnd="64dp"
+                android:background="@color/white10"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line2"
+                app:layout_constraintVertical_bias="0.6" />
+
+            <View
+                android:id="@+id/top_center_line8"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginEnd="64dp"
+                android:background="@color/white10"
+                app:layout_constraintBottom_toTopOf="@+id/top_center_line4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/top_center_line2"
+                app:layout_constraintVertical_bias="0.8" />
+
+            <View
+                android:id="@+id/top_center_line4"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginEnd="64dp"
+                android:layout_marginBottom="64dp"
+                android:background="@color/white10"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView26"
+                android:layout_width="290dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="64dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/img_appstatus_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </eightbitlab.com.blurview.BlurView>
+</androidx.constraintlayout.widget.ConstraintLayout>
