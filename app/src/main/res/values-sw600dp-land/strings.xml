@@ -28,4 +28,6 @@
     <string name="bank_account">Bank Account</string>
     <string name="cardholder_name_fallback">Account Holder</string>
     <string name="account_holder">ACCOUNT HOLDER</string>
+    <string name="new_password">NEW PASSWORD</string>
+    <string name="incorrect_password_error">Incorrect password.</string>
 </resources>
