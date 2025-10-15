@@ -35,6 +35,7 @@ public class LoginManager {
                 return;
             }
             User user = (User) result[0];
+            user.setUserPassword(password);
             if (UserSession.getUser() != null) {
                 try {
                     user.setWeakAuth(UserSession.getUser().getWeakAuth());
