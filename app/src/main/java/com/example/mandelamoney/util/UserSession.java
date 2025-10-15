@@ -140,4 +140,5 @@ public class UserSession {
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         );
     }
+
 }
