@@ -88,6 +88,17 @@
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
+            android:name="com.example.mandelamoney.view.activity.WithdrawFundsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode" />
+
+        <activity
+            android:name="com.example.mandelamoney.view.activity.ConfirmWithdrawActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".view.activity.DepositFundsActivity"
             android:exported="true"
             android:screenOrientation="portrait" />

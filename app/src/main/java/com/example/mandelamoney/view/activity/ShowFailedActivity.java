@@ -1,36 +1,30 @@
 package com.example.mandelamoney.view.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.controller.DepositFundsController;
 import com.example.mandelamoney.controller.MakePaymentController;
 import com.example.mandelamoney.controller.RequestPaymentController;
-import com.example.mandelamoney.model.Business;
-import com.example.mandelamoney.model.Student;
-import com.example.mandelamoney.model.Transaction;
-import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.controller.WithdrawFundsController;
 import com.example.mandelamoney.util.DataShare;
-import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
 
 public class ShowFailedActivity extends AppCompatActivity implements ITransactionStatusDisplayView {
 
     private MakePaymentController makePaymentController;
     private RequestPaymentController requestPaymentController;
-    private TextView txtToname, txtFromname, txtTonumber, txtFromnumber, txtAmount, txtError;
+
+    private DepositFundsController depositFundsController;
+    private WithdrawFundsController withdrawFundsController;
+    private TextView txtToname, txtFromname, txtTonumber, txtFromnumber, txtAmount, txtError, txtToLabel, txtFromLabel;
 
 
     @Override
@@ -42,12 +36,6 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
         WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
-
         Object obj = DataShare.receive();
         if (obj instanceof MakePaymentController) {
             makePaymentController = (MakePaymentController) obj;
@@ -57,16 +45,26 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
             requestPaymentController = (RequestPaymentController) obj;
             requestPaymentController.setTransactionStatusDisplayView(this);
             requestPaymentController.setContext(this);
-
+        } else if (obj instanceof DepositFundsController) {
+            depositFundsController = (DepositFundsController) obj;
+            depositFundsController.setTransactionStatusDisplayView(this);
+        } else if (obj instanceof WithdrawFundsController) {
+            withdrawFundsController = (WithdrawFundsController) obj;
+            withdrawFundsController.setTransactionStatusDisplayView(this);
         }
         connectToUi();
+        String errorReason = getIntent().getStringExtra("ERROR_REASON");
+        if (errorReason == null || errorReason.trim().isEmpty()) {
+            errorReason = getString(R.string.failed);}
+        displayErrorMessage(errorReason);
         if (makePaymentController != null) {
             makePaymentController.loadTransactionStatusData();
-            String errorReason = getIntent().getStringExtra("ERROR_REASON");
-            displayErrorMessage(errorReason);
         } else if (requestPaymentController != null) {
             requestPaymentController.loadTransactionStatusData();
-            displayErrorMessage("Transaction Failed and Rolled Back");
+        } else if (depositFundsController != null) {
+            depositFundsController.loadTransactionStatusDataForFailed();
+        } else if (withdrawFundsController != null) {
+            withdrawFundsController.loadTransactionStatusDataForFailed();
         }
     }
 
@@ -77,6 +75,8 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
         txtFromnumber = findViewById(R.id.txt_fromnumber_failed);
         txtAmount = findViewById(R.id.txt_amount_failed);
         txtError = findViewById(R.id.txt_error_failed);
+        txtToLabel = findViewById(R.id.txt_transactiontypeto_failed);
+        txtFromLabel = findViewById(R.id.txt_transactiontypefrom_failed);
         Button btnClose = findViewById(R.id.btn_generate_qr_failed);
         configureCloseButton(btnClose);
 
@@ -94,6 +94,15 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
                     requestPaymentController.handleCancelButton();
                 } catch (Exception ignore) {}
             }
+            if(depositFundsController != null){
+                try{
+                    depositFundsController.handleCancelDepositFunds();
+                }catch (Exception ignore){}
+            }
+            if(withdrawFundsController != null){
+                try{ withdrawFundsController.handleCancelWithdrawFunds();}catch(Exception ignore){}
+            }
+            finish();
         });
     }
 
@@ -126,6 +135,26 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
     @Override
     public void finishActivity() {
         finish();
+    }
+
+    @Override
+    public void setFromUserLabelAsBank() {
+        txtFromLabel.setText(R.string.bank_account);
+    }
+
+    @Override
+    public void setToUserLabelAsBank() {
+        txtToLabel.setText(R.string.bank_account);
+    }
+
+    @Override
+    public void setToUserLabelAsMandelaMoney() {
+        txtToLabel.setText(R.string.mandela_money);
+    }
+
+    @Override
+    public void setFromUserLabelAsMandelaMoney() {
+        txtFromLabel.setText(R.string.mandela_money);
     }
 
     private void displayErrorMessage(String error) {

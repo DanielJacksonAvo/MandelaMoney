@@ -1,20 +1,18 @@
 package com.example.mandelamoney.view.activity;
 
-import android.content.Intent;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.MakePaymentController;
 import com.example.mandelamoney.controller.RequestPaymentController;
+import com.example.mandelamoney.controller.WithdrawFundsController;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.view.Iface.ITransactionStatusDisplayView;
 import com.example.mandelamoney.controller.DepositFundsController;
@@ -25,6 +23,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
     private MakePaymentController makePaymentController;
     private RequestPaymentController requestPaymentController;
     private DepositFundsController depositFundsController;
+    private WithdrawFundsController withdrawFundsController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +34,6 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
         WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
 
         Object obj = DataShare.receive();
         if (obj instanceof MakePaymentController) {
@@ -50,9 +44,12 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
             requestPaymentController = (RequestPaymentController) obj;
             requestPaymentController.setTransactionStatusDisplayView(this);
             requestPaymentController.setContext(this);
-        } else if (obj instanceof DepositFundsController) {      // NEW
+        } else if (obj instanceof DepositFundsController) {
             depositFundsController = (DepositFundsController) obj;
             depositFundsController.setTransactionStatusDisplayView(this);
+        } else if (obj instanceof WithdrawFundsController) {
+            withdrawFundsController = (WithdrawFundsController) obj;
+            withdrawFundsController.setTransactionStatusDisplayView(this);
         }
 
         connectToUi();
@@ -61,8 +58,10 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
             makePaymentController.loadTransactionStatusData();
         } else if (requestPaymentController != null) {
             requestPaymentController.loadTransactionStatusData();
-        } else if (depositFundsController != null) {             // NEW
+        } else if (depositFundsController != null) {
             depositFundsController.loadTransactionStatusDataForSuccess();
+        } else if (withdrawFundsController != null) {
+            withdrawFundsController.loadTransactionStatusDataForSuccess();
         }
 
 
@@ -99,9 +98,34 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
         txtFromnumber.setText(number);
     }
 
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
     public void displayAmount(double amount) {
         txtAmount.setText("R " + String.format("%.2f", amount));
+    }
+    @Override
+    public void setFromUserLabelAsBank(){
+        TextView txtFromUserType = findViewById(R.id.txt_transactiontypefrom_success);
+        txtFromUserType.setText(R.string.bank_account);
+    }
+
+    @Override
+    public void setToUserLabelAsBank() {
+        TextView txtToUserType = findViewById(R.id.txt_transactiontypeto_success);
+        txtToUserType.setText(R.string.bank_account);
+
+    }
+
+    @Override
+    public void setToUserLabelAsMandelaMoney() {
+        TextView txtToUserType = findViewById(R.id.txt_transactiontypeto_success);
+        txtToUserType.setText(R.string.mandela_money);
+    }
+
+    @Override
+    public void setFromUserLabelAsMandelaMoney() {
+        TextView txtFromUserType = findViewById(R.id.txt_transactiontypefrom_success);
+        txtFromUserType.setText(R.string.mandela_money);
     }
 
     @Override
@@ -111,14 +135,21 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
 
     private void configureCloseButton(Button btnClose) {
         btnClose.setOnClickListener(v -> {
-            // For deposit, just close; dashboard will pick up the refreshed balance
             if (makePaymentController != null) {
                 try { makePaymentController.handleCancel(); } catch (Exception ignore) {}
             }
             if (requestPaymentController != null) {
                 try { requestPaymentController.handleCancelButton(); } catch (Exception ignore) {}
             }
-            finish(); // ensure
+            if(depositFundsController != null){
+                try{
+                    depositFundsController.handleCancelDepositFunds();
+                }catch (Exception ignore){}
+            }
+            if(withdrawFundsController != null){
+                try{ withdrawFundsController.handleCancelWithdrawFunds();}catch(Exception ignore){}
+            }
+            finish();
         });
     }
 }
