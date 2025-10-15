@@ -260,7 +260,6 @@ public class CreateAccountController {
         }
     }
 
-    // New constructors to properly set the specific view interfaces
     public void setContextViewStudent(Context context, ICreateStudentAccountView viewCreateStudentAccount) {
         this.context = context;
         this.viewCreateStudentAccount = viewCreateStudentAccount;
@@ -287,7 +286,6 @@ public class CreateAccountController {
         return userPassword.length() >= 8;
     }
 
-    // This method will now be called from the background thread
     private boolean checkUniqueEmail(String userEmail) {
         return MySQLConnector.checkUniqueEmail(userEmail, context);
     }

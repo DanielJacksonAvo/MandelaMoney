@@ -7,4 +7,8 @@ public interface IConfirmDepositView {
     void displayFromUserNumber(String number);
     void displayAmount(double amount);
     void finishActivity();
+
+    void showLoadingSpinner();
+
+    void hideLoadingSpinner();
 }

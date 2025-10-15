@@ -1,18 +1,24 @@
 package com.example.mandelamoney.controller;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Looper;
 import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.BiometricsManager;
+import com.example.mandelamoney.util.NetworkChecker;
 import com.example.mandelamoney.util.TransactionManager;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.util.DataShare;
@@ -20,11 +26,17 @@ import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.view.Iface.IDashboardView;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.IProfileView;
+import com.example.mandelamoney.view.Iface.ISettingsView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
+import com.example.mandelamoney.view.activity.DepositFundsActivity;
+import com.example.mandelamoney.view.activity.EditBusinessProfileActivity;
+import com.example.mandelamoney.view.activity.EditStudentProfileActivity;
 import com.example.mandelamoney.view.activity.LoginActivity;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
 import com.example.mandelamoney.view.activity.UnlockActivity;
+import com.example.mandelamoney.view.activity.WithdrawFundsActivity;
+import com.example.mandelamoney.view.fragment.SettingsDashboardFragment;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -42,6 +54,8 @@ public class DashboardController {
     public DashboardHomeController DashboardHomeController;
     public TransactionHistoryController TransactionHistoryController;
     public DashboardProfileController DashboardProfileController;
+    public DashboardSettingsController DashboardSettingsController;
+
 
 
     public DashboardController(Context context, IDashboardView view) {
@@ -123,6 +137,10 @@ public class DashboardController {
 
     public void createDashboardProfileController(IProfileView view) {
         DashboardProfileController = new DashboardProfileController(view);
+    }
+
+    public void createDashboardSettingsController(ISettingsView view) {
+        DashboardSettingsController = new DashboardSettingsController(view);
     }
 
 
@@ -244,9 +262,94 @@ public class DashboardController {
                 });
         }
 
+        public void handleWithdraw() {
+            stopPolling();
+            Intent intent = new Intent(context, WithdrawFundsActivity.class);
+            context.startActivity(intent);
+        }
     }
 
-    private class DashboardSettingsController {
+    public class DashboardSettingsController {
+        private final ISettingsView view;
+
+        public DashboardSettingsController(ISettingsView view) {
+            this.view = view;
+        }
+
+        public void loadUserToUI() {
+            if (UserSession.getUser() instanceof Student) {
+                view.displayUserName(((Student) UserSession.getUser()).getStudentFullName());
+            } else {
+                view.displayUserName(((Business) UserSession.getUser()).getBusinessName());
+            }
+        }
+
+        public void displayNetworkStatus() {
+            view.displayConnectionQuality("Checking...");
+            view.displayConnectionStatus("Checking...");
+            new Thread(() -> {
+                String status = NetworkChecker.checkConnection();
+                if (view instanceof SettingsDashboardFragment) {
+                    Activity activity = ((SettingsDashboardFragment) view).getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(() -> {
+                            view.displayConnectionQuality(status);
+                            if (status.equals("Disconnected")) {
+                                view.displayConnectionStatus(status);
+                            } else {
+                                view.displayConnectionStatus("Connected");
+                            }
+                        });
+                    }
+                }
+            }).start();
+        }
+
+
+        public void displayCameraPermission() {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                view.displayCameraPermission("Allowed");
+            } else {
+                view.displayCameraPermission("Denied");
+            }
+        }
+
+        public void displayAvailableAuthenticationSettings() {
+            if (BiometricsManager.hasWeakAuthentication(context)) {
+                view.updateBiometricsSwitchFunctionality(true);
+                view.updateWeakBiometricsSwitchFunctionality(true);
+                view.setBiometricsSwitchStatus(UserSession.getUser().getStrongAuth());
+                view.setWeakBiometricsSwitchStatus(UserSession.getUser().getWeakAuth());
+
+            } else {
+                view.updateBiometricsSwitchFunctionality(false);
+                view.updateWeakBiometricsSwitchFunctionality(false);
+                view.setBiometricsSwitchStatus(false);
+                view.setWeakBiometricsSwitchStatus(false);
+            }
+        }
+
+
+
+
+        public void handleStrongAuthenticationChange(Boolean enabled) {
+            UserSession.getUser().setStrongAuth(enabled);
+            if (!enabled) {
+                handleWeakAuthenticationChange(false);
+                view.setWeakBiometricsSwitchStatus(false);
+            }
+            UserSession.saveSession(context);
+        }
+
+        public void handleWeakAuthenticationChange(Boolean enabled) {
+            UserSession.getUser().setWeakAuth(enabled);
+            if (enabled) {
+                handleStrongAuthenticationChange(true);
+                view.setBiometricsSwitchStatus(true);
+            }
+            UserSession.saveSession(context);
+
+        }
     }
 
     public class DashboardProfileController {
@@ -302,7 +405,13 @@ public class DashboardController {
         }
 
         public void handleEditButton() {
-            /// edit profile activity
+            if (UserSession.getUser() instanceof Student) {
+                Intent intent = new Intent(context, EditStudentProfileActivity.class);
+                context.startActivity(intent);
+            } else if (UserSession.getUser() instanceof Business) {
+                Intent intent = new Intent(context, EditBusinessProfileActivity.class);
+                context.startActivity(intent);
+            }
         }
 
         public void handleDepositButton() {
@@ -312,7 +421,7 @@ public class DashboardController {
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 return;
             }
-            com.example.mandelamoney.util.DataShare.send(u);   // <-- send user
+            com.example.mandelamoney.util.DataShare.send(u);
             Intent intent = new Intent(context, com.example.mandelamoney.view.activity.DepositFundsActivity.class);
             context.startActivity(intent);
         }

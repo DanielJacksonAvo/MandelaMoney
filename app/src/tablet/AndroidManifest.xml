@@ -76,10 +76,32 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
             tools:replace="android:screenOrientation,android:configChanges" />
+
         <activity android:name="com.example.mandelamoney.view.activity.DashboardActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
-            android:windowSoftInputMode="stateHidden|adjustNothing"
             tools:replace="android:screenOrientation,android:configChanges" />
+        <activity
+            android:name="com.example.mandelamoney.view.activity.WithdrawFundsActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:screenOrientation="locked"
+            tools:replace="android:screenOrientation,android:configChanges" />
+
+        <activity
+            android:name="com.example.mandelamoney.view.activity.ConfirmWithdrawActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:screenOrientation="locked"
+            tools:replace="android:screenOrientation,android:configChanges" />
+
+        <activity
+            android:name=".view.activity.EditBusinessProfileActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:screenOrientation="locked"
+            tools:replace="android:screenOrientation" />
+        <activity
+            android:name=".view.activity.EditStudentProfileActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:screenOrientation="locked"
+            tools:replace="android:screenOrientation" />
     </application>
 </manifest>
