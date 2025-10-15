@@ -35,6 +35,7 @@ import com.example.mandelamoney.view.activity.LoginActivity;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
 import com.example.mandelamoney.view.activity.UnlockActivity;
+import com.example.mandelamoney.view.fragment.SecondSettingsDashboardFragment;
 import com.example.mandelamoney.view.fragment.SettingsDashboardFragment;
 
 import java.util.List;
@@ -266,9 +267,14 @@ public class DashboardController {
 
     public class DashboardSettingsController {
         private final ISettingsView view;
+        private ISettingsView view2;
 
         public DashboardSettingsController(ISettingsView view) {
             this.view = view;
+        }
+
+        public void setTabletView(ISettingsView view2) {
+            this.view2 = view2;
         }
 
         public void loadUserToUI() {
@@ -285,33 +291,63 @@ public class DashboardController {
         }
 
         public void displayNetworkStatus() {
-            view.displayConnectionQuality("Checking...");
-            view.displayConnectionStatus("Checking...");
-            new Thread(() -> {
-                String status = NetworkChecker.checkConnection();
-                if (view instanceof SettingsDashboardFragment) {
-                    Activity activity = ((SettingsDashboardFragment) view).getActivity();
-                    if (activity != null) {
-                        activity.runOnUiThread(() -> {
-                            view.displayConnectionQuality(status);
-                            if (status.equals("Disconnected")) {
-                                view.displayConnectionStatus(status);
-                            } else {
-                                view.displayConnectionStatus("Connected");
-                            }
-                        });
+            if (context.getResources().getBoolean(R.bool.is_tablet_landscape)) {
+                view2.displayConnectionQuality("Checking...");
+                view2.displayConnectionStatus("Checking...");
+                new Thread(() -> {
+                 String status = NetworkChecker.checkConnection();
+                    if (view2 instanceof SecondSettingsDashboardFragment) {
+                     Activity activity = ((SecondSettingsDashboardFragment) view2).getActivity();
+                     if (activity != null) {
+                            activity.runOnUiThread(() -> {
+                             view2.displayConnectionQuality(status);
+                                if (status.equals("Disconnected")) {
+                                view2.displayConnectionStatus(status);
+                                } else {
+                                view2.displayConnectionStatus("Connected");
+                                }
+                                });
+                        }
                     }
-                }
-            }).start();
+                }).start();
+            } else {
+                view.displayConnectionQuality("Checking...");
+                view.displayConnectionStatus("Checking...");
+                new Thread(() -> {
+                    String status = NetworkChecker.checkConnection();
+                    if (view instanceof SettingsDashboardFragment) {
+                        Activity activity = ((SettingsDashboardFragment) view).getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(() -> {
+                                view.displayConnectionQuality(status);
+                                if (status.equals("Disconnected")) {
+                                    view.displayConnectionStatus(status);
+                                } else {
+                                    view.displayConnectionStatus("Connected");
+                                }
+                            });
+                        }
+                    }
+                }).start();
+            }
         }
 
 
         public void displayCameraPermission() {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                view.displayCameraPermission("Allowed");
+            if (context.getResources().getBoolean(R.bool.is_tablet_landscape)) {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    view2.displayCameraPermission("Allowed");
+                } else {
+                    view2.displayCameraPermission("Denied");
+                }
             } else {
-                view.displayCameraPermission("Denied");
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    view.displayCameraPermission("Allowed");
+                } else {
+                    view.displayCameraPermission("Denied");
+                }
             }
+
         }
 
         public void displayAvailableAuthenticationSettings() {
@@ -351,9 +387,6 @@ public class DashboardController {
 
         }
 
-        public void setTabletUI() {
-
-        }
     }
 
     public class DashboardProfileController {

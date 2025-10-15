@@ -44,14 +44,12 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
         configureFaceIDSwitch();
         configureFingerprintSwitch();
         if (!this.getResources().getBoolean(R.bool.is_tablet_landscape)) {
+            //if mobile
             controller.DashboardSettingsController.loadUserToUI();
             controller.DashboardSettingsController.displayNetworkStatus();
-            controller.DashboardSettingsController.displayCameraPermission();}
-        else {
-            DataShare.send(controller);
-            controller.DashboardSettingsController.setTabletUI();
-            controller.DashboardSettingsController.displayAvailableAuthenticationSettings();
+            controller.DashboardSettingsController.displayCameraPermission();
         }
+        controller.DashboardSettingsController.displayAvailableAuthenticationSettings();
     }
 
     public void setController(DashboardController controller) {
