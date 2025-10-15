@@ -148,5 +148,6 @@
     <string name="save">Save</string>
     <string name="incorrect_password">Incorrect Password</string>
     <string name="new_password">NEW PASSWORD</string>
-    <string name="incorrect_password_error">Incorrect password.</string>
+    <string name="incorrect_password_error">Incorrect Password</string>
+    <string name="incorrect_email_and_password_combination"><![CDATA[Incorrect Email & Password]]></string>
 </resources>

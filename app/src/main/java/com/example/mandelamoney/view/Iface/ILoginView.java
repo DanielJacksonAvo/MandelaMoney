@@ -4,6 +4,8 @@ public interface ILoginView {
     void showErrorMessage();
 
     void hideErrorMessage();
+    void showEmailErrorMessage();
+    void hideEmailErrorMessage();
 
     void finishActivity();
 
