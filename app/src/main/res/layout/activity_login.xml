@@ -26,6 +26,7 @@
             android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
@@ -40,12 +41,12 @@
                     android:id="@+id/img_email_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:contentDescription="@string/todo"
                     android:src="@drawable/img_email_icon"
-                    android:layout_marginStart="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/tbx_email_login"
@@ -53,18 +54,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:autofillHints="@string/email"
+                    android:ellipsize="end"
                     android:hint="@string/email"
                     android:maxLines="1"
                     android:paddingHorizontal="40dp"
+                    android:singleLine="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0"
-                    tools:ignore="TextFields"
-                    android:singleLine="true"
-                    android:ellipsize="end"/>
+                    tools:ignore="TextFields" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -127,14 +128,27 @@
                 android:id="@+id/txt_error_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/email_password_invalid"
+                android:text="@string/incorrect_email_and_password_combination"
                 android:textColor="@color/mandelaYellow"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_forgotPassword_login"
                 app:layout_constraintVertical_bias="0.15" />
+
+            <TextView
+                android:id="@+id/txt_email_error_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/invalid_email"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout_password_login"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout6"
+                app:layout_constraintVertical_bias="0.14999998" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
