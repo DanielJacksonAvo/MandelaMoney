@@ -5,6 +5,11 @@ public interface IResetPasswordView {
     void hideErrorMessage_PasswordsDoNotMatch();
     void showErrorMessage_Minimum8Characters(String string);
     void hideErrorMessage_Minimum8Characters();
+
+    void showLoadingSpinner();
+
+    void hideLoadingSpinner();
+
     void finishActivity();
 
 }

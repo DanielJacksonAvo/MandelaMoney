@@ -266,7 +266,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/login_loading_spinner"
+        android:id="@+id/recover_account_loading_spinner"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:elevation="999dp"

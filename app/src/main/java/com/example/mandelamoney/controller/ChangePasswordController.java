@@ -32,74 +32,85 @@ public class ChangePasswordController {
         this.changePasswordView = changePasswordView;
     }
     public void handleChangePassword(String userEmail, String oldPassword, String newPassword, String confirmNewPassword){
-        final String TAG = "ChangePassword";
         Log.d(TAG, "handleChangePassword() invoked");
 
-        if(changePasswordView != null){
+        if (changePasswordView != null) {
             changePasswordView.hideCurrentPasswordError();
             changePasswordView.hideNewPasswordError();
         }
         boolean hasError = false;
+        if (newPassword == null) newPassword = "";
+        if (confirmNewPassword == null) confirmNewPassword = "";
+        if (oldPassword == null) oldPassword = "";
+        if (userEmail == null) userEmail = "";
 
-        boolean isMatch = MySQLConnector.verifyPassword(userEmail, Hasher.getHash(oldPassword), context);
-        if (!isMatch) {
-            Log.w(TAG, "Password verification failed");
-            if(changePasswordView != null) changePasswordView.showCurrentPasswordError(context.getString(R.string.incorrect_password_error));
+        if(oldPassword.length() <8){
+            if (changePasswordView != null)
+                changePasswordView.showCurrentPasswordError(context.getString(R.string.invalid_password));
             hasError = true;
         }
-
         if (newPassword.length() < 8) {
-            Log.w(TAG, "New password length < 8");
-           if(changePasswordView != null) changePasswordView.showNewPasswordError(context.getString(R.string.minimum_8_characters));
-           hasError = true;
-        }else if (!newPassword.equals(confirmNewPassword)) {
-            Log.d(TAG, "New password passes length check");
-            Log.w(TAG, "New password and confirmation do not match");
-            if(changePasswordView != null) changePasswordView.showNewPasswordError(context.getString(R.string.passwords_do_not_match_error));
-            hasError=true;
+            if (changePasswordView != null)
+                changePasswordView.showNewPasswordError(context.getString(R.string.minimum_8_characters));
+            hasError = true;
+        } else if (!newPassword.equals(confirmNewPassword)) {
+            if (changePasswordView != null)
+                changePasswordView.showNewPasswordError(context.getString(R.string.passwords_do_not_match_error));
+            hasError = true;
         }
-        if(hasError) return;
-        changePasswordExecutor.execute(()->{
-            try{
-                User current = UserSession.getUser();
-                Log.d(TAG, "BG: fetched current user = " + (current != null ? safe(current.getUserEmail()) : "null"));
+        if (hasError) return;
 
-                if(current == null){
+        if (changePasswordView != null) changePasswordView.showLoadingSpinner();
+
+        String finalUserEmail = userEmail;
+        String finalOldPassword = oldPassword;
+        String finalNewPassword = newPassword;
+        changePasswordExecutor.execute(() -> {
+            try {
+                boolean isMatch = MySQLConnector.verifyPassword(finalUserEmail, Hasher.getHash(finalOldPassword), context);
+                if (!isMatch) {
                     ContextCompat.getMainExecutor(context).execute(() -> {
-                        Log.w(TAG, "BG->UI: session expired, notifying view");
-                        Toast.makeText(context.getApplicationContext(),
-                                context.getString(R.string.session_expired),
-                                Toast.LENGTH_LONG).show();
+                        if (changePasswordView != null) {
+                            changePasswordView.hideLoadingSpinner();
+                            changePasswordView.showCurrentPasswordError(context.getString(R.string.incorrect_password_error));
+                        }
                     });
                     return;
-
                 }
-                boolean changePasswordSuccess = MySQLConnector.changePassword(userEmail, Hasher.getHash(oldPassword),Hasher.getHash(newPassword), context);
+                boolean changePasswordSuccess = MySQLConnector.changePassword(
+                        finalUserEmail,
+                        Hasher.getHash(finalOldPassword),
+                        Hasher.getHash(finalNewPassword),
+                        context
+                );
 
-                if (changePasswordSuccess) {
-                    UserSession.getUser().setUserPassword(newPassword);
-                    UserSession.saveSession(context);
-
-                    Log.i(TAG, "Password change succeeded; redirecting to LoginActivity");
-                    Toast.makeText(context, "Password changed successful! Please log in.", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(context, LoginActivity.class);
-                    context.startActivity(intent);
-                    if(changePasswordView!= null) changePasswordView.finishActivity();
-                } else {
-                    Log.e(TAG, "Password change failed (connector returned false)");
-                    Toast.makeText(context, context.getString(R.string.invalid_recovery_code), Toast.LENGTH_LONG).show();
-                }
-            }catch (Throwable t){
-                Log.e(TAG, "BG: Unexpected error during withdraw flow", t);
                 ContextCompat.getMainExecutor(context).execute(() -> {
-                    if(changePasswordView!=null) changePasswordView.hideLoadingSpinner();
+                    if (changePasswordView != null) changePasswordView.hideLoadingSpinner();
+
+                    if (changePasswordSuccess) {
+                        if (UserSession.getUser() != null) {
+                            UserSession.getUser().setUserPassword(finalNewPassword);
+                            UserSession.saveSession(context);
+                        }
+
+                        Toast.makeText(context, "Password changed successfully! Please log in.", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(context, LoginActivity.class);
+                        context.startActivity(intent);
+                        if (changePasswordView != null) changePasswordView.finishActivity();
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.invalid_recovery_code), Toast.LENGTH_LONG).show();
+                    }
+                });
+            } catch (Throwable t) {
+                Log.e(TAG, "Unexpected error during changePassword flow", t);
+                ContextCompat.getMainExecutor(context).execute(() -> {
+                    if (changePasswordView != null) changePasswordView.hideLoadingSpinner();
                     Toast.makeText(context, "Unexpected error. Please try again.", Toast.LENGTH_SHORT).show();
                 });
             }
         });
-
-
     }
+
     private static String safe(String s) { return s == null ? "(null)" : s.trim(); }
 
 
