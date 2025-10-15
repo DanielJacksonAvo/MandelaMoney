@@ -100,6 +100,10 @@
             android:name="com.example.mandelamoney.view.activity.ConfirmDepositActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.example.mandelamoney.view.activity.ChangePasswordActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.example.mandelamoney.view.activity.MainActivity"
