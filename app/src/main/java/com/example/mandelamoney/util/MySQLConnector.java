@@ -277,7 +277,7 @@ public class MySQLConnector {
         try (CallableStatement stmt = conn.prepareCall(SQL)) {
             int i = 1;
             stmt.setString(i++, userEmail);
-
+          
             java.math.BigDecimal decAmount = java.math.BigDecimal.valueOf(
                     Math.round((double) amount * 100.0) / 100.0
             );
@@ -303,6 +303,50 @@ public class MySQLConnector {
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "createDepositBankAndPendingTransaction failed: " + e.getMessage(), e);
+        }
+        return out;
+    }
+    public static Object[] createWithdrawBankAndPendingTransaction(
+            String userEmail,
+            float amount,
+            String baNumber,
+            String baBranchCode,
+            String baName,
+            String baBank,
+            Context context
+    ) {
+        Connection conn = getConnection(context);
+        Object[] out = new Object[]{false, null, null};
+        if (conn == null) return out;
+        final String SQL = "{CALL MandelaMoneyDB.createWithdrawBankAndPendingTransaction(?, ?, ?, ?, ?, ?, ?, ?)}";
+
+        try (CallableStatement stmt = conn.prepareCall(SQL)) {
+            int i = 1;
+            stmt.setString(i++, userEmail);
+
+            java.math.BigDecimal decAmount = java.math.BigDecimal.valueOf(
+                    Math.round((double) amount * 100.0) / 100.0
+            );
+            stmt.setBigDecimal(i++, decAmount);
+            stmt.setString(i++, baNumber);
+            stmt.setString(i++, baBranchCode);
+            stmt.setString(i++, baName);
+            stmt.setString(i++, baBank);
+            stmt.registerOutParameter(i++, java.sql.Types.BOOLEAN);
+            stmt.registerOutParameter(i++, java.sql.Types.INTEGER);
+
+            stmt.execute();
+
+            boolean success = stmt.getBoolean(7);
+            int txnId = stmt.getInt(8);
+            Integer txnObj = stmt.wasNull() ? null : txnId;
+
+            out[0] = success;
+            out[1] = txnObj;
+            out[2] = null;
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "createWithdrawBankAndPendingTransaction failed: " + e.getMessage(), e);
         }
         return out;
     }
