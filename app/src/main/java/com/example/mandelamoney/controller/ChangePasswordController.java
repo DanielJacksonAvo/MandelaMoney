@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
-import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.Hasher;
 import com.example.mandelamoney.util.UserSession;
@@ -135,11 +134,6 @@ public class ChangePasswordController {
             }
         });
     }
-
-
-    private static String safe(String s) { return s == null ? "(null)" : s.trim(); }
-
-
 
     public void handleCancel(){
         Log.d(TAG, "handleCancelDepositFunds()");
