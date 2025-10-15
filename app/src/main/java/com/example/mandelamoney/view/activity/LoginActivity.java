@@ -23,12 +23,13 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.LoginController;
+import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.view.Iface.ILoginView;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LoginActivity extends AppCompatActivity implements ILoginView {
     private LoginController loginController;
-    private TextView txtError;
+    private TextView txtError, txtEmailError;
 
     private Button btnLogin;
     private EditText tbxUserEmail;
@@ -76,6 +77,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         btnForgotPassword = findViewById(R.id.btn_forgotPassword_login);
         btnSignup = findViewById(R.id.btn_signup_login);
         loadingSpinner = findViewById(R.id.login_loading_spinner);
+        txtEmailError = findViewById(R.id.txt_email_error_login);
 
         if (btnLogin != null && tbxUserEmail != null && tbxUserPassword != null) {
             configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
@@ -100,6 +102,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         btnForgotPassword = findViewById(R.id.btn_forgotPassword_login);
         btnSignup = findViewById(R.id.btn_signup_login2);
         loadingSpinner = findViewById(R.id.login_loading_spinner);
+        txtEmailError = findViewById(R.id.txt_email_error_login);
 
         if (btnLogin != null && tbxUserEmail != null && tbxUserPassword != null) {
             configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
@@ -148,12 +151,40 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         if (txtError != null) {
             txtError.setVisibility(VISIBLE);
         }
+        if (tbxUserEmail != null && tbxUserPassword != null) {
+            ErrorBorder.applyMandelaYellowBorder(tbxUserEmail);
+            ErrorBorder.applyMandelaYellowBorder(tbxUserPassword);
+        }
     }
 
     @Override
     public void hideErrorMessage() {
         if (txtError != null) {
             txtError.setVisibility(GONE);
+        }
+        if (tbxUserEmail != null && tbxUserPassword != null) {
+            ErrorBorder.removeStroke(tbxUserEmail);
+            ErrorBorder.removeStroke(tbxUserPassword);
+        }
+    }
+
+    @Override
+    public void showEmailErrorMessage() {
+        if (tbxUserEmail != null) {
+            ErrorBorder.applyMandelaYellowBorder(tbxUserEmail);
+        }
+        if (txtEmailError != null) {
+            txtEmailError.setVisibility(VISIBLE);
+        }
+    }
+
+    @Override
+    public void hideEmailErrorMessage() {
+        if (tbxUserEmail != null) {
+            ErrorBorder.removeStroke(tbxUserEmail);
+        }
+        if (txtEmailError != null) {
+            txtEmailError.setVisibility(GONE);
         }
     }
 

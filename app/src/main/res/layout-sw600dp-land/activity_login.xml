@@ -64,7 +64,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <TextView
+                        android:id="@+id/txt_email_error_login"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/invalid_email"
+                        android:textColor="@color/mandelaYellow"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toTopOf="@+id/constraintLayout_password_login"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout7"
+                        app:layout_constraintVertical_bias="0.14999998" />
+
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout7"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
@@ -80,11 +94,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
-                            android:contentDescription="@string/todo"
                             android:src="@drawable/img_email_icon"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="ContentDescription" />
 
                         <EditText
                             android:id="@+id/tbx_email_login"
@@ -163,7 +177,7 @@
                         android:id="@+id/txt_error_login"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/email_password_invalid"
+                        android:text="@string/incorrect_email_and_password_combination"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -184,7 +198,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/img_welcome_text" />
+                app:srcCompat="@drawable/img_welcome_text"
+                tools:ignore="ContentDescription" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline3"
@@ -274,7 +289,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/img_mandelamoney_text_tablet" />
+                app:srcCompat="@drawable/img_mandelamoney_text_tablet"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/imageView10"
@@ -284,7 +300,8 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline9"
                 app:layout_constraintStart_toStartOf="@+id/guideline8"
                 app:layout_constraintTop_toTopOf="@+id/guideline11"
-                app:srcCompat="@drawable/img_mandelamoneylogo" />
+                app:srcCompat="@drawable/img_mandelamoneylogo"
+                tools:ignore="ContentDescription" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </eightbitlab.com.blurview.BlurView>
