@@ -60,7 +60,7 @@ public class ForgotPasswordController {
             boolean exists = false;
             String hashcode = null;
             try {
-                Object[] objs = callSQLForgotPassword(userEmail);
+                Object[] objs = callSQLForgotPassword(email);
                 if (objs != null && objs.length >= 2) {
                     Object ex = objs[0];
                     exists = (ex instanceof Boolean) && (Boolean) ex;
@@ -197,12 +197,10 @@ public class ForgotPasswordController {
 
                 if(finalSuccess) {
                     Toast.makeText(context, "Password reset successful! Please log in.", Toast.LENGTH_LONG).show();
-                    resetPasswordView.hideLoadingSpinner();
                     Intent intent = new Intent(context, LoginActivity.class);
                     context.startActivity(intent);
                     resetPasswordView.finishActivity();
                 }else{
-                    resetPasswordView.hideLoadingSpinner();
                     Toast.makeText(context, context.getString(R.string.invalid_recovery_code), Toast.LENGTH_LONG).show();
 
                 }
