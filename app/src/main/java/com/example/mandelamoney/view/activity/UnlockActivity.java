@@ -11,7 +11,6 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.util.TypedValue;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,16 +19,17 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.UnlockController;
+import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.view.Iface.IUnlockView;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class UnlockActivity extends AppCompatActivity implements IUnlockView {
     private UnlockController unlockController;
     private TextView txtError;
+    private EditText tbxUserPassword;
     private ConstraintLayout loadingSpinner;
     private Button btnBiometrics, btnUnlock;
 
@@ -56,7 +56,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
     }
     public void connectToUI() {
         btnUnlock = findViewById(R.id.btn_unlock);
-        EditText tbxUserPassword = findViewById(R.id.tbx_password_unlock);
+        tbxUserPassword = findViewById(R.id.tbx_password_unlock);
         txtError = findViewById(R.id.txt_error_unlock_application);
         ImageView imgPasswordIcon = findViewById(R.id.img_password_unlock);
         btnBiometrics = findViewById(R.id.btn_biometrics_unlock);
@@ -156,6 +156,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
 
     @Override
     public void showErrorMessage() {
+        ErrorBorder.applyMandelaYellowBorder(tbxUserPassword);
         if(txtError != null){
             txtError.setVisibility(VISIBLE);
         }
@@ -163,6 +164,7 @@ public class UnlockActivity extends AppCompatActivity implements IUnlockView {
 
     @Override
     public void hideErrorMessage() {
+        ErrorBorder.removeStroke(tbxUserPassword);
         if(txtError != null){
             txtError.setVisibility(GONE);
         }
