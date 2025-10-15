@@ -38,46 +38,72 @@ public class ChangePasswordController {
             changePasswordView.hideCurrentPasswordError();
             changePasswordView.hideNewPasswordError();
         }
-        boolean hasError = false;
-        if (newPassword == null) newPassword = "";
-        if (confirmNewPassword == null) confirmNewPassword = "";
-        if (oldPassword == null) oldPassword = "";
-        if (userEmail == null) userEmail = "";
+        userEmail = userEmail == null ? "" : userEmail.trim();
+        oldPassword = oldPassword == null ? "" : oldPassword.trim();
+        newPassword = newPassword == null ? "" : newPassword.trim();
+        confirmNewPassword = confirmNewPassword == null ? "" : confirmNewPassword.trim();
 
-        if(oldPassword.length() <8){
-            if (changePasswordView != null)
-                changePasswordView.showCurrentPasswordError(context.getString(R.string.invalid_password));
+        boolean hasError = false;
+        boolean curPasswordError = false;
+
+        if (oldPassword.isEmpty() || oldPassword.length() < 8) {
+            if (changePasswordView != null) {
+                changePasswordView.showCurrentPasswordError(context.getString(R.string.incorrect_password_error));
+            }
             hasError = true;
+            curPasswordError = true;
         }
+
         if (newPassword.length() < 8) {
-            if (changePasswordView != null)
+            if (changePasswordView != null) {
                 changePasswordView.showNewPasswordError(context.getString(R.string.minimum_8_characters));
+            }
             hasError = true;
         } else if (!newPassword.equals(confirmNewPassword)) {
-            if (changePasswordView != null)
+            if (changePasswordView != null) {
                 changePasswordView.showNewPasswordError(context.getString(R.string.passwords_do_not_match_error));
+            }
             hasError = true;
         }
-        if (hasError) return;
+        if (hasError && curPasswordError) return;
 
         if (changePasswordView != null) changePasswordView.showLoadingSpinner();
 
-        String finalUserEmail = userEmail;
-        String finalOldPassword = oldPassword;
-        String finalNewPassword = newPassword;
+        final String finalUserEmail = userEmail;
+        final String finalOldPassword = oldPassword;
+        final String finalNewPassword = newPassword;
+        final boolean finalHasError = hasError;
+
         changePasswordExecutor.execute(() -> {
             try {
-                boolean isMatch = MySQLConnector.verifyPassword(finalUserEmail, Hasher.getHash(finalOldPassword), context);
+                boolean isMatch = MySQLConnector.verifyPassword(
+                        finalUserEmail,
+                        Hasher.getHash(finalOldPassword),
+                        context
+                );
+
                 if (!isMatch) {
                     ContextCompat.getMainExecutor(context).execute(() -> {
                         if (changePasswordView != null) {
                             changePasswordView.hideLoadingSpinner();
-                            changePasswordView.showCurrentPasswordError(context.getString(R.string.incorrect_password_error));
+                            changePasswordView.showCurrentPasswordError(
+                                    context.getString(R.string.incorrect_password_error)
+                            );
                         }
                     });
                     return;
                 }
-                boolean changePasswordSuccess = MySQLConnector.changePassword(
+
+                if (finalHasError) {
+                    ContextCompat.getMainExecutor(context).execute(() -> {
+                        if (changePasswordView != null) {
+                            changePasswordView.hideLoadingSpinner();
+                        }
+                    });
+                    return;
+                }
+
+                boolean changed = MySQLConnector.changePassword(
                         finalUserEmail,
                         Hasher.getHash(finalOldPassword),
                         Hasher.getHash(finalNewPassword),
@@ -87,12 +113,11 @@ public class ChangePasswordController {
                 ContextCompat.getMainExecutor(context).execute(() -> {
                     if (changePasswordView != null) changePasswordView.hideLoadingSpinner();
 
-                    if (changePasswordSuccess) {
+                    if (changed) {
                         if (UserSession.getUser() != null) {
                             UserSession.getUser().setUserPassword(finalNewPassword);
                             UserSession.saveSession(context);
                         }
-
                         Toast.makeText(context, "Password changed successfully! Please log in.", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(context, LoginActivity.class);
                         context.startActivity(intent);
@@ -110,6 +135,7 @@ public class ChangePasswordController {
             }
         });
     }
+
 
     private static String safe(String s) { return s == null ? "(null)" : s.trim(); }
 
