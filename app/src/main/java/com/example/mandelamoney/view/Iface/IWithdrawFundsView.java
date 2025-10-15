@@ -1,7 +1,6 @@
 package com.example.mandelamoney.view.Iface;
 
-public interface IDepositFundsView {
-
+public interface IWithdrawFundsView {
     void showMissingAmountError(String message);
     void hideMissingAmountError();
     void showInvalidAmountError(String message);
@@ -18,14 +17,6 @@ public interface IDepositFundsView {
     void hideMissingAccountNumberError();
     void showInvalidAccountNumberError(String message);
     void hideInvalidAccountNumberError();
-    void showMissingCvvError(String message);
-    void hideMissingCvvError();
-    void showInvalidCvvError(String message);
-    void hideInvalidCvvError();
-    void showMissingExpiryDateError(String message);
-    void hideMissingExpiryDateError();
-    void showInvalidExpiryDateError(String message);
-    void hideInvalidExpiryDateError();
     void showMissingAccountHolderError(String message);
     void hideMissingAccountHolderError();
     void showInvalidAccountHolderError(String message);
@@ -33,5 +24,4 @@ public interface IDepositFundsView {
     void showLoadingSpinner();
     void hideLoadingSpinner();
     void finishActivity();
-
 }

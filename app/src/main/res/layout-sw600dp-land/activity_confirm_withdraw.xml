@@ -26,7 +26,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/btn_confirmdeposit_cancel"
+                android:id="@+id/btn_confirmwithdraw_cancel"
                 style="@style/HyperLinkButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -34,14 +34,14 @@
                 android:text="@string/cancel"
                 android:textAllCaps="true"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/blurView_confirmdeposit"
+                app:layout_constraintEnd_toEndOf="@+id/blurView_confirmwithdraw"
                 app:layout_constraintHorizontal_bias="0.50"
-                app:layout_constraintStart_toStartOf="@+id/blurView_confirmdeposit"
-                app:layout_constraintTop_toBottomOf="@+id/blurView_confirmdeposit"
+                app:layout_constraintStart_toStartOf="@+id/blurView_confirmwithdraw"
+                app:layout_constraintTop_toBottomOf="@+id/blurView_confirmwithdraw"
                 app:layout_constraintVertical_bias="0.2" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_confirmdeposit"
+                android:id="@+id/btn_confirmwithdraw"
                 style="@style/PrimaryButton"
                 android:layout_width="wrap_content"
                 android:layout_height="43dp"
@@ -49,23 +49,24 @@
                 android:paddingHorizontal="50dp"
                 android:text="@string/confirm"
                 app:elevation="0dp"
-                app:layout_constraintEnd_toEndOf="@+id/blurView_confirmdeposit"
-                app:layout_constraintStart_toStartOf="@+id/blurView_confirmdeposit"
-                app:layout_constraintTop_toBottomOf="@id/blurView_confirmdeposit" />
+                app:layout_constraintEnd_toEndOf="@+id/blurView_confirmwithdraw"
+                app:layout_constraintStart_toStartOf="@+id/blurView_confirmwithdraw"
+                app:layout_constraintTop_toBottomOf="@id/blurView_confirmwithdraw" />
 
             <ImageView
-                android:id="@+id/txt_confirmdeposit"
+                android:id="@+id/txt_confirmwithdraw"
                 android:layout_width="560dp"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/todo"
                 android:textAlignment="center"
                 app:layout_constraintBottom_toTopOf="@+id/guideline6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/img_confirm_deposit_txt" />
+                app:srcCompat="@drawable/img_confirm_withdrawal_text" />
 
             <eightbitlab.com.blurview.BlurView
-                android:id="@+id/blurView_confirmdeposit"
+                android:id="@+id/blurView_confirmwithdraw"
                 style="@style/BlurPanel"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -81,7 +82,7 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/txt_fromname_confirmdeposit"
+                        android:id="@+id/txt_fromname_confirmwithdraw"
                         style="@style/TitleText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -96,11 +97,11 @@
                         app:layout_constraintEnd_toEndOf="@+id/divider"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/divider"
-                        app:layout_constraintTop_toBottomOf="@+id/txt_fromtitle_confirmdeposit"
+                        app:layout_constraintTop_toBottomOf="@+id/txt_fromtitle_confirmwithdraw"
                         app:layout_constraintVertical_bias="0.96" />
 
                     <TextView
-                        android:id="@+id/txt_toname_confirmdeposit"
+                        android:id="@+id/txt_toname_confirmwithdraw"
                         style="@style/TitleText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -115,11 +116,11 @@
                         app:layout_constraintEnd_toEndOf="@+id/divider7"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/divider"
-                        app:layout_constraintTop_toBottomOf="@+id/txt_totitle_confirmdeposit"
+                        app:layout_constraintTop_toBottomOf="@+id/txt_totitle_confirmwithdraw"
                         app:layout_constraintVertical_bias="0.96" />
 
                     <TextView
-                        android:id="@+id/txt_amount_confirmdeposit"
+                        android:id="@+id/txt_amount_confirmwithdraw"
                         style="@style/TitleText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -132,7 +133,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/divider5" />
 
                     <TextView
-                        android:id="@+id/txt_tonumber_confirmdeposit"
+                        android:id="@+id/txt_tonumber_confirmwithdraw"
                         style="@style/TitleText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -143,11 +144,11 @@
                         app:layout_constraintEnd_toEndOf="@+id/divider7"
                         app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintStart_toStartOf="@+id/divider"
-                        app:layout_constraintTop_toBottomOf="@+id/txt_transactiontypeto_confirmdeposit"
+                        app:layout_constraintTop_toBottomOf="@+id/txt_transactiontypeto_confirmwithdraw"
                         app:layout_constraintVertical_bias="0.96" />
 
                     <TextView
-                        android:id="@+id/txt_fromnumber_confirmdeposit"
+                        android:id="@+id/txt_fromnumber_confirmwithdraw"
                         style="@style/TitleText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -157,12 +158,12 @@
                         app:layout_constraintEnd_toEndOf="@+id/divider"
                         app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintStart_toStartOf="@+id/divider"
-                        app:layout_constraintTop_toBottomOf="@+id/txt_transactiontypefrom_confirmdeposit"
+                        app:layout_constraintTop_toBottomOf="@+id/txt_transactiontypefrom_confirmwithdraw"
                         app:layout_constraintVertical_bias="0.96"
                         tools:text="**** **** **** 9012" />
 
                     <TextView
-                        android:id="@+id/txt_error_confirmdeposit"
+                        android:id="@+id/txt_error_confirmwithdraw"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/invalid_email"
@@ -241,7 +242,7 @@
                         app:layout_constraintVertical_bias="0.3" />
 
                     <TextView
-                        android:id="@+id/txt_fromtitle_confirmdeposit"
+                        android:id="@+id/txt_fromtitle_confirmwithdraw"
                         style="@style/TitleTextSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -256,11 +257,11 @@
                         app:layout_constraintVertical_bias="0.04000002" />
 
                     <TextView
-                        android:id="@+id/txt_transactiontypefrom_confirmdeposit"
+                        android:id="@+id/txt_transactiontypefrom_confirmwithdraw"
                         style="@style/TitleTextSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/bank_account"
+                        android:text="@string/mandela_money"
                         android:textAlignment="viewEnd"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toTopOf="@+id/divider7"
@@ -271,7 +272,7 @@
                         app:layout_constraintVertical_bias="0.04000002" />
 
                     <TextView
-                        android:id="@+id/txt_totitle_confirmdeposit"
+                        android:id="@+id/txt_totitle_confirmwithdraw"
                         style="@style/TitleTextSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -286,11 +287,11 @@
                         app:layout_constraintVertical_bias="0.04000002" />
 
                     <TextView
-                        android:id="@+id/txt_transactiontypeto_confirmdeposit"
+                        android:id="@+id/txt_transactiontypeto_confirmwithdraw"
                         style="@style/TitleTextSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/mandela_money"
+                        android:text="@string/bank_account"
                         android:textAlignment="viewEnd"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toTopOf="@+id/divider5"
@@ -301,7 +302,7 @@
                         app:layout_constraintVertical_bias="0.04000002" />
 
                     <TextView
-                        android:id="@+id/txt_amounttitle_confirmdeposit"
+                        android:id="@+id/txt_amounttitle_confirmwithdraw"
                         style="@style/TitleTextSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -402,6 +403,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:contentDescription="@string/todo"
                 app:layout_constraintBottom_toTopOf="@+id/guideline11"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -412,6 +414,7 @@
                 android:id="@+id/imageView10"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:contentDescription="@string/todo"
                 app:layout_constraintBottom_toTopOf="@+id/guideline10"
                 app:layout_constraintEnd_toStartOf="@+id/guideline9"
                 app:layout_constraintStart_toStartOf="@+id/guideline8"
@@ -430,8 +433,9 @@
         app:layout_constraintGuide_percent="0.4"
         app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toStartOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/confirm_deposit_loading_spinner"
+        android:id="@+id/confirm_withdraw_loading_spinner"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:elevation="999dp"
@@ -461,5 +465,4 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

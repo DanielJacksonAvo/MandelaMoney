@@ -38,11 +38,6 @@ public class DashboardActivity extends AppCompatActivity implements IDashboardVi
         WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, v.getPaddingBottom());
-//            return insets;
-//        });
 
         dashboardController = new DashboardController(this, this);
         if (checkTablet()) {

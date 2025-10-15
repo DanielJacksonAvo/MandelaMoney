@@ -35,6 +35,7 @@ import com.example.mandelamoney.view.activity.LoginActivity;
 import com.example.mandelamoney.view.activity.MakePaymentScanQrActivity;
 import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
 import com.example.mandelamoney.view.activity.UnlockActivity;
+import com.example.mandelamoney.view.activity.WithdrawFundsActivity;
 import com.example.mandelamoney.view.fragment.SettingsDashboardFragment;
 
 import java.util.List;
@@ -261,6 +262,11 @@ public class DashboardController {
                 });
         }
 
+        public void handleWithdraw() {
+            stopPolling();
+            Intent intent = new Intent(context, WithdrawFundsActivity.class);
+            context.startActivity(intent);
+        }
     }
 
     public class DashboardSettingsController {
