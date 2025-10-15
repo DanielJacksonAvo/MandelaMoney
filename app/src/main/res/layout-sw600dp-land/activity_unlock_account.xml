@@ -40,18 +40,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/blurView_login2"
                 app:layout_constraintVertical_bias="0.32999998" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_unlock"
-                style="@style/TertiaryButton"
-                android:layout_width="167dp"
-                android:layout_height="43dp"
-                android:layout_marginTop="-21dp"
-                android:text="@string/unlock"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/blurView_login2"
-                app:layout_constraintStart_toStartOf="@+id/blurView_login2"
-                app:layout_constraintTop_toBottomOf="@+id/blurView_login2" />
-
             <eightbitlab.com.blurview.BlurView
                 android:id="@+id/blurView_login2"
                 style="@style/BlurPanel"
@@ -205,6 +193,18 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/img_unlock_text"
                 tools:ignore="ContentDescription" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_unlock"
+                style="@style/TertiaryButton"
+                android:layout_width="167dp"
+                android:layout_height="43dp"
+                android:layout_marginTop="-21dp"
+                android:text="@string/unlock"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/blurView_login2"
+                app:layout_constraintStart_toStartOf="@+id/blurView_login2"
+                app:layout_constraintTop_toBottomOf="@+id/blurView_login2" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline3"
