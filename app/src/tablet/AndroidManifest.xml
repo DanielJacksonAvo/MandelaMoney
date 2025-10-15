@@ -103,5 +103,10 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
             tools:replace="android:screenOrientation" />
+        <activity
+            android:name=".view.activity.ChangePasswordActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:screenOrientation="locked"
+            tools:replace="android:screenOrientation" />
     </application>
 </manifest>
