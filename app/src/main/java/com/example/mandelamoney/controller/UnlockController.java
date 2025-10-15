@@ -2,7 +2,6 @@ package com.example.mandelamoney.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.mandelamoney.model.User;
@@ -15,8 +14,8 @@ import com.example.mandelamoney.view.activity.LoginActivity;
 import com.example.mandelamoney.view.activity.UnlockActivity;
 
 public class UnlockController {
-    private Context context;
-    private IUnlockView view;
+    private final Context context;
+    private final IUnlockView view;
 
     public UnlockController(Context context, IUnlockView view) {
         this.context = context;
@@ -30,7 +29,6 @@ public class UnlockController {
                 (UnlockActivity)context,
                 () -> {
                     view.showLoadingSpinner();
-                    Toast.makeText(context, "Authenticated successfully!", Toast.LENGTH_SHORT).show();
                     if (UserSession.getUser() == null) {
                         Toast.makeText(context, "Session Expired", Toast.LENGTH_LONG).show();
                         handleLogout();
@@ -41,9 +39,7 @@ public class UnlockController {
                             this::onFailure
                     );
                 },
-                () -> {
-                    Toast.makeText(context, "Authentication failed or cancelled.", Toast.LENGTH_SHORT).show();
-                }
+                () -> Toast.makeText(context, "Authentication failed or cancelled.", Toast.LENGTH_SHORT).show()
         );
     }
 
@@ -99,6 +95,8 @@ public class UnlockController {
 
     private void onFailure() {
         view.hideLoadingSpinner();
+        Toast.makeText(context, "Authentication failed or cancelled.", Toast.LENGTH_SHORT).show();
+
     }
 
 
