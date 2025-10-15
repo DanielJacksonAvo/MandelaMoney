@@ -428,7 +428,15 @@ public class DashboardController {
 
 
         public void handleChangePasswordButton() {
-            ///  change password activity
+            User u = UserSession.getUser();
+            if (u == null) {
+                context.startActivity(new Intent(context, LoginActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                return;
+            }
+            com.example.mandelamoney.util.DataShare.send(u);
+            Intent intent = new Intent(context, com.example.mandelamoney.view.activity.ChangePasswordActivity.class);
+            context.startActivity(intent);
         }
 
         public void handleLogoutButton() {
