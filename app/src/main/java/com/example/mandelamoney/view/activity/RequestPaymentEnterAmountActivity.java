@@ -9,13 +9,11 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.RequestPaymentController;
+import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.view.Iface.IEnterAmountRequestPaymentView;
 
 public class RequestPaymentEnterAmountActivity extends AppCompatActivity implements IEnterAmountRequestPaymentView {
@@ -32,11 +30,6 @@ public class RequestPaymentEnterAmountActivity extends AppCompatActivity impleme
         insetsController.setAppearanceLightStatusBars(false);
 
         setContentView(R.layout.activity_request_payment_enter_amount);
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
         requestPaymentController = new RequestPaymentController();
         requestPaymentController.setContext(this);
         connectToUi();
@@ -65,12 +58,17 @@ public class RequestPaymentEnterAmountActivity extends AppCompatActivity impleme
 
     @Override
     public void showError(String message) {
+        EditText tbxAmount = findViewById(R.id.tbx_amount_request_payment);
+        ErrorBorder.applyMandelaYellowBorder(tbxAmount);
         txtErrorMessage.setText(message);
         txtErrorMessage.setVisibility(TextView.VISIBLE);
     }
 
     @Override
     public void hideError() {
+
+        EditText tbxAmount = findViewById(R.id.tbx_amount_request_payment);
+        ErrorBorder.removeStroke(tbxAmount);
         txtErrorMessage.setVisibility(TextView.GONE);
     }
 
