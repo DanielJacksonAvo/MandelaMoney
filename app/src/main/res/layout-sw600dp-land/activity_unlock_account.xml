@@ -40,18 +40,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/blurView_login2"
                 app:layout_constraintVertical_bias="0.32999998" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_unlock"
-                style="@style/TertiaryButton"
-                android:layout_width="167dp"
-                android:layout_height="43dp"
-                android:layout_marginTop="-21dp"
-                android:text="@string/unlock"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/blurView_login2"
-                app:layout_constraintStart_toStartOf="@+id/blurView_login2"
-                app:layout_constraintTop_toBottomOf="@+id/blurView_login2" />
-
             <eightbitlab.com.blurview.BlurView
                 android:id="@+id/blurView_login2"
                 style="@style/BlurPanel"
@@ -68,17 +56,18 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/txt_error_unlock_application2"
+                        android:id="@+id/txt_error_unlock_application"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/invalid_password"
+                        android:text="@string/incorrect_password"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_login"
-                        app:layout_constraintVertical_bias="0.15" />
+                        app:layout_constraintVertical_bias="0.15"
+                        tools:ignore="DuplicateIds" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout"
@@ -168,12 +157,13 @@
                         android:layout_height="wrap_content"
                         android:text="@string/invalid_password"
                         android:textColor="@color/mandelaYellow"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_login"
-                        app:layout_constraintVertical_bias="0.39" />
+                        app:layout_constraintVertical_bias="0.39"
+                        tools:ignore="DuplicateIds" />
 
                     <TextView
                         android:id="@+id/txt_or"
@@ -201,7 +191,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/img_unlock_text" />
+                app:srcCompat="@drawable/img_unlock_text"
+                tools:ignore="ContentDescription" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_unlock"
+                style="@style/TertiaryButton"
+                android:layout_width="167dp"
+                android:layout_height="43dp"
+                android:layout_marginTop="-21dp"
+                android:text="@string/unlock"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/blurView_login2"
+                app:layout_constraintStart_toStartOf="@+id/blurView_login2"
+                app:layout_constraintTop_toBottomOf="@+id/blurView_login2" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline3"
@@ -291,7 +294,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/img_mandelamoney_text_tablet" />
+                app:srcCompat="@drawable/img_mandelamoney_text_tablet"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/imageView10"
@@ -301,7 +305,8 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline9"
                 app:layout_constraintStart_toStartOf="@+id/guideline8"
                 app:layout_constraintTop_toTopOf="@+id/guideline11"
-                app:srcCompat="@drawable/img_mandelamoneylogo" />
+                app:srcCompat="@drawable/img_mandelamoneylogo"
+                tools:ignore="ContentDescription" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </eightbitlab.com.blurview.BlurView>

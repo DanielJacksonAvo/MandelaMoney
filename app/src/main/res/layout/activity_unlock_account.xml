@@ -113,7 +113,7 @@
                 android:id="@+id/txt_error_unlock_application"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/invalid_password"
+                android:text="@string/incorrect_password"
                 android:textColor="@color/mandelaYellow"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
