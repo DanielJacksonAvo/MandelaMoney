@@ -10,6 +10,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,11 +18,12 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.ChangePasswordController;
-import com.example.mandelamoney.util.DataShare;
+import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IChangePasswordView;
 
@@ -29,15 +31,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ChangePasswordActivity extends AppCompatActivity implements IChangePasswordView {
     private ChangePasswordController changePasswordController;
-    TextView txtError;
-    //Just double check Tablet
+    TextView txtChangePasswordErrorCurrent;
+    TextView txtChangePasswordErrorNew;
+    private ConstraintLayout loadingSpinner;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Object payload = DataShare.receive();
-        if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
-            UserSession.setUser((com.example.mandelamoney.model.User) payload);
-            Log.d("ChangePasswordActivity", "Restored user from DataShare.");
-        }
+
         if (UserSession.getUser() == null) {
             Log.w("ChangePasswordActivity", "No session; routing to LoginActivity");
             startActivity(new Intent(this, com.example.mandelamoney.view.activity.LoginActivity.class)
@@ -57,7 +58,6 @@ public class ChangePasswordActivity extends AppCompatActivity implements IChange
         connectToUI();
     }
     private void connectToUI(){
-        this.txtError = findViewById(R.id.txt_error_change_password);
         Button btnChangePassword = findViewById(R.id.btn_change_password);
         ImageView imgPasswordIcon = findViewById(R.id.img_password_changepassword);
         ImageView imgNewPasswordIcon = findViewById(R.id.img_new_password_changepassword);
@@ -66,28 +66,74 @@ public class ChangePasswordActivity extends AppCompatActivity implements IChange
         EditText tbxPassword = findViewById(R.id.tbx_password_changepassword);
         EditText tbxNewPassword = findViewById(R.id.tbx_new_password_changepassword);
         EditText tbxConfirmNewPassword = findViewById(R.id.tbx_confirm_password_changepassword);
+        txtChangePasswordErrorCurrent = findViewById(R.id.txt_error_current_password_change_password);
+        txtChangePasswordErrorNew = findViewById(R.id.txt_error_new_password_change_password);
         configureChangePasswordButton(btnChangePassword,tbxPassword,tbxNewPassword,tbxConfirmNewPassword);
         configurePasswordVisibility(imgPasswordIcon,tbxPassword);
         configurePasswordVisibility(imgNewPasswordIcon,tbxNewPassword);
         configurePasswordVisibility(imgConfirmNewPasswordIcon,tbxConfirmNewPassword);
         configureCancel(btnCancelChangePassword);
+        loadingSpinner = findViewById(R.id.change_password_loading_spinner);
+    }
+
+
+    @Override
+    public void showCurrentPasswordError(String s) {
+        EditText tbxCurrentPassword = findViewById(R.id.tbx_password_changepassword);
+        ErrorBorder.applyMandelaYellowBorder(tbxCurrentPassword);
+        txtChangePasswordErrorCurrent.setVisibility(VISIBLE);
+        txtChangePasswordErrorCurrent.setText(s);
     }
 
     @Override
-    public void showErrorMessage(String string) {
-        txtError.setText(string);
-        txtError.setVisibility(VISIBLE);
+    public void hideCurrentPasswordError() {
+        EditText tbxCurrentPassword = findViewById(R.id.tbx_password_changepassword);
+        ErrorBorder.removeStroke(tbxCurrentPassword);
+        txtChangePasswordErrorCurrent.setVisibility(GONE);
     }
 
     @Override
-    public void hideErrorMessage() {
-        txtError.setVisibility(GONE);
+    public void showNewPasswordError(String s) {
+        EditText tbxNewPassword = findViewById(R.id.tbx_new_password_changepassword);
+        EditText tbxConfirmPassword = findViewById(R.id.tbx_confirm_password_changepassword);
+        ErrorBorder.applyMandelaYellowBorder(tbxNewPassword);
+        ErrorBorder.applyMandelaYellowBorder(tbxConfirmPassword);
+        txtChangePasswordErrorNew.setVisibility(VISIBLE);
+        txtChangePasswordErrorNew.setText(s);
+    }
+
+    @Override
+    public void hideNewPasswordError() {
+        EditText tbxNewPassword = findViewById(R.id.tbx_new_password_changepassword);
+        EditText tbxConfirmPassword = findViewById(R.id.tbx_confirm_password_changepassword);
+        ErrorBorder.removeStroke(tbxNewPassword);
+        ErrorBorder.removeStroke(tbxConfirmPassword);
+        txtChangePasswordErrorNew.setVisibility(GONE);
     }
 
     @Override
     public void finishActivity() {
         finish();
     }
+
+    @Override
+    public void hideLoadingSpinner() {
+        runOnUiThread(() -> {
+            if (loadingSpinner != null) {
+                loadingSpinner.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    @Override
+    public void showLoadingSpinner() {
+        runOnUiThread(() -> {
+            if (loadingSpinner != null) {
+                loadingSpinner.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
     private void configureCancel(TextView btnCancel) {
         btnCancel.setOnClickListener((view)-> changePasswordController.handleCancel());
     }

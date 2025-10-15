@@ -15,7 +15,6 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.WithdrawFundsController;
-import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IWithdrawFundsView;
@@ -32,11 +31,6 @@ public class WithdrawFundsActivity extends AppCompatActivity implements IWithdra
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Object payload = DataShare.receive();
-        if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
-            UserSession.setUser((com.example.mandelamoney.model.User) payload);
-            Log.d("WithdrawFundsActivity", "Restored user from DataShare.");
-        }
 
         if (UserSession.getUser() == null) {
             Log.w("WithdrawFundsActivity", "No session; routing to LoginActivity");
