@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DashboardController;
+import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.view.Iface.ISettingsView;
 
 public class SettingsDashboardFragment extends Fragment implements ISettingsView {
@@ -45,9 +46,12 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
         if (!this.getResources().getBoolean(R.bool.is_tablet_landscape)) {
             controller.DashboardSettingsController.loadUserToUI();
             controller.DashboardSettingsController.displayNetworkStatus();
-            controller.DashboardSettingsController.displayCameraPermission();
+            controller.DashboardSettingsController.displayCameraPermission();}
+        else {
+            DataShare.send(controller);
+            controller.DashboardSettingsController.setTabletUI();
+            controller.DashboardSettingsController.displayAvailableAuthenticationSettings();
         }
-        controller.DashboardSettingsController.displayAvailableAuthenticationSettings();
     }
 
     public void setController(DashboardController controller) {

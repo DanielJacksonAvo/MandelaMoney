@@ -84,6 +84,7 @@ public class DashboardController {
 
     public void handleSettings() {
         currentFragment = 2;
+        DataShare.send(this);
         view.displaySettings();
         manageControllers();
     }
@@ -271,11 +272,16 @@ public class DashboardController {
         }
 
         public void loadUserToUI() {
-            if (UserSession.getUser() instanceof Student) {
-                view.displayUserName(((Student) UserSession.getUser()).getStudentFullName());
+            boolean isTabletLandscape = context.getResources().getBoolean(R.bool.is_tablet_landscape);
+            if (isTabletLandscape) {
             } else {
-                view.displayUserName(((Business) UserSession.getUser()).getBusinessName());
+                if (UserSession.getUser() instanceof Student) {
+                    view.displayUserName(((Student) UserSession.getUser()).getStudentFullName());
+                } else {
+                    view.displayUserName(((Business) UserSession.getUser()).getBusinessName());
+                }
             }
+
         }
 
         public void displayNetworkStatus() {
@@ -342,6 +348,10 @@ public class DashboardController {
                 view.setBiometricsSwitchStatus(true);
             }
             UserSession.saveSession(context);
+
+        }
+
+        public void setTabletUI() {
 
         }
     }
