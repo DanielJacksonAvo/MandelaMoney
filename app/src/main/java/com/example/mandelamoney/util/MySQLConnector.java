@@ -269,21 +269,15 @@ public class MySQLConnector {
             Context context
     ) {
         Connection conn = getConnection(context);
-        // [success(Boolean), transactionId(Integer), errorCode(String always null now)]
         Object[] out = new Object[]{false, null, null};
         if (conn == null) return out;
 
-        // Updated proc: 6 IN + 2 OUT  => 8 placeholders
         final String SQL = "{CALL MandelaMoneyDB.createDepositBankAndPendingTransaction(?, ?, ?, ?, ?, ?, ?, ?)}";
 
         try (CallableStatement stmt = conn.prepareCall(SQL)) {
             int i = 1;
-
-            // IN params
             stmt.setString(i++, userEmail);
-
-            // Your proc expects DECIMAL(12,2). Avoid float rounding surprises:
-            // BigDecimal.valueOf(double) is safer than new BigDecimal(float).
+          
             java.math.BigDecimal decAmount = java.math.BigDecimal.valueOf(
                     Math.round((double) amount * 100.0) / 100.0
             );
@@ -294,9 +288,6 @@ public class MySQLConnector {
             stmt.setString(i++, baName);
             stmt.setString(i++, baBank);
 
-            // OUT params (7 = success, 8 = transactionId)
-            // MySQL maps BOOLEAN to TINYINT(1); Types.BOOLEAN works with Connector/J 8+,
-            // but Types.TINYINT also works if you ever see driver quirks.
             stmt.registerOutParameter(i++, java.sql.Types.BOOLEAN);
             stmt.registerOutParameter(i++, java.sql.Types.INTEGER);
 
@@ -308,10 +299,54 @@ public class MySQLConnector {
 
             out[0] = success;
             out[1] = txnObj;
-            out[2] = null; // no errorCode in the new proc
+            out[2] = null;
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "createDepositBankAndPendingTransaction failed: " + e.getMessage(), e);
+        }
+        return out;
+    }
+    public static Object[] createWithdrawBankAndPendingTransaction(
+            String userEmail,
+            float amount,
+            String baNumber,
+            String baBranchCode,
+            String baName,
+            String baBank,
+            Context context
+    ) {
+        Connection conn = getConnection(context);
+        Object[] out = new Object[]{false, null, null};
+        if (conn == null) return out;
+        final String SQL = "{CALL MandelaMoneyDB.createWithdrawBankAndPendingTransaction(?, ?, ?, ?, ?, ?, ?, ?)}";
+
+        try (CallableStatement stmt = conn.prepareCall(SQL)) {
+            int i = 1;
+            stmt.setString(i++, userEmail);
+
+            java.math.BigDecimal decAmount = java.math.BigDecimal.valueOf(
+                    Math.round((double) amount * 100.0) / 100.0
+            );
+            stmt.setBigDecimal(i++, decAmount);
+            stmt.setString(i++, baNumber);
+            stmt.setString(i++, baBranchCode);
+            stmt.setString(i++, baName);
+            stmt.setString(i++, baBank);
+            stmt.registerOutParameter(i++, java.sql.Types.BOOLEAN);
+            stmt.registerOutParameter(i++, java.sql.Types.INTEGER);
+
+            stmt.execute();
+
+            boolean success = stmt.getBoolean(7);
+            int txnId = stmt.getInt(8);
+            Integer txnObj = stmt.wasNull() ? null : txnId;
+
+            out[0] = success;
+            out[1] = txnObj;
+            out[2] = null;
+
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "createWithdrawBankAndPendingTransaction failed: " + e.getMessage(), e);
         }
         return out;
     }
@@ -803,6 +838,113 @@ public class MySQLConnector {
 
         return emailToDisplayName;
     }
+
+    public static Student updateStudentDetails(
+            String userEmail,
+            String userPassword,
+            String newEmail,
+            String newFirstName,
+            String newLastName,
+            String newStudentNumber,
+            Context context
+    ) {
+        Connection currentConnection = getConnection(context);
+        Student updatedStudent = null;
+
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot update student details: No valid database connection.");
+            return null;
+        }
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL UpdateStudentDetails(?, ?, ?, ?, ?, ?, ?)}")) {
+            // Set the input parameters
+            callableStatement.setString(1, userEmail);
+            callableStatement.setString(2, userPassword);
+            callableStatement.setString(3, newEmail);
+            callableStatement.setString(4, newFirstName);
+            callableStatement.setString(5, newLastName);
+            callableStatement.setString(6, newStudentNumber);
+
+            // Register output parameter
+            callableStatement.registerOutParameter(7, Types.INTEGER);
+
+            Log.d("MySQLConnector", "Calling UpdateStudentDetails for user: " + userEmail);
+
+            // Execute the stored procedure
+            callableStatement.execute();
+
+            // Retrieve the result of the output parameter
+            int result = callableStatement.getInt(7);
+            if (result == 1) {
+                Log.d("MySQLConnector", "Student details updated successfully.");
+                // Create and return the updated Student object
+                updatedStudent = new Student(newEmail);
+                updatedStudent.setStudentFirstName(newFirstName);
+                updatedStudent.setStudentLastName(newLastName);
+                updatedStudent.setStudentNumber(newStudentNumber);
+            } else {
+                Log.d("MySQLConnector", "Failed to update student details.");
+            }
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'UpdateStudentDetails': " + e.getMessage());
+        }
+
+        return updatedStudent;
+    }
+
+    public static Business updateBusinessDetails(
+            String userEmail,
+            String userPassword,
+            String newEmail,
+            String newBusinessName,
+            String newVAT,
+            String newPhoneNumber,
+            Context context
+    ) {
+        Connection currentConnection = getConnection(context);
+        Business updatedBusiness = null;
+
+        if (currentConnection == null) {
+            Log.e("MySQLConnector", "Cannot update business details: No valid database connection.");
+            return null;
+        }
+
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL UpdateBusinessDetails(?, ?, ?, ?, ?, ?, ?)}")) {
+            // Set the input parameters
+            callableStatement.setString(1, userEmail);
+            callableStatement.setString(2, userPassword);
+            callableStatement.setString(3, newEmail);
+            callableStatement.setString(4, newBusinessName);
+            callableStatement.setString(5, newVAT);
+            callableStatement.setString(6, newPhoneNumber);
+
+            // Register output parameter
+            callableStatement.registerOutParameter(7, Types.INTEGER);
+
+            Log.d("MySQLConnector", "Calling UpdateBusinessDetails for user: " + userEmail);
+
+            // Execute the stored procedure
+            callableStatement.execute();
+
+            // Retrieve the result of the output parameter
+            int result = callableStatement.getInt(7);
+            if (result == 1) {
+                Log.d("MySQLConnector", "Business details updated successfully.");
+                // Create and return the updated Business object
+                updatedBusiness = new Business(newEmail);
+                updatedBusiness.setBusinessName(newBusinessName);
+                updatedBusiness.setBusinessPhoneNumber(newPhoneNumber);
+                updatedBusiness.setBusinessVAT(newVAT);
+            } else {
+                Log.d("MySQLConnector", "Failed to update business details.");
+            }
+        } catch (SQLException e) {
+            Log.e("MySQLConnector", "Error calling stored procedure 'UpdateBusinessDetails': " + e.getMessage());
+        }
+
+        return updatedBusiness;
+    }
+
 
 
 

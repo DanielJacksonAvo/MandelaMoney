@@ -14,5 +14,15 @@
     <color name="mandelaYellowLight">#FBE7A0</color>
     <color name="white30">#4DFFFFFF</color>
     <color name="grey10">#1AD9D9D9</color>
+    <color name="grey20">#33D9D9D9</color>
+    <color name="grey30">#4DD9D9D9</color>
+    <color name="grey40">#66D9D9D9</color>
+    <color name="grey50">#80D9D9D9</color>
+    <color name="grey60">#99D9D9D9</color>
+    <color name="grey70">#B3D9D9D9</color>
+    <color name="grey80">#CCD9D9D9</color>
+    <color name="grey90">#E6D9D9D9</color>
+    <color name="grey100">#FFD9D9D9</color>
     <color name="transactionCard">#1D2A44</color>
+    <color name="mandelaGreyDisabled">#2C2C2E</color>
 </resources>

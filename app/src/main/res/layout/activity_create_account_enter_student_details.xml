@@ -9,7 +9,7 @@
     tools:context=".view.activity.CreateAccountEnterStudentDetailsActivity">
 
     <TextView
-        android:id="@+id/btn_cancel_createstudentaccount"
+        android:id="@+id/btn_cancel_editbusinessprofile"
         style="@style/HyperLinkButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
 
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_create_createstudentaccount"
+        android:id="@+id/btn_save_editbusinessprofile"
         style="@style/PrimaryButton"
         android:layout_width="wrap_content"
         android:layout_height="43dp"
@@ -157,7 +157,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_studentnumber_createstudentaccount"
+                    android:id="@+id/tbx_studentnumber_editstudentprofile"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -197,7 +197,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_lastname_createstudentaccount"
+                    android:id="@+id/tbx_lastname_editstudentprofile"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -237,7 +237,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_firstname_createstudentaccount"
+                    android:id="@+id/tbx_firstname_editstudentprofile"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -318,7 +318,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/tbx_email_createstudentaccount"
+                    android:id="@+id/tbx_email_editbusinessprofile"
                     style="@style/TextBox"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"

@@ -2,24 +2,23 @@ package com.example.mandelamoney.view.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DepositFundsController;
-import com.example.mandelamoney.controller.MakePaymentController;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.view.Iface.IConfirmDepositView;
 
 public class ConfirmDepositActivity extends AppCompatActivity implements IConfirmDepositView {
     private DepositFundsController controller;
+    private ConstraintLayout loadingSpinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,11 +28,6 @@ public class ConfirmDepositActivity extends AppCompatActivity implements IConfir
         WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
         controller = (DepositFundsController) DataShare.receive();
         connectToUI();
         controller.setConfirmDepositView(this);
@@ -44,6 +38,7 @@ public class ConfirmDepositActivity extends AppCompatActivity implements IConfir
         TextView btnCancel = findViewById(R.id.btn_confirmdeposit_cancel);
         configureConfirmButton(btnConfirm);
         configureCancelButton(btnCancel);
+        loadingSpinner = findViewById(R.id.confirm_deposit_loading_spinner);
     }
     private void configureConfirmButton(Button btnConfirm) {
         btnConfirm.setOnClickListener((view) -> controller.handleConfirmDeposit());
@@ -85,5 +80,23 @@ public class ConfirmDepositActivity extends AppCompatActivity implements IConfir
     @Override
     public void finishActivity() {
         finish();
+    }
+
+    @Override
+    public void showLoadingSpinner() {
+        runOnUiThread(() -> {
+            if (loadingSpinner != null) {
+                loadingSpinner.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        runOnUiThread(() -> {
+            if (loadingSpinner != null) {
+                loadingSpinner.setVisibility(View.GONE);
+            }
+        });
     }
 }
