@@ -36,7 +36,7 @@ public class UnlockController {
                     }
                     LoginManager.login(context, UserSession.getUser().getUserEmail(), UserSession.getUser().getUserPassword(),
                             this::onSuccess,
-                            this::onFailure
+                            this::onAuthenticationFailure
                     );
                 },
                 () -> Toast.makeText(context, "Authentication failed or cancelled.", Toast.LENGTH_SHORT).show()
@@ -95,8 +95,11 @@ public class UnlockController {
 
     private void onFailure() {
         view.hideLoadingSpinner();
-        Toast.makeText(context, "Authentication failed or cancelled.", Toast.LENGTH_SHORT).show();
+    }
 
+    private void onAuthenticationFailure() {
+        view.hideLoadingSpinner();
+        Toast.makeText(context, "Authentication failed or cancelled.", Toast.LENGTH_SHORT).show();
     }
 
 
