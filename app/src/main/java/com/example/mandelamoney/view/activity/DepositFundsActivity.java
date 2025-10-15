@@ -43,14 +43,6 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
             Log.d("DepositFundsActivity", "Restored user from DataShare.");
         }
 
-        // Session gate
-//        if (UserSession.getUser() == null) {
-//            Log.w("DepositFundsActivity", "No session; routing to LoginActivity");
-//            startActivity(new Intent(this, com.example.mandelamoney.view.activity.LoginActivity.class)
-//                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-//            finish();
-//            return;
-//        }
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_deposit_funds);

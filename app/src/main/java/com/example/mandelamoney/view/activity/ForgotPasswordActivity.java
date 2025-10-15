@@ -5,12 +5,14 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -18,6 +20,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.ForgotPasswordController;
+import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.view.Iface.IForgotPasswordView;
 
 import java.sql.SQLException;
@@ -27,6 +30,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements IForgot
     private ForgotPasswordController forgotPasswordController;
     private TextView txtError;
     EditText tbxUserEmail;
+    private ConstraintLayout loadingSpinner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -35,14 +40,9 @@ public class ForgotPasswordActivity extends AppCompatActivity implements IForgot
 
         WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
-
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
         forgotPasswordController = new ForgotPasswordController(this, this);
         connectToUI();
+        hideErrorMessage_InvalidEmail();
     }
     private void connectToUI(){
         Button btnRecover = findViewById(R.id.btn_recover);
@@ -51,6 +51,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements IForgot
         TextView btnCancel = findViewById(R.id.btn_cancel_forgot_password);
         configureRecoverButton(btnRecover, tbxUserEmail);
         configureCancelButton(btnCancel);
+        loadingSpinner = findViewById(R.id.forgot_password_loading_spinner);
     }
     private void configureRecoverButton(Button btnRecover, EditText tbxUserEmail){
         btnRecover.setOnClickListener((view)->{
@@ -67,12 +68,33 @@ public class ForgotPasswordActivity extends AppCompatActivity implements IForgot
     }
     @Override
     public void showErrorMessage_InvalidEmail() {
+        ErrorBorder.applyMandelaYellowBorder(tbxUserEmail);
         txtError.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideErrorMessage_InvalidEmail() {
+        ErrorBorder.removeStroke(tbxUserEmail);
         txtError.setVisibility(GONE);
+    }
+
+    @Override
+    public void showLoadingSpinner() {
+        runOnUiThread(() -> {
+            if (loadingSpinner != null) {
+                loadingSpinner.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        runOnUiThread(() -> {
+            if (loadingSpinner != null) {
+                loadingSpinner.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     @Override
