@@ -12,6 +12,7 @@ import com.example.mandelamoney.model.User;
 import com.example.mandelamoney.util.LoginManager;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
+import com.example.mandelamoney.util.UserValueChecker;
 import com.example.mandelamoney.view.Iface.ILoginView;
 import com.example.mandelamoney.view.activity.CreateAccountSelectUserTypeActivity;
 import com.example.mandelamoney.view.activity.DashboardActivity;
@@ -34,6 +35,13 @@ public class LoginController {
 
     public void handleLogin(String userEmail, String userPassword) {
         view.showLoadingSpinner();
+        view.hideErrorMessage();
+        view.hideEmailErrorMessage();
+        if (!UserValueChecker.isValidEmail(userEmail)) {
+            view.hideLoadingSpinner();
+            view.showEmailErrorMessage();
+            return;
+        }
         LoginManager.login(context, userEmail, userPassword,
                 this::onSuccess
                 ,this::onFailure
@@ -55,6 +63,8 @@ public class LoginController {
 
     private void onSuccess() {
         view.hideLoadingSpinner();
+        view.hideErrorMessage();
+        view.hideEmailErrorMessage();
         Intent intent = new Intent(context, DashboardActivity.class);
         context.startActivity(intent);
         view.finishActivity();
