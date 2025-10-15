@@ -9,11 +9,9 @@ import android.os.Looper;
 
 import com.example.mandelamoney.BuildConfig;
 import com.example.mandelamoney.R;
-import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.EmailSender;
 import com.example.mandelamoney.util.Hasher;
 import com.example.mandelamoney.util.MySQLConnector;
-import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IForgotPasswordView;
 import com.example.mandelamoney.view.Iface.IRecoverAccountView;
 import com.example.mandelamoney.view.Iface.IResetPasswordView;
@@ -91,7 +89,6 @@ public class ForgotPasswordController {
                 Intent intent = new Intent(context, RecoverAccountActivity.class);
                 intent.putExtra("userEmail", email);
                 intent.putExtra("emailExists", finalExists);
-                DataShare.send(this);
                 context.startActivity(intent);
                 if (forgotPasswordView != null) forgotPasswordView.finishActivity();
             });
@@ -122,18 +119,38 @@ public class ForgotPasswordController {
     }
 
     public void handleVerify(String recoveryCode) throws SQLException {
-        this.recoveryCode = recoveryCode.toLowerCase();
-        boolean isValid = MySQLConnector.verifyRecoveryCode(userEmail, recoveryCode, context);
-        if (isValid) {
-            DataShare.send(this);
-            Intent intent = new Intent(context, ResetPasswordActivity.class);
-            intent.putExtra("userEmail", userEmail);
-            intent.putExtra("recoveryCode",this.recoveryCode);
-            context.startActivity(intent);
-            if (recoverAccountView != null) recoverAccountView.finishActivity();
-        } else {
-            if (recoverAccountView != null) recoverAccountView.showErrorMessage_InvalidCode();
+         final String code  =  (recoveryCode == null ? "" : recoveryCode.trim().toLowerCase());
+
+        if(recoverAccountView != null){
+            recoverAccountView.showLoadingSpinner();
         }
+
+        forgotPasswordExecutor.execute(()->{
+            boolean isValid = false;
+            try{
+                isValid = MySQLConnector.verifyRecoveryCode(userEmail, code, context);
+            } catch(Exception e){
+                isValid = false;
+            }
+
+            final boolean finalIsValid = isValid;
+            mainHandler.post(()->{
+                if(recoverAccountView != null){
+                    recoverAccountView.hideLoadingSpinner();
+                }
+                if (finalIsValid) {
+                    this.recoveryCode = code;
+                    Intent intent = new Intent(context, ResetPasswordActivity.class);
+                    intent.putExtra("userEmail", userEmail);
+                    intent.putExtra("recoveryCode", this.recoveryCode);
+                    context.startActivity(intent);
+                    if (recoverAccountView != null) recoverAccountView.finishActivity();
+                } else {
+                    if (recoverAccountView != null) recoverAccountView.showErrorMessage_InvalidCode();
+                }
+            });
+        });
+
     }
 
 
@@ -147,29 +164,49 @@ public class ForgotPasswordController {
     }
 
     public void handleResetPassword(String newPassword, String confirmNewPassword) {
+        if(resetPasswordView == null) return;
 
         resetPasswordView.hideErrorMessage_PasswordsDoNotMatch();
         resetPasswordView.hideErrorMessage_Minimum8Characters();
-        if (!newPassword.equals(confirmNewPassword)) {
+
+        final String password = (newPassword == null ? "" : newPassword.trim());
+        final String confirm = (confirmNewPassword == null ? "":confirmNewPassword.trim());
+
+        if (!password.equals(confirm)) {
             resetPasswordView.showErrorMessage_PasswordsDoNotMatch(context.getString(R.string.passwords_do_not_match_error));
             return;
         }
 
-        if (newPassword.length() < 8) {
+        if (password.length() < 8) {
             resetPasswordView.showErrorMessage_Minimum8Characters(context.getString(R.string.minimum_8_characters));
             return;
         }
-        boolean resetSuccess = MySQLConnector.resetPassword(userEmail, recoveryCode, Hasher.getHash(newPassword), context);
 
-        if (resetSuccess) {
-            UserSession.getUser().setUserPassword(newPassword);
-            UserSession.saveSession(context);
-            Toast.makeText(context, "Password reset successful! Please log in.", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(context, LoginActivity.class);
-            context.startActivity(intent);
-            resetPasswordView.finishActivity();
-        } else {
-            Toast.makeText(context, context.getString(R.string.invalid_recovery_code), Toast.LENGTH_LONG).show();
-        }
+        resetPasswordView.showLoadingSpinner();
+        forgotPasswordExecutor.execute(()->{
+            boolean resetSuccess;
+            try {
+                resetSuccess = MySQLConnector.resetPassword(userEmail, recoveryCode, Hasher.getHash(password), context);
+            }catch(Exception e){
+                resetSuccess = false;
+            }
+            final boolean finalSuccess = resetSuccess;
+            mainHandler.post(()->{
+                resetPasswordView.hideLoadingSpinner();
+
+                if(finalSuccess) {
+                    Toast.makeText(context, "Password reset successful! Please log in.", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(context, LoginActivity.class);
+                    context.startActivity(intent);
+                    resetPasswordView.finishActivity();
+                }else{
+                    Toast.makeText(context, context.getString(R.string.invalid_recovery_code), Toast.LENGTH_LONG).show();
+
+                }
+            });
+
+
+        });
+
     }
 }

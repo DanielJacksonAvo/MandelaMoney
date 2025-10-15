@@ -56,6 +56,8 @@ public class ChangePasswordActivity extends AppCompatActivity implements IChange
 
         this.changePasswordController = new ChangePasswordController(this, this);
         connectToUI();
+        hideCurrentPasswordError();
+        hideNewPasswordError();
     }
     private void connectToUI(){
         Button btnChangePassword = findViewById(R.id.btn_change_password);
@@ -121,6 +123,11 @@ public class ChangePasswordActivity extends AppCompatActivity implements IChange
         runOnUiThread(() -> {
             if (loadingSpinner != null) {
                 loadingSpinner.setVisibility(View.GONE);
+                findViewById(R.id.btn_change_password).setEnabled(true);
+                findViewById(R.id.btn_cancel_change_password).setEnabled(true);
+                findViewById(R.id.tbx_password_changepassword).setEnabled(true);
+                findViewById(R.id.tbx_new_password_changepassword).setEnabled(true);
+                findViewById(R.id.tbx_confirm_password_changepassword).setEnabled(true);
             }
         });
     }
@@ -130,6 +137,11 @@ public class ChangePasswordActivity extends AppCompatActivity implements IChange
         runOnUiThread(() -> {
             if (loadingSpinner != null) {
                 loadingSpinner.setVisibility(View.VISIBLE);
+                findViewById(R.id.btn_change_password).setEnabled(false);
+                findViewById(R.id.btn_cancel_change_password).setEnabled(false);
+                findViewById(R.id.tbx_password_changepassword).setEnabled(false);
+                findViewById(R.id.tbx_new_password_changepassword).setEnabled(false);
+                findViewById(R.id.tbx_confirm_password_changepassword).setEnabled(false);
             }
         });
     }
