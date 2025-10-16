@@ -37,7 +37,7 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
         setController();
-        if (!this.getResources().getBoolean(R.bool.is_tablet_landscape)) {
+        if (!this.getResources().getBoolean(R.bool.is_tablet_landscape) && controller != null && controller.DashboardProfileController != null) {
             controller.DashboardProfileController.loadUserToUi();
         }
         connectToUi();
