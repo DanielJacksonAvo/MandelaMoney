@@ -1,5 +1,6 @@
 package com.example.mandelamoney.view.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.mandelamoney.R;
@@ -37,7 +37,7 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         rootView = view;
         setController();
-        if (!this.getResources().getBoolean(R.bool.is_tablet_landscape)) {
+        if (!this.getResources().getBoolean(R.bool.is_tablet_landscape) && controller != null && controller.DashboardProfileController != null) {
             controller.DashboardProfileController.loadUserToUi();
         }
         connectToUi();
@@ -49,11 +49,20 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
         ConstraintLayout btnDeposit = rootView.findViewById(R.id.btn_deposit_profile);
         ConstraintLayout btnChangePassword = rootView.findViewById(R.id.btn_changepassword_profile);
         ConstraintLayout btnLogout = rootView.findViewById(R.id.btn_logout_profile);
-        btnEdit.setOnClickListener((view) -> controller.DashboardProfileController.handleEditButton());
-        btnDeposit.setOnClickListener((view) -> controller.DashboardProfileController.handleDepositButton());
-        btnChangePassword.setOnClickListener((view) -> controller.DashboardProfileController.handleChangePasswordButton());
-        btnLogout.setOnClickListener((view) -> controller.DashboardProfileController.handleLogoutButton());
-
+        if (controller != null && controller.DashboardProfileController != null) {
+            if (btnEdit != null) {
+                btnEdit.setOnClickListener((view) -> controller.DashboardProfileController.handleEditButton());
+            }
+            if (btnDeposit != null){
+                btnDeposit.setOnClickListener((view) -> controller.DashboardProfileController.handleDepositButton());
+            }
+            if (btnChangePassword != null) {
+                btnChangePassword.setOnClickListener((view) -> controller.DashboardProfileController.handleChangePasswordButton());
+            }
+            if (btnLogout != null) {
+                btnLogout.setOnClickListener((view) -> controller.DashboardProfileController.handleLogoutButton());
+            }
+        }
     }
 
     public void setController() {
@@ -66,55 +75,74 @@ public class ProfileDashboardFragment extends Fragment implements IProfileView {
     @Override
     public void setFirstNameLabel(String label) {
         TextView textView = rootView.findViewById(R.id.txt_firstnamelabel_profile);
-        textView.setText(label);
+        if (textView != null) {
+            textView.setText(label);
+        }
     }
 
     @Override
     public void setFirstName(String firstName) {
         TextView textView = rootView.findViewById(R.id.txt_firstname_profile);
-        textView.setText(firstName);
+        if (textView != null) {
+            textView.setText(firstName);
+        }
     }
 
     @Override
     public void setLastNameLabel(String label) {
         TextView textView = rootView.findViewById(R.id.txt_lastnamelabel_profile);
-        textView.setText(label);
+        if (textView != null) {
+            textView.setText(label);
+        }
     }
 
     @Override
     public void setLastName(String lastName) {
         TextView textView = rootView.findViewById(R.id.txt_lastname_profile);
-        textView.setText(lastName);
+        if (textView != null) {
+            textView.setText(lastName);
+        }
     }
 
     @Override
     public void setEmail(String email) {
         TextView textView = rootView.findViewById(R.id.txt_email_profile);
-        textView.setText(email);
+        if (textView != null) {
+            textView.setText(email);
+        }
     }
 
     @Override
     public void setStudentNumberLabel(String label) {
         TextView textView = rootView.findViewById(R.id.txt_studentnumberlabel_profile);
-        textView.setText(label);
+        if (textView != null) {
+            textView.setText(label);
+        }
     }
 
     @Override
     public void setStudentNumber(String number) {
         TextView textView = rootView.findViewById(R.id.txt_studentnumber_profile);
-        textView.setText(number);
+        if (textView != null) {
+            textView.setText(number);
+        }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void setBalance(Float balance) {
         TextView textView = rootView.findViewById(R.id.txt_balance_profile);
-        textView.setText("R " + Float.toString(balance));
+        if (textView != null) {
+            textView.setText("R " + balance);
+        }
     }
 
     @Override
     public void setWelcomeName(String name) {
         TextView textView = rootView.findViewById(R.id.txt_user_name_profile);
-        textView.setText(name);
+        if (textView != null) {
+            textView.setText(name);
+        }
     }
 
 }
