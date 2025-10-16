@@ -30,4 +30,5 @@
     <string name="account_holder">ACCOUNT HOLDER</string>
     <string name="new_password">NEW PASSWORD</string>
     <string name="incorrect_password_error">Incorrect password.</string>
+    <string name="deposits">Deposits</string>
 </resources>

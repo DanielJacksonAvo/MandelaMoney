@@ -20,7 +20,7 @@ public class TransactionManager {
         User user = UserSession.getUser();
         if (user == null) {
             Log.e("THController", "User is null in formatTransactionHistory()");
-            return transactionList;  // Return as-is to avoid crash, or you can handle this scenario as needed
+            return transactionList;
         }
         String currentUserEmail = user.getUserEmail();
         Set<String> emailsToLookup = new HashSet<>();
