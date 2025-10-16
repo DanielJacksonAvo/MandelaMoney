@@ -25,17 +25,17 @@ import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.controller.RequestPaymentController;
 import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
-import com.example.mandelamoney.util.DataShare;
+import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.util.UserSession;
+import com.example.mandelamoney.view.Iface.IEnterAmountRequestPaymentView;
 import com.example.mandelamoney.view.Iface.IHomeDashboardView;
-import com.example.mandelamoney.view.activity.RequestPaymentEnterAmountActivity;
-import com.example.mandelamoney.view.activity.ShowFailedActivity;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class HomeDashboardFragment extends Fragment implements IHomeDashboardView {
+public class HomeDashboardFragment extends Fragment implements IHomeDashboardView, IEnterAmountRequestPaymentView {
 
     DashboardController controller;
     private TextView txtBalance, txtUserName;
@@ -43,6 +43,10 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
     private TransactionAdapter adapter;
     private RecyclerView recyclerView;
     private View rootView;
+    private TextView txtErrorRequestPayment;
+    private View loadingSpinner;
+    private RequestPaymentController requestPaymentController;
+
     private boolean isTabletLandscape = false;
 
     public HomeDashboardFragment() {
@@ -124,13 +128,28 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
 
     private void connectToUITablet(View rootView) {
         txtBalance = rootView.findViewById(R.id.txt_user_account_balance);
+
         Button btnWithdraw = rootView.findViewById(R.id.btn_withdraw);
         configureWithdrawButton(btnWithdraw);
+
         Button btnPayNow = rootView.findViewById(R.id.btn_pay_now);
         configurePayNowButton(btnPayNow);
-        tbxRequestPayAmount = rootView.findViewById(R.id.tbx_amount_request_payment);
+
+        tbxRequestPayAmount   = rootView.findViewById(R.id.tbx_amount_request_payment);
+        txtErrorRequestPayment = rootView.findViewById(R.id.txt_error_request_payment);
+        loadingSpinner         = rootView.findViewById(R.id.enteramount_loading_spinner);
+
+        // Reuse same controller + view contract as mobile
+        requestPaymentController = new RequestPaymentController();
+        requestPaymentController.setContext(getContext());
+        requestPaymentController.setEnterAmountRequestPaymentView(this);
+
         Button btnGenerateQR = rootView.findViewById(R.id.btn_generate_qr_request_payment);
         configureGenerateQRCodeButton(btnGenerateQR);
+
+        // Initial state like mobile
+        hideError();
+        if (loadingSpinner != null) loadingSpinner.setVisibility(View.GONE);
     }
 
     private void configureWithdrawButton(Button btnWithdraw) {
@@ -186,17 +205,45 @@ public class HomeDashboardFragment extends Fragment implements IHomeDashboardVie
 
     private void configureGenerateQRCodeButton(Button btnGenerateQR) {
         if (btnGenerateQR != null && checkTablet()) {
-            btnGenerateQR.setOnClickListener((view) -> {
-                RequestPaymentController requestPaymentController = new RequestPaymentController();
-                requestPaymentController.setContext(getContext());
-                requestPaymentController.handleGenerateQR(tbxRequestPayAmount.getText().toString());
+            btnGenerateQR.setOnClickListener(v -> {
+                String amount = tbxRequestPayAmount.getText() == null ? "" : tbxRequestPayAmount.getText().toString();
+                requestPaymentController.handleGenerateQR(amount);
             });
-
         }
     }
     @Override
     public void onResume() {
         super.onResume();
         controller.DashboardHomeController.handleLoadUserToUI();
+    }
+    @Override
+    public void showError(String message) {
+        ErrorBorder.applyMandelaYellowBorder(tbxRequestPayAmount);
+        if (txtErrorRequestPayment != null) {
+            txtErrorRequestPayment.setText(message);
+            txtErrorRequestPayment.setVisibility(View.VISIBLE);
+        }
+    }
+    @Override
+    public void hideError() {
+        ErrorBorder.removeStroke(tbxRequestPayAmount);
+        if (txtErrorRequestPayment != null) {
+            txtErrorRequestPayment.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void showLoadingSpinner() {
+        if (loadingSpinner != null) loadingSpinner.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        if (loadingSpinner != null) loadingSpinner.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void finishActivity() {
+        // no-op for a Fragment
     }
 }
