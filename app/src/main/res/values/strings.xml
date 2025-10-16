@@ -24,7 +24,7 @@
     <string name="confirm_CAPS">CONFIRM</string>
     <string name="passwords_do_not_match_error"><![CDATA[Passwords do not match.]]></string>
     <string name="minimum_8_characters"><![CDATA[Please enter a minimum of 8 characters.]]></string>
-    <string name="invalid_recovery_code"><![CDATA[Invalid Recovery Code.]]></string>
+    <string name="invalid_recovery_code"><![CDATA[Invalid Recovery Code]]></string>
     <string name="business">business</string>
     <string name="student">student</string>
     <string name="select_account_type">Select Account Type</string>
