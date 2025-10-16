@@ -1,13 +1,15 @@
 package com.example.mandelamoney.view.Iface;
 
 public interface ICreateStudentAccountView {
-    void showPasswordError(String message);
-
-    void hidePasswordError();
-
-    void showDetailError(String message);
-
-    void hideDetailError();
-
     void finishActivity();
+    void showEmailError();
+    void showFirstNameError();
+    void showLastNameError();
+    void showStudentNumberError();
+    void showPasswordError(String Error, boolean forPassword);
+    void hideEmailError();
+    void hideFirstNameError();
+    void hideLastNameError();
+    void hideStudentNumberError();
+    void hidePasswordError();
 }
