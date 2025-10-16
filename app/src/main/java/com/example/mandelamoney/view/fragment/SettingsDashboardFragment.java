@@ -1,10 +1,11 @@
 package com.example.mandelamoney.view.fragment;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -15,12 +16,12 @@ import android.widget.TextView;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DashboardController;
-import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.view.Iface.ISettingsView;
 
 public class SettingsDashboardFragment extends Fragment implements ISettingsView {
 
     private TextView txtUserName, txtConnectionStatus, txtConnectionQuality, txtCameraPermission;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch swchFaceID, swchFingerprint;
     private View rootView;
     private DashboardController controller;
@@ -72,41 +73,51 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
     }
 
     private void configureFaceIDSwitch() {
-        swchFaceID.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            controller.DashboardSettingsController.handleWeakAuthenticationChange(isChecked);
-        });
+        if (swchFaceID != null) {
+            swchFaceID.setOnCheckedChangeListener((buttonView, isChecked) -> controller.DashboardSettingsController.handleWeakAuthenticationChange(isChecked));
+        }
     }
 
     private void configureFingerprintSwitch() {
-        swchFingerprint.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            controller.DashboardSettingsController.handleStrongAuthenticationChange(isChecked);
-        });
+        if (swchFingerprint != null) {
+            swchFingerprint.setOnCheckedChangeListener((buttonView, isChecked) -> controller.DashboardSettingsController.handleStrongAuthenticationChange(isChecked));
+        }
     }
 
     @Override
     public void displayUserName(String name) {
-        txtUserName.setText(name);
+        if (txtUserName != null) {
+            txtUserName.setText(name);
+        }
     }
 
     @Override
     public void displayConnectionStatus(String status) {
-        txtConnectionStatus.setText(status);
+        if (txtConnectionStatus != null) {
+            txtConnectionStatus.setText(status);
+        }
     }
 
     @Override
     public void displayConnectionQuality(String status) {
-        txtConnectionQuality.setText(status);
+        if (txtConnectionQuality != null) {
+            txtConnectionQuality.setText(status);
+        }
     }
 
     @Override
     public void displayCameraPermission(String status) {
-        txtCameraPermission.setText(status);
+        if (txtCameraPermission != null) {
+            txtCameraPermission.setText(status);
+        }
     }
 
     @Override
     public void updateWeakBiometricsSwitchFunctionality(Boolean available) {
         //enable or disable the switch
-        swchFaceID.setEnabled(available);
+        if (swchFaceID != null) {
+            swchFaceID.setEnabled(available);
+        }
     }
 
     @Override
@@ -115,19 +126,25 @@ public class SettingsDashboardFragment extends Fragment implements ISettingsView
         if (!available) {
             updateWeakBiometricsSwitchFunctionality(false);
         }
-        swchFingerprint.setEnabled(available);
+        if (swchFingerprint != null) {
+            swchFingerprint.setEnabled(available);
+        }
     }
 
     @Override
     public void setWeakBiometricsSwitchStatus(Boolean on) {
         //turn the switch on or off
-        swchFaceID.setChecked(on);
+        if (swchFaceID != null) {
+            swchFaceID.setChecked(on);
+        }
     }
 
     @Override
     public void setBiometricsSwitchStatus(Boolean on) {
         //turn the switch on or off
-        swchFingerprint.setChecked(on);
+        if (swchFingerprint != null) {
+            swchFingerprint.setChecked(on);
+        }
     }
 
 

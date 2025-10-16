@@ -13,13 +13,12 @@ import android.widget.TextView;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.DashboardController;
-import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.view.Iface.ISettingsView;
 
 public class SecondSettingsDashboardFragment extends Fragment implements ISettingsView {
     private View rootView;
     private DashboardController controller;
-    private TextView txtUserName, txtConnectionStatus, txtConnectionQuality, txtCameraPermission;
+    private TextView txtConnectionStatus, txtConnectionQuality, txtCameraPermission;
 
 
 
@@ -62,41 +61,47 @@ public class SecondSettingsDashboardFragment extends Fragment implements ISettin
 
     @Override
     public void displayUserName(String name) {
-
+        //unused
     }
 
     @Override
     public void displayConnectionStatus(String status) {
-        txtConnectionStatus.setText(status);
+        if (txtConnectionStatus != null) {
+            txtConnectionStatus.setText(status);
+        }
     }
 
     @Override
     public void displayConnectionQuality(String status) {
-        txtConnectionQuality.setText(status);
+        if (txtConnectionQuality != null) {
+            txtConnectionQuality.setText(status);
+        }
     }
 
     @Override
     public void displayCameraPermission(String status) {
-        txtCameraPermission.setText(status);
+        if (txtCameraPermission != null) {
+            txtCameraPermission.setText(status);
+        }
     }
 
     @Override
     public void updateWeakBiometricsSwitchFunctionality(Boolean available) {
-
+        //unused
     }
 
     @Override
     public void updateBiometricsSwitchFunctionality(Boolean available) {
-
+        //unused
     }
 
     @Override
     public void setWeakBiometricsSwitchStatus(Boolean on) {
-
+        //unused
     }
 
     @Override
     public void setBiometricsSwitchStatus(Boolean on) {
-
+        //unused
     }
 }
