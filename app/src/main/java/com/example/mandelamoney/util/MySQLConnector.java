@@ -962,33 +962,34 @@ public class MySQLConnector {
             return null;
         }
 
-        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL UpdateBusinessDetails(?, ?, ?, ?, ?, ?, ?)}")) {
+        // The SQL call now has 6 parameters (5 IN, 1 OUT)
+        try (CallableStatement callableStatement = currentConnection.prepareCall("{CALL UpdateBusinessDetails(?, ?, ?, ?, ?, ?)}")) {
             // Set the input parameters
             callableStatement.setString(1, userEmail);
             callableStatement.setString(2, userPassword);
-            callableStatement.setString(4, newBusinessName);
-            callableStatement.setString(5, newVAT);
-            callableStatement.setString(6, newPhoneNumber);
+            callableStatement.setString(3, newBusinessName);
+            callableStatement.setString(4, newVAT);
+            callableStatement.setString(5, newPhoneNumber);
 
-            // Register output parameter
-            callableStatement.registerOutParameter(7, Types.INTEGER);
+            // Register the output parameter
+            callableStatement.registerOutParameter(6, Types.INTEGER);
 
             Log.d("MySQLConnector", "Calling UpdateBusinessDetails for user: " + userEmail);
 
             // Execute the stored procedure
             callableStatement.execute();
 
-            // Retrieve the result of the output parameter
-            int result = callableStatement.getInt(7);
+            // Retrieve the result from the output parameter
+            int result = callableStatement.getInt(6);
             if (result == 1) {
                 Log.d("MySQLConnector", "Business details updated successfully.");
-                // Create and return the updated Business object
-                //updatedBusiness = new Business(newEmail);
+                // Create the updated Business object using the original email
+                updatedBusiness = new Business(userEmail);
                 updatedBusiness.setBusinessName(newBusinessName);
-                updatedBusiness.setBusinessPhoneNumber(newPhoneNumber);
-                updatedBusiness.setBusinessVAT(newVAT);
+                updatedBusiness.setBusinessVAT(newVAT); // Assuming setter method name
+                updatedBusiness.setBusinessPhoneNumber(newPhoneNumber); // Assuming setter method name
             } else {
-                Log.d("MySQLConnector", "Failed to update business details.");
+                Log.e("MySQLConnector", "Failed to update business details. Check credentials or database state.");
             }
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error calling stored procedure 'UpdateBusinessDetails': " + e.getMessage());
