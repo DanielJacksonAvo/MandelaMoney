@@ -80,6 +80,7 @@
         <activity
             android:name=".view.activity.DashboardActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:windowSoftInputMode="stateUnchanged|adjustNothing"
             android:exported="false"
             android:screenOrientation="portrait"
             tools:replace="android:configChanges" />
