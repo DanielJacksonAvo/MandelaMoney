@@ -10,11 +10,9 @@ public interface IEditProfileView {
     void showError1();
     void showError2();
     void showError3();
-    void showError4();
     void hideError1();
     void hideError2();
     void hideError3();
-    void hideError4();
 
 
 
