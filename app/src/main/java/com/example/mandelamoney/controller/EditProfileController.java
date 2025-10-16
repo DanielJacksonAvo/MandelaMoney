@@ -4,12 +4,17 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.Hasher;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.util.UserValueChecker;
 import com.example.mandelamoney.view.Iface.IEditProfileView;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class EditProfileController {
     private final IEditProfileView view;
@@ -22,69 +27,75 @@ public class EditProfileController {
         runOnUiThread(view::loadUser);
     }
 
-    public void handleSaveButton(String email, String param1, String param2, String param3) {
+    public void handleSaveButton(String param1, String param2, String param3) {
         runOnUiThread(view::hideError);
+        runOnUiThread(view::hideError1);
+        runOnUiThread(view::hideError2);
+        runOnUiThread(view::hideError3);
+        runOnUiThread(view::showLoadingScreen);
 
         Thread thread = new Thread(() -> {
             User user;
-
-            if (!UserValueChecker.isValidEmail(email)) {
-                showErrorOnMainThread("Invalid Email");
-                onFailure();
-                return;
+            boolean[] errors = new boolean[4];
+            for (int i = 0; i < errors.length; i++) {
+                errors[i] = false;
             }
 
             if (UserSession.getUser() instanceof Student) {
                 if (param1.length() < 2) {
-                    showErrorOnMainThread("Enter A First Name");
-                    onFailure();
-                    return;
+                    errors[0] = true;
                 }
                 if (param2.length() < 2) {
-                    showErrorOnMainThread("Enter A Last Name");
-                    onFailure();
-                    return;
+                    errors[1] = true;
                 }
                 if (!UserValueChecker.isValidStudentNumber(param3)) {
-                    showErrorOnMainThread("Invalid Student Number");
-                    onFailure();
-                    return;
+                    errors[2] = true;
+                }
+
+                for (boolean error : errors) {
+                    if (error) {
+                        onFailure(errors);
+                        return;
+                    }
                 }
 
                 user = MySQLConnector.updateStudentDetails(
                         UserSession.getUser().getUserEmail(),
-                        UserSession.getUser().getUserPassword(),
-                        email, param1, param2, param3, context
+                        Hasher.getHash(UserSession.getUser().getUserPassword()),
+                        param1, param2, param3, context
                 );
 
             } else {
                 if (param1.length() < 2) {
-                    showErrorOnMainThread("Enter A Business Name");
-                    onFailure();
-                    return;
+                    errors[0] = true;
                 }
                 if (!UserValueChecker.isValidPhoneNumber(param2)) {
-                    showErrorOnMainThread("Invalid Phone Number");
-                    onFailure();
-                    return;
+                    errors[1] = true;
                 }
                 if (!UserValueChecker.isValidVatNumber(param3)) {
-                    showErrorOnMainThread("Invalid VAT Number");
-                    onFailure();
-                    return;
+                    errors[2] = true;
+                }
+
+                for (boolean error : errors) {
+                    if (error) {
+                        onFailure(errors);
+                        return;
+                    }
                 }
 
                 user = MySQLConnector.updateBusinessDetails(
                         UserSession.getUser().getUserEmail(),
-                        UserSession.getUser().getUserPassword(),
-                        email, param1, param2, param3, context
+                        Hasher.getHash(UserSession.getUser().getUserPassword()),
+                        param1, param2, param3, context
                 );
             }
 
             if (user != null) {
                 onSuccess(user);
             } else {
-                onFailure();
+                errors[3] = true;
+                onFailure(errors);
+                return;
             }
         });
 
@@ -92,23 +103,36 @@ public class EditProfileController {
     }
 
     private void onSuccess(User user) {
+        boolean strongAuth = UserSession.getUser().getStrongAuth();
+        boolean weakAuth = UserSession.getUser().getWeakAuth();
+        String userPassword = UserSession.getUser().getUserPassword();
         UserSession.setUser(user);
+        UserSession.getUser().setStrongAuth(strongAuth);
+        UserSession.getUser().setWeakAuth(weakAuth);
+        UserSession.getUser().setUserPassword(userPassword);
+        UserSession.saveSession(context);
         runOnUiThread(() -> {
             view.hideLoadingScreen();
             view.finishActivity();
         });
     }
 
-    private void onFailure() {
+    private void onFailure(boolean[] errors) {
         runOnUiThread(() -> {
-            //view.showError("Error Saving");
+            for (int i = 0; i < errors.length; i++) {
+                if (errors[i]) {
+                    switch(i) {
+                        case 0: view.showError1(); break;
+                        case 1: view.showError2(); break;
+                        case 2: view.showError3(); break;
+                        case 3: view.showError(context.getString(R.string.unknown_error_occurred)); break;
+                    }
+                }
+            }
             view.hideLoadingScreen();
         });
     }
 
-    private void showErrorOnMainThread(String message) {
-        runOnUiThread(() -> view.showError(message));
-    }
 
     private void runOnUiThread(Runnable task) {
         mainHandler.post(task);
