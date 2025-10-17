@@ -9,7 +9,6 @@ import androidx.security.crypto.MasterKeys;
 import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
 import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
@@ -24,7 +23,6 @@ public class UserSession {
 
     private static User currentUser;
     private static List<Transaction> cachedTransactionHistory;
-
     private static final String PREF_NAME = "secure_user_prefs";
     private static final String KEY_USER = "user_data";
 
@@ -56,14 +54,16 @@ public class UserSession {
 
     public static float updateBalance(Context context) {
         float balance = MySQLConnector.getUserBalance(currentUser.getUserEmail(), context);
-        currentUser.setUserBalance(balance);
+        if (balance != -1) currentUser.setUserBalance(balance);
         return balance;
     }
 
 
     public static void updateTransactions(Context context) {
         List<Transaction> rawTransactionHistory = MySQLConnector.getTransactionHistory(currentUser.getUserEmail(), context);
-        cachedTransactionHistory = TransactionManager.formatTransactionHistory(rawTransactionHistory, context);
+        if(rawTransactionHistory != null) {
+            cachedTransactionHistory = TransactionManager.formatTransactionHistory(rawTransactionHistory, context);
+        }
     }
 
     public static List<Transaction> getLastWeekTransactions() {

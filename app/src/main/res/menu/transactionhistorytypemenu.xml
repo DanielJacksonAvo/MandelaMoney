@@ -8,7 +8,7 @@
      android:title="@string/outgoing" />
  <item
      android:id="@+id/th_type_deposit"
-     android:title="@string/deposit" />
+     android:title="@string/deposits" />
  <item
      android:id="@+id/th_type_withdrawal"
      android:title="@string/withdrawal" />
