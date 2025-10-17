@@ -21,7 +21,6 @@ import com.example.mandelamoney.view.activity.LoginActivity;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService; // New import
 import java.util.concurrent.Executors; // New import
-import java.util.concurrent.TimeUnit; // New import
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,15 +72,17 @@ public class CreateAccountController {
         boolean error = false;
 
         if (checkEmpty(userEmail)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showEmailError();
+            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showEmailError(context.getString(R.string.enter_an_email));
             error = true;
+        } else {
+            if (!isValidEmail(userEmail)) {
+                if (viewCreateStudentAccount != null) viewCreateStudentAccount.showEmailError(context.getString(R.string.invalid_email));
+                error = true;
+
+            }
         }
 
-        if (!isValidEmail(userEmail)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showEmailError();
-            error = true;
 
-        }
 
         if (checkEmpty(userFirstName)) {
             if (viewCreateStudentAccount != null) viewCreateStudentAccount.showFirstNameError();
@@ -119,44 +120,33 @@ public class CreateAccountController {
             }
         }
 
-
-
-
-
         if (error) {
             return;
         }
 
-
-
         // --- Background Thread for Database Operations ---
         accountCreationExecutor.execute(() -> {
-            boolean accountCreated = false;
-            String errorMessage = null;
+            boolean accountCreated;
 
             // Database call: Check unique email
-            if (MySQLConnector.checkUniqueEmail(userEmail, context)) {
-                errorMessage = context.getString(R.string.email_already_in_use);
+            if (!MySQLConnector.checkUniqueEmail(userEmail, context)) {
+                ContextCompat.getMainExecutor(context).execute(() -> viewCreateStudentAccount.showEmailError(context.getString(R.string.email_already_in_use)));
+                return;
             } else {
                 // Database call: Create student account
                 accountCreated = MySQLConnector.createStudentAccount(userEmail, Hasher.getHash(userPassword), userFirstName, userLastName, userStudentNumber, context);
-                if (!accountCreated) {
-                    errorMessage = "Account Failed to Create!"; // More specific error if needed
-                }
             }
 
             // --- Post Results to Main Thread ---
-            final boolean finalAccountCreated = accountCreated;
-            final String finalErrorMessage = errorMessage;
+            boolean finalAccountCreated = accountCreated;
             ContextCompat.getMainExecutor(context).execute(() -> {
                 if (finalAccountCreated) {
                     Toast.makeText(context, "Account Successfully Created!\nPlease login.", Toast.LENGTH_LONG).show();
                     handleCreateStudentAccountCancel(); // Navigates to LoginActivity and finishes current
                 } else {
-                    Toast.makeText(context, finalErrorMessage != null ? finalErrorMessage : "An unexpected error occurred!", Toast.LENGTH_LONG).show();
                     if (viewCreateStudentAccount != null) {
                         // You might want to show the error on the view as well, depending on your UI design
-                        viewCreateStudentAccount.showPasswordError(finalErrorMessage != null ? finalErrorMessage : context.getString(R.string.unknown_error_occurred), true);
+                        viewCreateStudentAccount.showPasswordError(context.getString(R.string.unknown_error_occurred), false);
                     }
                 }
             });
@@ -165,15 +155,26 @@ public class CreateAccountController {
 
     public void handleCreateBusinessUser(String userEmail, String userBusinessName, String userBusinessVAT, String userBusinessPhone, String userPassword, String userPasswordReenter) {
         // --- UI Thread Validations (fast, no database calls) ---
+        viewCreateBusinessAccount.hidePasswordError();
+        viewCreateBusinessAccount.hideEmailError();
+        viewCreateBusinessAccount.hideBusinessNameError();
+        viewCreateBusinessAccount.hideVATError();
+        viewCreateBusinessAccount.hidePhoneError();
+
         boolean error = false;
 
         if (viewCreateBusinessAccount != null) {
             viewCreateBusinessAccount.hidePasswordError();
         }
 
-        if (checkEmpty(userEmail) || !isValidEmail(userEmail)) {
-            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showEmailError();
+        if (checkEmpty(userEmail)) {
+            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showEmailError(context.getString(R.string.enter_an_email));
             error = true;
+        } else {
+            if (!isValidEmail(userEmail)) {
+                if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showEmailError(context.getString(R.string.invalid_email));
+                error = true;
+            }
         }
 
 
@@ -219,32 +220,26 @@ public class CreateAccountController {
 
         // --- Background Thread for Database Operations ---
         accountCreationExecutor.execute(() -> {
-            boolean accountCreated = false;
-            String errorMessage = null;
+            boolean accountCreated;
 
             // Database call: Check unique email
-            if (MySQLConnector.checkUniqueEmail(userEmail, context)) {
-                errorMessage = context.getString(R.string.email_already_in_use);
+            if (!MySQLConnector.checkUniqueEmail(userEmail, context)) {
+                ContextCompat.getMainExecutor(context).execute(() -> viewCreateBusinessAccount.showEmailError(context.getString(R.string.email_already_in_use)));
+                return;
             } else {
                 // Database call: Create business account
                 accountCreated = MySQLConnector.createBusinessAccount(userEmail, Hasher.getHash(userPassword), userBusinessName, userBusinessPhone, userBusinessVAT, context);
-                if (!accountCreated) {
-                    errorMessage = "Account Failed to Create!"; // More specific error if needed
-                }
             }
 
             // --- Post Results to Main Thread ---
             final boolean finalAccountCreated = accountCreated;
-            final String finalErrorMessage = errorMessage;
             ContextCompat.getMainExecutor(context).execute(() -> {
                 if (finalAccountCreated) {
                     Toast.makeText(context, "Account Successfully Created!\nPlease login.", Toast.LENGTH_LONG).show();
                     handleCreateBusinessAccountCancel(); // Navigates to LoginActivity and finishes current
                 } else {
-                    Toast.makeText(context, finalErrorMessage != null ? finalErrorMessage : "An unexpected error occurred!", Toast.LENGTH_LONG).show();
                     if (viewCreateBusinessAccount != null) {
-                        // You might want to show the error on the view as well
-                        viewCreateBusinessAccount.showPasswordError(finalErrorMessage != null ? finalErrorMessage : context.getString(R.string.unknown_error_occurred), false);
+                        viewCreateBusinessAccount.showPasswordError(context.getString(R.string.unknown_error_occurred), false);
                     }
                 }
             });
@@ -331,19 +326,4 @@ public class CreateAccountController {
         return phoneNumber != null && phoneNumber.matches("^0\\d{9}$");
     }
 
-    // Cleanup method to shut down the executor
-    public void cleanup() {
-        if (accountCreationExecutor != null && !accountCreationExecutor.isShutdown()) {
-            accountCreationExecutor.shutdown();
-            try {
-                if (!accountCreationExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    accountCreationExecutor.shutdownNow();
-                }
-            } catch (InterruptedException ie) {
-                accountCreationExecutor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
-        }
-        Log.d("CreateAccountController", "Account creation executor cleaned up.");
-    }
 }
