@@ -560,14 +560,25 @@ public class MySQLConnector {
                 return transactions;
             }
 
+            Log.d("MySQLConnector", "Preparing call: getTransactionHistoryWithFilters("
+                    + "userEmail=" + userEmail
+                    + ", period=" + (period != null ? period : "All")
+                    + ", type=" + (type != null ? type : "All") + ")");
+
             CallableStatement stmt = conn.prepareCall("{call MandelaMoneyDB.getTransactionHistoryWithFilters(?, ?, ?)}");
             stmt.setString(1, userEmail);
             stmt.setString(2, period != null ? period : "All");
             stmt.setString(3, type != null ? type : "All");
 
+            Log.d("MySQLConnector", "Executing stored procedure...");
+
             ResultSet rs = stmt.executeQuery();
 
+            Log.d("MySQLConnector", "ResultSet received, parsing transactions...");
+
             transactions = ResultSetParser.parseTransactions(rs, userEmail);
+
+            Log.d("MySQLConnector", "Transaction parsing complete.");
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "SQLException in getTransactionHistoryWithFilters: " + e.getMessage(), e);
@@ -575,9 +586,11 @@ public class MySQLConnector {
             Log.e("MySQLConnector", "Exception in getTransactionHistoryWithFilters: " + e.getMessage(), e);
         }
 
-        Log.d("MySQLConnector", "Transaction count: " + transactions.size() + 1);
+        Log.d("MySQLConnector", "Transaction count: " + transactions.size());
+
         return transactions;
     }
+
 
     public static List<Transaction> getTransactionHistory(String userEmail, Context context) {
         List<Transaction> transactions = new ArrayList<>();
@@ -852,6 +865,7 @@ public class MySQLConnector {
         }
 
         float balance = 0.0F;
+        boolean changed = false;
 
         try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.getUserBalance(?, ?)}")) {
             stmt.setString(1, email);
@@ -859,14 +873,15 @@ public class MySQLConnector {
 
             stmt.execute();
             balance = stmt.getFloat(2);
+            changed = true;
 
             Log.d("MySQLConnector", "Fetched balance for " + email + ": " + balance);
 
         } catch (SQLException e) {
             Log.e("MySQLConnector", "Error calling getUserBalance: " + e.getMessage());
         }
-
-        return balance;
+        if (changed) {return balance;}
+        else return -1;
     }
     public static Map<String, String> getDisplayNamesForEmails(Set<String> emails, Context context) {
         Map<String, String> emailToDisplayName = new HashMap<>();
