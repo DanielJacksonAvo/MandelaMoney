@@ -1,7 +1,7 @@
 package com.example.mandelamoney.view.Iface;
 
 public interface ICreateBusinessAccountView {
-    void showEmailError();
+    void showEmailError(String error);
     void showBusinessNameError();
     void showPhoneError();
     void showVATError();

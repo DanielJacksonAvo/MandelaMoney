@@ -13,14 +13,11 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
-
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.CreateAccountController;
 import com.example.mandelamoney.util.DataShare;
+import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.view.Iface.ICreateBusinessAccountView;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,8 +25,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CreateAccountEnterBusinessDetailsActivity extends AppCompatActivity implements ICreateBusinessAccountView {
 
     private CreateAccountController controller;
-    private TextView txtPasswordError;
-    private TextView txtDetailError;
+    private TextView txtPasswordError, txtEmailError, txtPhoneError, txtVATError, txtNameError;
+    private EditText tbxPassword, tbxEmail, tbxName, tbxVAT, tbxPhone, tbxPasswordReenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +54,19 @@ public class CreateAccountEnterBusinessDetailsActivity extends AppCompatActivity
     private void connectToUI() {
         TextView btnCancel = findViewById(R.id.btn_cancel_createbusinessaccount);
         Button btnCreateAccount = findViewById(R.id.btn_create_createbusinessaccount);
-        EditText tbxPassword = findViewById(R.id.tbx_password_createbusinessaccount);
-        EditText tbxPasswordReenter = findViewById(R.id.tbx_password_reenter_createbusinessaccount);
+        tbxPassword = findViewById(R.id.tbx_password_createbusinessaccount);
+        tbxPasswordReenter = findViewById(R.id.tbx_password_reenter_createbusinessaccount);
         ImageView imgPasswordIcon = findViewById(R.id.img_password_icon_createbusinessaccount);
         ImageView imgPasswordRenterIcon = findViewById(R.id.img_password_reenter_createbusinessaccount);
-        EditText tbxEmail = findViewById(R.id.tbx_email_createbusinessaccount);
-        EditText tbxName = findViewById(R.id.tbx_name_createbusinessaccount);
-        EditText tbxVAT = findViewById(R.id.tbx_vat_createbusinessaccount);
-        EditText tbxPhone = findViewById(R.id.tbx_phone_createbusinessaccount);
-        txtPasswordError = findViewById(R.id.txt_error_password_createbusinessaccount);
-        txtDetailError = findViewById(R.id.txt_error_details_createbusinessaccount);
+        tbxEmail = findViewById(R.id.tbx_email_createbusinessaccount);
+        tbxName = findViewById(R.id.tbx_name_createbusinessaccount);
+        tbxVAT = findViewById(R.id.tbx_vat_createbusinessaccount);
+        tbxPhone = findViewById(R.id.tbx_phone_createbusinessaccount);
+        txtPasswordError = findViewById(R.id.txt_password_error_createbusinessaccount);
+        txtEmailError = findViewById(R.id.txt_email_error_createsbusinessaccount);
+        txtNameError = findViewById(R.id.txt_businessname_error_createbusinessaccount);
+        txtPhoneError = findViewById(R.id.txt_phone_error_createbusinessaccount);
+        txtVATError = findViewById(R.id.txt_vat_error_createbusinessaccount);
         configureCancelButton(btnCancel);
         configurePasswordVisibility(imgPasswordIcon, tbxPassword);
         configurePasswordVisibility(imgPasswordRenterIcon, tbxPasswordReenter);
@@ -82,25 +82,70 @@ public class CreateAccountEnterBusinessDetailsActivity extends AppCompatActivity
     }
 
     @Override
-    public void showPasswordError(String message) {
-        txtPasswordError.setText(message);
+    public void showEmailError(String error) {
+        txtEmailError.setText(error);
+        txtEmailError.setVisibility(View.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxEmail);
+    }
+
+    @Override
+    public void showBusinessNameError() {
+        txtNameError.setVisibility(View.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxName);
+    }
+
+    @Override
+    public void showPhoneError() {
+        txtPhoneError.setVisibility(View.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxPhone);
+    }
+
+    @Override
+    public void showVATError() {
+        txtVATError.setVisibility(View.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxVAT);
+    }
+
+
+    @Override
+    public void showPasswordError(String Error, boolean forPassword) {
         txtPasswordError.setVisibility(View.VISIBLE);
+        txtPasswordError.setText(Error);
+        if (forPassword) {
+            ErrorBorder.applyMandelaYellowBorder(tbxPassword);
+            ErrorBorder.applyMandelaYellowBorder(tbxPasswordReenter);
+        }
+    }
+
+    @Override
+    public void hideEmailError() {
+        txtEmailError.setVisibility(View.GONE);
+        ErrorBorder.removeStroke(tbxEmail);
+    }
+
+    @Override
+    public void hideBusinessNameError() {
+        txtNameError.setVisibility(View.GONE);
+        ErrorBorder.removeStroke(tbxName);
+    }
+
+    @Override
+    public void hidePhoneError() {
+        txtPhoneError.setVisibility(View.GONE);
+        ErrorBorder.removeStroke(tbxPhone);
+    }
+
+    @Override
+    public void hideVATError() {
+        txtVATError.setVisibility(View.GONE);
+        ErrorBorder.removeStroke(tbxVAT);
     }
 
     @Override
     public void hidePasswordError() {
         txtPasswordError.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showDetailError(String message) {
-        txtDetailError.setText(message);
-        txtDetailError.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideDetailError() {
-        txtDetailError.setVisibility(View.GONE);
+        ErrorBorder.removeStroke(tbxPassword);
+        ErrorBorder.removeStroke(tbxPasswordReenter);
     }
 
     @Override
