@@ -274,6 +274,7 @@ public class DashboardController {
     public class DashboardSettingsController {
         private final ISettingsView view;
         private ISettingsView view2;
+        private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
         public DashboardSettingsController(ISettingsView view) {
             this.view = view;
@@ -357,18 +358,34 @@ public class DashboardController {
         }
 
         public void displayAvailableAuthenticationSettings() {
-            if (BiometricsManager.hasWeakAuthentication(context)) {
-                view.updateBiometricsSwitchFunctionality(true);
-                view.updateWeakBiometricsSwitchFunctionality(true);
-                view.setBiometricsSwitchStatus(UserSession.getUser().getStrongAuth());
-                view.setWeakBiometricsSwitchStatus(UserSession.getUser().getWeakAuth());
+            new Thread(() -> {
+                final boolean hasBiometrics = BiometricsManager.hasWeakAuthentication(context);
+                final boolean strongAuthEnabled;
+                final boolean weakAuthEnabled;
 
-            } else {
-                view.updateBiometricsSwitchFunctionality(false);
-                view.updateWeakBiometricsSwitchFunctionality(false);
-                view.setBiometricsSwitchStatus(false);
-                view.setWeakBiometricsSwitchStatus(false);
-            }
+                if (hasBiometrics) {
+                    Object user = UserSession.getUser();
+                    strongAuthEnabled = ((User) user).getStrongAuth();
+                    weakAuthEnabled = ((User) user).getWeakAuth();
+                } else {
+                    strongAuthEnabled = false;
+                    weakAuthEnabled = false;
+                }
+
+                mainThreadHandler.post(() -> {
+                    if (hasBiometrics) {
+                        view.updateBiometricsSwitchFunctionality(true);
+                        view.updateWeakBiometricsSwitchFunctionality(true);
+                        view.setBiometricsSwitchStatus(strongAuthEnabled);
+                        view.setWeakBiometricsSwitchStatus(weakAuthEnabled);
+                    } else {
+                        view.updateBiometricsSwitchFunctionality(false);
+                        view.updateWeakBiometricsSwitchFunctionality(false);
+                        view.setBiometricsSwitchStatus(false);
+                        view.setWeakBiometricsSwitchStatus(false);
+                    }
+                });
+            }).start();
         }
 
 

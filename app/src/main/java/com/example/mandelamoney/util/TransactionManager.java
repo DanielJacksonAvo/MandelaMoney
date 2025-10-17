@@ -52,11 +52,17 @@ public class TransactionManager {
             } else {
                 if (tx.getFromUser().equals(currentUserEmail)) {
                     String displayName = emailToDisplayName.getOrDefault(tx.getToUser(), tx.getToUser());
+                    if(displayName != null && displayName.equals("Bank")){
+                        displayName = "Withdrawal";
+                    }
                     Log.d("THController", "Outgoing: replacing " + tx.getToUser() + " with " + displayName);
                     tx.setDisplayName(displayName);
                     tx.setAmount(tx.getAmount() * -1);
                 } else if (tx.getToUser().equals(currentUserEmail)) {
                     String displayName = emailToDisplayName.getOrDefault(tx.getFromUser(), tx.getFromUser());
+                    if(displayName != null && displayName.equals("Bank")){
+                        displayName = "Deposit";
+                    }
                     Log.d("THController", "Incoming: replacing " + tx.getFromUser() + " with " + displayName);
                     tx.setDisplayName(displayName);
 
