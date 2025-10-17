@@ -2,7 +2,7 @@ package com.example.mandelamoney.view.Iface;
 
 public interface ICreateStudentAccountView {
     void finishActivity();
-    void showEmailError();
+    void showEmailError(String error);
     void showFirstNameError();
     void showLastNameError();
     void showStudentNumberError();
