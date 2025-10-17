@@ -19,8 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/blurView_createaccountstudent"
         app:layout_constraintStart_toStartOf="@+id/blurView_createaccountstudent"
-        app:layout_constraintTop_toBottomOf="@+id/blurView_createaccountstudent"
-        app:layout_constraintVertical_bias="0.19999999" />
+        app:layout_constraintTop_toBottomOf="@+id/blurView_createaccountstudent" />
 
     <ImageView
         android:id="@+id/img_mandelamoney_createstudentaccount"
@@ -317,7 +316,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/invalid_email"
                 android:textColor="@color/mandelaYellow"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
@@ -328,7 +327,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/enter_a_first_name"
                 android:textColor="@color/mandelaYellow"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
@@ -339,7 +338,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/enter_a_last_name"
                 android:textColor="@color/mandelaYellow"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout4"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout4"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout4" />
@@ -350,7 +349,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/invalid_student_number"
                 android:textColor="@color/mandelaYellow"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout5"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout5"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout5" />
@@ -361,7 +360,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/password_mismatch"
                 android:textColor="@color/mandelaYellow"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@+id/constraintLayout_password_reenter_createstudentaccount"
                 app:layout_constraintStart_toStartOf="@+id/constraintLayout_password_reenter_createstudentaccount"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createstudentaccount" />

@@ -138,7 +138,8 @@ public class CreateAccountEnterStudentDetailsActivity extends AppCompatActivity 
     }
 
     @Override
-    public void showEmailError() {
+    public void showEmailError(String error) {
+        txtEmailError.setText(error);
         txtEmailError.setVisibility(View.VISIBLE);
         ErrorBorder.applyMandelaYellowBorder(tbxEmail);
     }
