@@ -150,5 +150,6 @@
     <string name="new_password">NEW PASSWORD</string>
     <string name="incorrect_password_error">Incorrect Password</string>
     <string name="incorrect_email_and_password_combination"><![CDATA[Incorrect Email & Password]]></string>
+    <string name="unknown_error_occurred">Unknown Error Occurred</string>
     <string name="deposits">Deposits</string>
 </resources>

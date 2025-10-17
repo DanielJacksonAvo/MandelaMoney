@@ -1,13 +1,18 @@
 package com.example.mandelamoney.view.Iface;
 
 public interface ICreateBusinessAccountView {
-    void showPasswordError(String message);
-
+    void showEmailError(String error);
+    void showBusinessNameError();
+    void showPhoneError();
+    void showVATError();
+    void showPasswordError(String Error, boolean forPassword);
+    void hideEmailError();
+    void hideBusinessNameError();
+    void hidePhoneError();
+    void hideVATError();
     void hidePasswordError();
 
-    void showDetailError(String message);
-
-    void hideDetailError();
-
     void finishActivity();
+    void showLoadingSpinner();
+    void hideLoadingSpinner();
 }

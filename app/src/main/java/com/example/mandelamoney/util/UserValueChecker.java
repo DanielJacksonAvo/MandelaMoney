@@ -26,10 +26,16 @@ public class UserValueChecker {
 
 
     public static boolean isValidStudentNumber(String studentNumber) {
-        if (studentNumber == null) return false; // Added null check
+        // FIX: Check for both null and an empty string at the beginning.
+        if (studentNumber == null || studentNumber.isEmpty()) {
+            return false;
+        }
+
+        // This block is now safe because we know the string is not empty.
         if (studentNumber.charAt(0) != 's') {
             studentNumber = "s" + studentNumber;
         }
+
         String regex = "^s\\d{9}$";
         return studentNumber.matches(regex);
     }
