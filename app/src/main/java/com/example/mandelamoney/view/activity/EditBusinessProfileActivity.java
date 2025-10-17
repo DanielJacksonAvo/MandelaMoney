@@ -15,12 +15,13 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.EditProfileController;
 import com.example.mandelamoney.model.Business;
+import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.view.Iface.IEditProfileView;
 
 public class EditBusinessProfileActivity extends AppCompatActivity implements IEditProfileView {
-    private EditText tbxEmail, tbxBusinessName, tbxPhone, tbxVAT;
-    private TextView txtError, btnCancel;
+    private EditText tbxBusinessName, tbxPhone, tbxVAT;
+    private TextView txtBusinessNameError, txtPhoneError, txtVATError, btnCancel;
     private Button btnSave;
     private ConstraintLayout loadingSpinner;
     private EditProfileController controller;
@@ -43,19 +44,19 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
     }
 
     private void connectToUi() {
-        tbxEmail = findViewById(R.id.tbx_email_editbusinessprofile);
         tbxBusinessName = findViewById(R.id.tbx_name_editbusinessprofile);
         tbxPhone = findViewById(R.id.tbx_phone_editbusinessprofile);
         tbxVAT = findViewById(R.id.tbx_vat_editbusinessprofile);
-        txtError = findViewById(R.id.txt_error_details_editbusinessprofile);
         btnCancel = findViewById(R.id.btn_cancel_editbusinessprofile);
         btnSave = findViewById(R.id.btn_save_editbusinessprofile);
         loadingSpinner = findViewById(R.id.editbusinessprofile_loading_spinner);
+        txtBusinessNameError = findViewById(R.id.txt_businessname_error_editbusinessprofile);
+        txtPhoneError = findViewById(R.id.txt_phone_error_editbusinessprofile);
+        txtVATError = findViewById(R.id.txt_vat_error_editbusinessprofile);
     }
 
     @Override
     public void loadUser() {
-        tbxEmail.setText(UserSession.getUser().getUserEmail());
         tbxBusinessName.setText(((Business)(UserSession.getUser())).getBusinessName());
         tbxPhone.setText(((Business)(UserSession.getUser())).getBusinessPhoneNumber());
         tbxVAT.setText(((Business)(UserSession.getUser())).getBusinessVAT());
@@ -63,13 +64,13 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
 
     @Override
     public void showError(String error) {
-        txtError.setText(error);
-        txtError.setVisibility(TextView.VISIBLE);
+        txtVATError.setText(error);
+        txtVATError.setVisibility(TextView.VISIBLE);
     }
 
     @Override
     public void hideError() {
-        txtError.setVisibility(TextView.GONE);
+        txtVATError.setVisibility(TextView.GONE);
     }
 
     @Override
@@ -87,13 +88,48 @@ public class EditBusinessProfileActivity extends AppCompatActivity implements IE
         loadingSpinner.setVisibility(ConstraintLayout.GONE);
     }
 
+    @Override
+    public void showError1() {
+        txtBusinessNameError.setVisibility(TextView.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxBusinessName);
+    }
+
+    @Override
+    public void showError2() {
+        txtPhoneError.setVisibility(TextView.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxPhone);
+    }
+
+    @Override
+    public void showError3() {
+        txtVATError.setVisibility(TextView.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxVAT);
+    }
+
+    @Override
+    public void hideError1() {
+        txtBusinessNameError.setVisibility(TextView.GONE);
+        ErrorBorder.removeStroke(tbxBusinessName);
+    }
+
+    @Override
+    public void hideError2() {
+        txtPhoneError.setVisibility(TextView.GONE);
+        ErrorBorder.removeStroke(tbxPhone);
+    }
+
+    @Override
+    public void hideError3() {
+        txtVATError.setVisibility(TextView.GONE);
+        ErrorBorder.removeStroke(tbxVAT);
+    }
+
     private void configureSaveButton() {
         btnSave.setOnClickListener((view) -> {
-            String email = String.valueOf(tbxEmail.getText());
             String name = String.valueOf(tbxBusinessName.getText());
             String phone = String.valueOf(tbxPhone.getText());
             String vat = String.valueOf(tbxVAT.getText());
-            controller.handleSaveButton(email, name, phone, vat);
+            controller.handleSaveButton(name, phone, vat);
         });
     }
 

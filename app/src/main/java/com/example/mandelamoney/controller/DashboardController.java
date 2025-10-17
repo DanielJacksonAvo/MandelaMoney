@@ -465,6 +465,7 @@ public class DashboardController {
         }
 
         public void handleEditButton() {
+            DataShare.send(this);
             if (UserSession.getUser() instanceof Student) {
                 Intent intent = new Intent(context, EditStudentProfileActivity.class);
                 context.startActivity(intent);
