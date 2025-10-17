@@ -6,7 +6,7 @@
             android:name="com.example.mandelamoney.view.activity.UnlockActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
-            tools:replace="android:screenOrientation" />
+            tools:replace="android:screenOrientation,android:configChanges" />
         <activity
             android:name="com.example.mandelamoney.view.activity.LoginActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
@@ -20,15 +20,19 @@
         <activity android:name="com.example.mandelamoney.view.activity.ResetPasswordActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
-            tools:replace="android:screenOrientation" />
-        <activity android:name="com.example.mandelamoney.view.activity.RecoverAccountActivity"
+            android:windowSoftInputMode="stateUnchanged|adjustNothing"
+            tools:replace="android:screenOrientation,android:windowSoftInputMode" />
+        <activity
+            android:name="com.example.mandelamoney.view.activity.RecoverAccountActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
-            tools:replace="android:screenOrientation" />
+            android:windowSoftInputMode="stateUnchanged|adjustNothing"
+            tools:replace="android:screenOrientation,android:windowSoftInputMode" />
         <activity android:name="com.example.mandelamoney.view.activity.ForgotPasswordActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
-            tools:replace="android:screenOrientation" />
+            android:windowSoftInputMode="stateUnchanged|adjustNothing"
+            tools:replace="android:screenOrientation,android:windowSoftInputMode" />
         <activity android:name="com.example.mandelamoney.view.activity.MakePaymentScanQrActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
@@ -107,6 +111,7 @@
             android:name=".view.activity.ChangePasswordActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="locked"
-            tools:replace="android:screenOrientation" />
+            android:windowSoftInputMode="stateUnchanged|adjustNothing"
+            tools:replace="android:screenOrientation,android:windowSoftInputMode" />
     </application>
 </manifest>
