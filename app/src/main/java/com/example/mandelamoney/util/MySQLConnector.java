@@ -861,10 +861,10 @@ public class MySQLConnector {
         Connection currentConnection = getConnection(context);
         if (currentConnection == null) {
             Log.e("MySQLConnector", "Cannot fetch balance: No valid DB connection.");
-            return 0.0F;
+            return -1;
         }
 
-        float balance = 0.0F;
+        float balance = -1;
         boolean changed = false;
 
         try (CallableStatement stmt = currentConnection.prepareCall("{CALL MandelaMoneyDB.getUserBalance(?, ?)}")) {

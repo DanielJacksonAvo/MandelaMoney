@@ -9,9 +9,6 @@ import androidx.security.crypto.MasterKeys;
 import com.example.mandelamoney.model.Transaction;
 import com.example.mandelamoney.model.User;
 import com.google.gson.Gson;
-
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
@@ -57,7 +54,7 @@ public class UserSession {
 
     public static float updateBalance(Context context) {
         float balance = MySQLConnector.getUserBalance(currentUser.getUserEmail(), context);
-        if(balance != -1) currentUser.setUserBalance(balance);
+        if (balance != -1) currentUser.setUserBalance(balance);
         return balance;
     }
 

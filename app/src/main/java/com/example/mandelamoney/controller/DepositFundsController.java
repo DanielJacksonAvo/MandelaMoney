@@ -353,7 +353,7 @@ public class DepositFundsController {
                 Executors.newSingleThreadExecutor().execute(() -> {
                     float updated = UserSession.updateBalance(context);
                     User u = UserSession.getUser();
-                    if (u != null){
+                    if (u != null && updated != -1) {
                         u.setUserBalance(updated);
                         UserSession.updateTransactions(context);
                     }
