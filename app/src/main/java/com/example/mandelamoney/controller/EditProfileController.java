@@ -7,23 +7,23 @@ import android.os.Looper;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.Hasher;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.util.UserValueChecker;
 import com.example.mandelamoney.view.Iface.IEditProfileView;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 public class EditProfileController {
     private final IEditProfileView view;
     private final Context context;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final DashboardController.DashboardProfileController dashboardProfileController;
 
     public EditProfileController(IEditProfileView view, Context context) {
         this.view = view;
         this.context = context;
+        dashboardProfileController = (DashboardController.DashboardProfileController) DataShare.receive();
         runOnUiThread(view::loadUser);
     }
 
@@ -37,9 +37,6 @@ public class EditProfileController {
         Thread thread = new Thread(() -> {
             User user;
             boolean[] errors = new boolean[4];
-            for (int i = 0; i < errors.length; i++) {
-                errors[i] = false;
-            }
 
             if (UserSession.getUser() instanceof Student) {
                 if (param1.length() < 2) {
@@ -106,12 +103,15 @@ public class EditProfileController {
         boolean strongAuth = UserSession.getUser().getStrongAuth();
         boolean weakAuth = UserSession.getUser().getWeakAuth();
         String userPassword = UserSession.getUser().getUserPassword();
+        float userBalance = UserSession.getUser().getUserBalance();
         UserSession.setUser(user);
         UserSession.getUser().setStrongAuth(strongAuth);
         UserSession.getUser().setWeakAuth(weakAuth);
         UserSession.getUser().setUserPassword(userPassword);
+        UserSession.getUser().setUserBalance(userBalance);
         UserSession.saveSession(context);
         runOnUiThread(() -> {
+            dashboardProfileController.loadUserToUi();
             view.hideLoadingScreen();
             view.finishActivity();
         });
