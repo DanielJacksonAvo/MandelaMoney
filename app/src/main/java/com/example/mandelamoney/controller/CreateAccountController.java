@@ -21,7 +21,6 @@ import com.example.mandelamoney.view.activity.LoginActivity;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService; // New import
 import java.util.concurrent.Executors; // New import
-import java.util.concurrent.TimeUnit; // New import
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,173 +62,200 @@ public class CreateAccountController {
     public void handleCreateStudentUser(String userEmail, String userFirstName, String userLastName, String userStudentNumber, String userPassword, String userPasswordReenter) {
         // --- UI Thread Validations (fast, no database calls) ---
         if (viewCreateStudentAccount != null) {
+            viewCreateStudentAccount.showLoadingSpinner();
             viewCreateStudentAccount.hidePasswordError();
-            viewCreateStudentAccount.hideDetailError();
+            viewCreateStudentAccount.hideEmailError();
+            viewCreateStudentAccount.hideFirstNameError();
+            viewCreateStudentAccount.hideLastNameError();
+            viewCreateStudentAccount.hideStudentNumberError();
         }
+
+        boolean error = false;
 
         if (checkEmpty(userEmail)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showDetailError(context.getString(R.string.enter_an_email));
-            return;
+            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showEmailError(context.getString(R.string.enter_an_email));
+            error = true;
+        } else {
+            if (!isValidEmail(userEmail)) {
+                if (viewCreateStudentAccount != null) viewCreateStudentAccount.showEmailError(context.getString(R.string.invalid_email));
+                error = true;
+
+            }
         }
 
-        if (!isValidEmail(userEmail)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showDetailError(context.getString(R.string.invalid_email));
-            return;
-        }
+
 
         if (checkEmpty(userFirstName)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showDetailError(context.getString(R.string.enter_a_first_name));
-            return;
+            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showFirstNameError();
+            error = true;
+
         }
 
         if (checkEmpty(userLastName)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showDetailError(context.getString(R.string.enter_a_last_name));
-            return;
+            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showLastNameError();
+            error = true;
+
         }
 
-        if (checkEmpty(userStudentNumber)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showDetailError(context.getString(R.string.enter_a_student_number));
-            return;
-        }
+        if (checkEmpty(userStudentNumber) || !isValidStudentNumber(userStudentNumber)) {
+            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showStudentNumberError();
+            error = true;
 
-        if (!isValidStudentNumber(userStudentNumber)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showDetailError(context.getString(R.string.invalid_student_number));
-            return;
         }
 
         if (checkEmpty(userPassword)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showPasswordError(context.getString(R.string.enter_a_password));
-            return;
+            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showPasswordError(context.getString(R.string.enter_a_password), true);
+            error = true;
+
+        } else {
+            if (!checkPasswordLength(userPassword)) {
+                if (viewCreateStudentAccount != null) viewCreateStudentAccount.showPasswordError(context.getString(R.string.password_too_short), true);
+                error = true;
+
+            } else {
+                if (!checkPasswordMatch(userPassword, userPasswordReenter)) {
+                    if (viewCreateStudentAccount != null) viewCreateStudentAccount.showPasswordError(context.getString(R.string.password_mismatch), true);
+                    error = true;
+
+                }
+            }
         }
 
-        if (!checkPasswordLength(userPassword)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showPasswordError(context.getString(R.string.password_too_short));
-            return;
-        }
-
-        if (!checkPasswordMatch(userPassword, userPasswordReenter)) {
-            if (viewCreateStudentAccount != null) viewCreateStudentAccount.showPasswordError(context.getString(R.string.password_mismatch));
+        if (error) {
+            assert viewCreateStudentAccount != null;
+            viewCreateStudentAccount.hideLoadingSpinner();
             return;
         }
 
         // --- Background Thread for Database Operations ---
         accountCreationExecutor.execute(() -> {
-            boolean accountCreated = false;
-            String errorMessage = null;
+            boolean accountCreated;
 
             // Database call: Check unique email
-            if (MySQLConnector.checkUniqueEmail(userEmail, context)) {
-                errorMessage = context.getString(R.string.email_already_in_use);
+            if (!MySQLConnector.checkUniqueEmail(userEmail, context)) {
+                ContextCompat.getMainExecutor(context).execute(() -> {
+                    viewCreateStudentAccount.showEmailError(context.getString(R.string.email_already_in_use));
+                    viewCreateStudentAccount.hideLoadingSpinner();
+                });
+                return;
             } else {
                 // Database call: Create student account
                 accountCreated = MySQLConnector.createStudentAccount(userEmail, Hasher.getHash(userPassword), userFirstName, userLastName, userStudentNumber, context);
-                if (!accountCreated) {
-                    errorMessage = "Account Failed to Create!"; // More specific error if needed
-                }
             }
 
             // --- Post Results to Main Thread ---
-            final boolean finalAccountCreated = accountCreated;
-            final String finalErrorMessage = errorMessage;
+            boolean finalAccountCreated = accountCreated;
             ContextCompat.getMainExecutor(context).execute(() -> {
                 if (finalAccountCreated) {
                     Toast.makeText(context, "Account Successfully Created!\nPlease login.", Toast.LENGTH_LONG).show();
                     handleCreateStudentAccountCancel(); // Navigates to LoginActivity and finishes current
                 } else {
-                    Toast.makeText(context, finalErrorMessage != null ? finalErrorMessage : "An unexpected error occurred!", Toast.LENGTH_LONG).show();
                     if (viewCreateStudentAccount != null) {
                         // You might want to show the error on the view as well, depending on your UI design
-                        viewCreateStudentAccount.showDetailError(finalErrorMessage != null ? finalErrorMessage : "An unexpected error occurred!");
+                        viewCreateStudentAccount.showPasswordError(context.getString(R.string.unknown_error_occurred), false);
                     }
                 }
+                assert viewCreateStudentAccount != null;
+                viewCreateStudentAccount.hideLoadingSpinner();
+
             });
         });
     }
 
     public void handleCreateBusinessUser(String userEmail, String userBusinessName, String userBusinessVAT, String userBusinessPhone, String userPassword, String userPasswordReenter) {
         // --- UI Thread Validations (fast, no database calls) ---
-        if (viewCreateBusinessAccount != null) {
-            viewCreateBusinessAccount.hidePasswordError();
-            viewCreateBusinessAccount.hideDetailError();
-        }
+        viewCreateBusinessAccount.hidePasswordError();
+        viewCreateBusinessAccount.hideEmailError();
+        viewCreateBusinessAccount.hideBusinessNameError();
+        viewCreateBusinessAccount.hideVATError();
+        viewCreateBusinessAccount.hidePhoneError();
+        viewCreateBusinessAccount.showLoadingSpinner();
+
+
+        boolean error = false;
 
         if (checkEmpty(userEmail)) {
-            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showDetailError(context.getString(R.string.enter_an_email));
-            return;
+            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showEmailError(context.getString(R.string.enter_an_email));
+            error = true;
+        } else {
+            if (!isValidEmail(userEmail)) {
+                if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showEmailError(context.getString(R.string.invalid_email));
+                error = true;
+            }
         }
 
-        if (!isValidEmail(userEmail)) {
-            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showDetailError(context.getString(R.string.invalid_email));
-            return;
-        }
+
 
         if (checkEmpty(userBusinessName)) {
-            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showDetailError(context.getString(R.string.enter_a_business_name));
-            return;
+            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showBusinessNameError();
+            error = true;
         }
 
-        if (checkEmpty(userBusinessVAT)) {
-            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showDetailError(context.getString(R.string.enter_a_vat_number));
-            return;
-        }
-
-        if (!isValidVatNumber(userBusinessVAT)) {
-            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showDetailError(context.getString(R.string.invalid_vat_number));
-            return;
+        if (checkEmpty(userBusinessVAT) || !isValidVatNumber(userBusinessVAT)) {
+            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showVATError();
+            error = true;
         }
 
         // Note: The original code had a bug here: if (isValidPhoneNumber(userBusinessPhone))
         // It should be if (!isValidPhoneNumber(userBusinessPhone)) to show error for invalid phone number
-        if (!isValidPhoneNumber(userBusinessPhone)) { // Corrected logic
-            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showDetailError(context.getString(R.string.invalid_phone_number));
-            return;
+        if (checkEmpty(userBusinessPhone) || !isValidPhoneNumber(userBusinessPhone)) { // Corrected logic
+            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showPhoneError();
+            error = true;
         }
 
         if (checkEmpty(userPassword)) {
-            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showPasswordError(context.getString(R.string.enter_a_password));
+            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showPasswordError(context.getString(R.string.enter_a_password), true);
+            error = true;
+        } else {
+            if (!checkPasswordLength(userPassword)) {
+                if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showPasswordError(context.getString(R.string.password_too_short), true);
+                error = true;
+            } else {
+                if (!checkPasswordMatch(userPassword, userPasswordReenter)) {
+                    if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showPasswordError(context.getString(R.string.password_mismatch), true);
+                    error = true;
+                }
+            }
+        }
+
+
+        if (error) {
+            assert viewCreateBusinessAccount != null;
+            viewCreateBusinessAccount.hideLoadingSpinner();
             return;
         }
 
-        if (!checkPasswordLength(userPassword)) {
-            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showPasswordError(context.getString(R.string.password_too_short));
-            return;
-        }
 
-        if (!checkPasswordMatch(userPassword, userPasswordReenter)) {
-            if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showPasswordError(context.getString(R.string.password_mismatch));
-            return;
-        }
 
         // --- Background Thread for Database Operations ---
         accountCreationExecutor.execute(() -> {
-            boolean accountCreated = false;
-            String errorMessage = null;
+            boolean accountCreated;
 
             // Database call: Check unique email
-            if (MySQLConnector.checkUniqueEmail(userEmail, context)) {
-                errorMessage = context.getString(R.string.email_already_in_use);
+            if (!MySQLConnector.checkUniqueEmail(userEmail, context)) {
+                ContextCompat.getMainExecutor(context).execute(() -> {
+                    viewCreateBusinessAccount.showEmailError(context.getString(R.string.email_already_in_use));
+                    viewCreateBusinessAccount.hideLoadingSpinner();
+                });
+                return;
             } else {
                 // Database call: Create business account
                 accountCreated = MySQLConnector.createBusinessAccount(userEmail, Hasher.getHash(userPassword), userBusinessName, userBusinessPhone, userBusinessVAT, context);
-                if (!accountCreated) {
-                    errorMessage = "Account Failed to Create!"; // More specific error if needed
-                }
             }
 
             // --- Post Results to Main Thread ---
             final boolean finalAccountCreated = accountCreated;
-            final String finalErrorMessage = errorMessage;
             ContextCompat.getMainExecutor(context).execute(() -> {
                 if (finalAccountCreated) {
                     Toast.makeText(context, "Account Successfully Created!\nPlease login.", Toast.LENGTH_LONG).show();
                     handleCreateBusinessAccountCancel(); // Navigates to LoginActivity and finishes current
                 } else {
-                    Toast.makeText(context, finalErrorMessage != null ? finalErrorMessage : "An unexpected error occurred!", Toast.LENGTH_LONG).show();
                     if (viewCreateBusinessAccount != null) {
-                        // You might want to show the error on the view as well
-                        viewCreateBusinessAccount.showDetailError(finalErrorMessage != null ? finalErrorMessage : "An unexpected error occurred!");
+                        viewCreateBusinessAccount.showPasswordError(context.getString(R.string.unknown_error_occurred), false);
                     }
                 }
+                assert viewCreateBusinessAccount != null;
+                viewCreateBusinessAccount.hideLoadingSpinner();
             });
         });
     }
@@ -286,9 +312,6 @@ public class CreateAccountController {
         return userPassword.length() >= 8;
     }
 
-    private boolean checkUniqueEmail(String userEmail) {
-        return MySQLConnector.checkUniqueEmail(userEmail, context);
-    }
 
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
@@ -314,19 +337,4 @@ public class CreateAccountController {
         return phoneNumber != null && phoneNumber.matches("^0\\d{9}$");
     }
 
-    // Cleanup method to shut down the executor
-    public void cleanup() {
-        if (accountCreationExecutor != null && !accountCreationExecutor.isShutdown()) {
-            accountCreationExecutor.shutdown();
-            try {
-                if (!accountCreationExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    accountCreationExecutor.shutdownNow();
-                }
-            } catch (InterruptedException ie) {
-                accountCreationExecutor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
-        }
-        Log.d("CreateAccountController", "Account creation executor cleaned up.");
-    }
 }

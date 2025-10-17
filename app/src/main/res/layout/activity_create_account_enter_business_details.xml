@@ -19,8 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/blurView_createaccountstudent"
         app:layout_constraintStart_toStartOf="@+id/blurView_createaccountstudent"
-        app:layout_constraintTop_toBottomOf="@+id/blurView_createaccountstudent"
-        app:layout_constraintVertical_bias="0.19999999" />
+        app:layout_constraintTop_toBottomOf="@+id/blurView_createaccountstudent" />
 
     <ImageView
         android:id="@+id/img_mandelamoney_createbusinessaccount"
@@ -49,7 +48,7 @@
         android:id="@+id/blurView_createaccountstudent"
         style="@style/BlurPanel"
         android:layout_width="0dp"
-        android:layout_height="499dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:padding="10dp"
@@ -64,32 +63,60 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/txt_error_password_createbusinessaccount"
+                android:id="@+id/txt_phone_error_createbusinessaccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="@string/email_password_invalid"
+                android:text="@string/invalid_phone_number"
                 android:textColor="@color/mandelaYellow"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.502"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createbusinessaccount"
-                app:layout_constraintVertical_bias="0.25" />
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayout5"
+                app:layout_constraintStart_toStartOf="@+id/constraintLayout5"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout5" />
 
             <TextView
-                android:id="@+id/txt_error_details_createbusinessaccount"
+                android:id="@+id/txt_password_error_createbusinessaccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/email_password_invalid"
+                android:layout_marginTop="4dp"
+                android:text="@string/password_mismatch"
                 android:textColor="@color/mandelaYellow"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/constraintLayout_password_createstudentaccount"
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayout_password_reenter_createbusinessaccount"
+                app:layout_constraintStart_toStartOf="@+id/constraintLayout_password_reenter_createbusinessaccount"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createbusinessaccount" />
+
+            <TextView
+                android:id="@+id/txt_vat_error_createbusinessaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/invalid_vat_number"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayout4"
+                app:layout_constraintStart_toStartOf="@+id/constraintLayout4"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout4" />
+
+            <TextView
+                android:id="@+id/txt_businessname_error_createbusinessaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_a_business_name"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
-                app:layout_constraintVertical_bias="0.25" />
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+
+            <TextView
+                android:id="@+id/txt_email_error_createsbusinessaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/invalid_email"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout_password_reenter_createbusinessaccount"
@@ -98,6 +125,7 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="25dp"
+                android:layout_marginBottom="48dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -143,7 +171,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
+                app:layout_constraintTop_toBottomOf="@+id/txt_vat_error_createbusinessaccount"
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
@@ -183,7 +211,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+                app:layout_constraintTop_toBottomOf="@+id/txt_businessname_error_createbusinessaccount"
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
@@ -223,7 +251,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+                app:layout_constraintTop_toBottomOf="@+id/txt_email_error_createsbusinessaccount"
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
@@ -259,12 +287,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginRight="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
-                app:layout_constraintVertical_bias="0.3">
+                app:layout_constraintTop_toBottomOf="@+id/txt_phone_error_createbusinessaccount"
+                app:layout_constraintVertical_bias="0.0">
 
                 <EditText
                     android:id="@+id/tbx_password_createbusinessaccount"
@@ -352,5 +381,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blurView_createaccountstudent"
         app:srcCompat="@drawable/img_mandelamoneylogo" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/createbusinessaccount_loading_spinner"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:elevation="999dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            style="@style/DimLoadingScreen"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="999dp"
+            android:indeterminateTint="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
