@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.CreateAccountController;
@@ -27,6 +28,8 @@ public class CreateAccountEnterBusinessDetailsActivity extends AppCompatActivity
     private CreateAccountController controller;
     private TextView txtPasswordError, txtEmailError, txtPhoneError, txtVATError, txtNameError;
     private EditText tbxPassword, tbxEmail, tbxName, tbxVAT, tbxPhone, tbxPasswordReenter;
+    private ConstraintLayout loadingSpinner;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,7 @@ public class CreateAccountEnterBusinessDetailsActivity extends AppCompatActivity
         txtNameError = findViewById(R.id.txt_businessname_error_createbusinessaccount);
         txtPhoneError = findViewById(R.id.txt_phone_error_createbusinessaccount);
         txtVATError = findViewById(R.id.txt_vat_error_createbusinessaccount);
+        loadingSpinner = findViewById(R.id.createbusinessaccount_loading_spinner);
         configureCancelButton(btnCancel);
         configurePasswordVisibility(imgPasswordIcon, tbxPassword);
         configurePasswordVisibility(imgPasswordRenterIcon, tbxPasswordReenter);
@@ -151,6 +155,16 @@ public class CreateAccountEnterBusinessDetailsActivity extends AppCompatActivity
     @Override
     public void finishActivity() {
         finish();
+    }
+
+    @Override
+    public void showLoadingSpinner() {
+        loadingSpinner.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        loadingSpinner.setVisibility(View.GONE);
     }
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {

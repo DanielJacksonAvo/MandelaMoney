@@ -13,9 +13,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
@@ -31,6 +29,7 @@ public class CreateAccountEnterStudentDetailsActivity extends AppCompatActivity 
     private CreateAccountController controller;
     private TextView txtPasswordError, txtEmailError, txtFirstNameError, txtLastNameError, txtStudentNumberError;
     private EditText tbxFirstName, tbxLastName, tbxStudentNumber, tbxEmail, tbxPassword, tbxPasswordReenter;
+    private ConstraintLayout loadingSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +72,7 @@ public class CreateAccountEnterStudentDetailsActivity extends AppCompatActivity 
         txtFirstNameError = findViewById(R.id.txt_firstname_error_createstudentaccount);
         txtLastNameError = findViewById(R.id.txt_lastname_error_createstudentaccount);
         txtStudentNumberError = findViewById(R.id.txt_studentnumber_error_createstudentaccount);
+        loadingSpinner = findViewById(R.id.createstudentaccount_loading_spinner);
         configureCancelButton(btnCancel);
         configureCreateAccountButton(btnCreateAccount, tbxEmail, tbxFirstName, tbxLastName, tbxStudentNumber, tbxPassword, tbxPasswordReenter);
         configurePasswordVisibility(imgPasswordIcon, tbxPassword);
@@ -130,6 +130,16 @@ public class CreateAccountEnterStudentDetailsActivity extends AppCompatActivity 
 
 
 
+    }
+
+    @Override
+    public void showLoadingSpinner() {
+        loadingSpinner.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoadingSpinner() {
+        loadingSpinner.setVisibility(View.GONE);
     }
 
     @Override

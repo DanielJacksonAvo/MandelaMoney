@@ -12,4 +12,7 @@ public interface ICreateStudentAccountView {
     void hideLastNameError();
     void hideStudentNumberError();
     void hidePasswordError();
+    void showLoadingSpinner();
+    void hideLoadingSpinner();
+
 }
