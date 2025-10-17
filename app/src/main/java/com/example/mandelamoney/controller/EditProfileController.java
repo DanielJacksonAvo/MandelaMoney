@@ -6,6 +6,7 @@ import android.os.Looper;
 
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.User;
+import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.MySQLConnector;
 import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.util.UserValueChecker;
@@ -15,10 +16,12 @@ public class EditProfileController {
     private final IEditProfileView view;
     private final Context context;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private DashboardController.DashboardProfileController dashboardProfileController;
 
     public EditProfileController(IEditProfileView view, Context context) {
         this.view = view;
         this.context = context;
+        dashboardProfileController = (DashboardController.DashboardProfileController) DataShare.receive();
         runOnUiThread(view::loadUser);
     }
 
@@ -95,6 +98,9 @@ public class EditProfileController {
         UserSession.setUser(user);
         runOnUiThread(() -> {
             view.hideLoadingScreen();
+            if (dashboardProfileController != null) {
+                dashboardProfileController.loadUserToUi();
+            }
             view.finishActivity();
         });
     }
