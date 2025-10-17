@@ -13,14 +13,13 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
 import com.example.mandelamoney.controller.CreateAccountController;
 import com.example.mandelamoney.util.DataShare;
+import com.example.mandelamoney.util.ErrorBorder;
 import com.example.mandelamoney.view.Iface.ICreateStudentAccountView;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,8 +27,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CreateAccountEnterStudentDetailsActivity extends AppCompatActivity implements ICreateStudentAccountView {
 
     private CreateAccountController controller;
-    TextView txtPasswordError;
-    TextView txtDetailError;
+    private TextView txtPasswordError, txtEmailError, txtFirstNameError, txtLastNameError, txtStudentNumberError;
+    private EditText tbxFirstName, tbxLastName, tbxStudentNumber, tbxEmail, tbxPassword, tbxPasswordReenter;
+    private ConstraintLayout loadingSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,17 +58,21 @@ public class CreateAccountEnterStudentDetailsActivity extends AppCompatActivity 
 
     private void connectToUI() {
         TextView btnCancel = findViewById(R.id.btn_cancel_editbusinessprofile);
-        EditText tbxEmail = findViewById(R.id.tbx_email_editbusinessprofile);
-        EditText tbxFirstName = findViewById(R.id.tbx_firstname_editstudentprofile);
-        EditText tbxLastName = findViewById(R.id.tbx_lastname_editstudentprofile);
-        EditText tbxStudentNumber = findViewById(R.id.tbx_studentnumber_editstudentprofile);
+        tbxEmail = findViewById(R.id.tbx_email_editbusinessprofile);
+        tbxFirstName = findViewById(R.id.tbx_firstname_editstudentprofile);
+        tbxLastName = findViewById(R.id.tbx_lastname_editstudentprofile);
+        tbxStudentNumber = findViewById(R.id.tbx_studentnumber_editstudentprofile);
         Button btnCreateAccount = findViewById(R.id.btn_save_editbusinessprofile);
-        EditText tbxPassword = findViewById(R.id.tbx_password_createstudentaccount);
-        EditText tbxPasswordReenter = findViewById(R.id.tbx_password_reenter_createstudentaccount);
+        tbxPassword = findViewById(R.id.tbx_password_createstudentaccount);
+        tbxPasswordReenter = findViewById(R.id.tbx_password_reenter_createstudentaccount);
         ImageView imgPasswordIcon = findViewById(R.id.img_password_icon_createstudentaccount);
         ImageView imgPasswordRenterIcon = findViewById(R.id.img_password_reenter_createstudentaccount);
-        txtPasswordError = findViewById(R.id.txt_error_password_createstudentaccount);
-        txtDetailError = findViewById(R.id.txt_error_details_createstudentaccount);
+        txtPasswordError = findViewById(R.id.txt_password_error_createstudentaccount);
+        txtEmailError = findViewById(R.id.txt_email_error_createstudentaccount);
+        txtFirstNameError = findViewById(R.id.txt_firstname_error_createstudentaccount);
+        txtLastNameError = findViewById(R.id.txt_lastname_error_createstudentaccount);
+        txtStudentNumberError = findViewById(R.id.txt_studentnumber_error_createstudentaccount);
+        loadingSpinner = findViewById(R.id.createstudentaccount_loading_spinner);
         configureCancelButton(btnCancel);
         configureCreateAccountButton(btnCreateAccount, tbxEmail, tbxFirstName, tbxLastName, tbxStudentNumber, tbxPassword, tbxPasswordReenter);
         configurePasswordVisibility(imgPasswordIcon, tbxPassword);
@@ -84,31 +88,88 @@ public class CreateAccountEnterStudentDetailsActivity extends AppCompatActivity 
     }
 
     @Override
-    public void showPasswordError(String message) {
+    public void showPasswordError(String message, boolean forPassword) {
         txtPasswordError.setVisibility(View.VISIBLE);
         txtPasswordError.setText(message);
+        if (forPassword) {
+            ErrorBorder.applyMandelaYellowBorder(tbxPassword);
+            ErrorBorder.applyMandelaYellowBorder(tbxPasswordReenter);
+        }
+
+    }
+
+    @Override
+    public void hideEmailError() {
+        txtEmailError.setVisibility(View.GONE);
+        ErrorBorder.removeStroke(tbxEmail);
+    }
+
+    @Override
+    public void hideFirstNameError() {
+        txtFirstNameError.setVisibility(View.GONE);
+        ErrorBorder.removeStroke(tbxFirstName);
+    }
+
+    @Override
+    public void hideLastNameError() {
+        txtLastNameError.setVisibility(View.GONE);
+        ErrorBorder.removeStroke(tbxLastName);
+    }
+
+    @Override
+    public void hideStudentNumberError() {
+        txtStudentNumberError.setVisibility(View.GONE);
+        ErrorBorder.removeStroke(tbxStudentNumber);
     }
 
     @Override
     public void hidePasswordError() {
         txtPasswordError.setVisibility(View.GONE);
+        ErrorBorder.removeStroke(tbxPassword);
+        ErrorBorder.removeStroke(tbxPasswordReenter);
+
+
 
     }
 
     @Override
-    public void showDetailError(String message) {
-        txtDetailError.setVisibility(View.VISIBLE);
-        txtDetailError.setText(message);
+    public void showLoadingSpinner() {
+        loadingSpinner.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideDetailError() {
-        txtDetailError.setVisibility(View.GONE);
+    public void hideLoadingSpinner() {
+        loadingSpinner.setVisibility(View.GONE);
     }
 
     @Override
     public void finishActivity() {
         finish();
+    }
+
+    @Override
+    public void showEmailError(String error) {
+        txtEmailError.setText(error);
+        txtEmailError.setVisibility(View.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxEmail);
+    }
+
+    @Override
+    public void showFirstNameError() {
+        txtFirstNameError.setVisibility(View.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxFirstName);
+    }
+
+    @Override
+    public void showLastNameError() {
+        txtLastNameError.setVisibility(View.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxLastName);
+    }
+
+    @Override
+    public void showStudentNumberError() {
+        txtStudentNumberError.setVisibility(View.VISIBLE);
+        ErrorBorder.applyMandelaYellowBorder(tbxStudentNumber);
     }
 
     private void configurePasswordVisibility(ImageView imgPasswordIcon, EditText tbxUserPassword) {
