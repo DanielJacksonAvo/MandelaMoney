@@ -13,4 +13,6 @@ public interface ICreateBusinessAccountView {
     void hidePasswordError();
 
     void finishActivity();
+    void showLoadingSpinner();
+    void hideLoadingSpinner();
 }

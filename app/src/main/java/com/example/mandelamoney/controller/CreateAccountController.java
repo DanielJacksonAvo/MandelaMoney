@@ -62,6 +62,7 @@ public class CreateAccountController {
     public void handleCreateStudentUser(String userEmail, String userFirstName, String userLastName, String userStudentNumber, String userPassword, String userPasswordReenter) {
         // --- UI Thread Validations (fast, no database calls) ---
         if (viewCreateStudentAccount != null) {
+            viewCreateStudentAccount.showLoadingSpinner();
             viewCreateStudentAccount.hidePasswordError();
             viewCreateStudentAccount.hideEmailError();
             viewCreateStudentAccount.hideFirstNameError();
@@ -121,6 +122,8 @@ public class CreateAccountController {
         }
 
         if (error) {
+            assert viewCreateStudentAccount != null;
+            viewCreateStudentAccount.hideLoadingSpinner();
             return;
         }
 
@@ -130,7 +133,10 @@ public class CreateAccountController {
 
             // Database call: Check unique email
             if (!MySQLConnector.checkUniqueEmail(userEmail, context)) {
-                ContextCompat.getMainExecutor(context).execute(() -> viewCreateStudentAccount.showEmailError(context.getString(R.string.email_already_in_use)));
+                ContextCompat.getMainExecutor(context).execute(() -> {
+                    viewCreateStudentAccount.showEmailError(context.getString(R.string.email_already_in_use));
+                    viewCreateStudentAccount.hideLoadingSpinner();
+                });
                 return;
             } else {
                 // Database call: Create student account
@@ -149,6 +155,9 @@ public class CreateAccountController {
                         viewCreateStudentAccount.showPasswordError(context.getString(R.string.unknown_error_occurred), false);
                     }
                 }
+                assert viewCreateStudentAccount != null;
+                viewCreateStudentAccount.hideLoadingSpinner();
+
             });
         });
     }
@@ -160,12 +169,10 @@ public class CreateAccountController {
         viewCreateBusinessAccount.hideBusinessNameError();
         viewCreateBusinessAccount.hideVATError();
         viewCreateBusinessAccount.hidePhoneError();
+        viewCreateBusinessAccount.showLoadingSpinner();
+
 
         boolean error = false;
-
-        if (viewCreateBusinessAccount != null) {
-            viewCreateBusinessAccount.hidePasswordError();
-        }
 
         if (checkEmpty(userEmail)) {
             if (viewCreateBusinessAccount != null) viewCreateBusinessAccount.showEmailError(context.getString(R.string.enter_an_email));
@@ -213,6 +220,8 @@ public class CreateAccountController {
 
 
         if (error) {
+            assert viewCreateBusinessAccount != null;
+            viewCreateBusinessAccount.hideLoadingSpinner();
             return;
         }
 
@@ -224,7 +233,10 @@ public class CreateAccountController {
 
             // Database call: Check unique email
             if (!MySQLConnector.checkUniqueEmail(userEmail, context)) {
-                ContextCompat.getMainExecutor(context).execute(() -> viewCreateBusinessAccount.showEmailError(context.getString(R.string.email_already_in_use)));
+                ContextCompat.getMainExecutor(context).execute(() -> {
+                    viewCreateBusinessAccount.showEmailError(context.getString(R.string.email_already_in_use));
+                    viewCreateBusinessAccount.hideLoadingSpinner();
+                });
                 return;
             } else {
                 // Database call: Create business account
@@ -242,6 +254,8 @@ public class CreateAccountController {
                         viewCreateBusinessAccount.showPasswordError(context.getString(R.string.unknown_error_occurred), false);
                     }
                 }
+                assert viewCreateBusinessAccount != null;
+                viewCreateBusinessAccount.hideLoadingSpinner();
             });
         });
     }
@@ -298,9 +312,6 @@ public class CreateAccountController {
         return userPassword.length() >= 8;
     }
 
-    private boolean checkUniqueEmail(String userEmail) {
-        return MySQLConnector.checkUniqueEmail(userEmail, context);
-    }
 
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
