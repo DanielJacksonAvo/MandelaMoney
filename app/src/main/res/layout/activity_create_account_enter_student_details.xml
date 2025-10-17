@@ -49,7 +49,7 @@
         android:id="@+id/blurView_createaccountstudent"
         style="@style/BlurPanel"
         android:layout_width="0dp"
-        android:layout_height="499dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:padding="10dp"
@@ -63,34 +63,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/txt_error_details_createstudentaccount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/email_password_invalid"
-                android:textColor="@color/mandelaYellow"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/constraintLayout_password_createstudentaccount"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
-                app:layout_constraintVertical_bias="0.25" />
-
-            <TextView
-                android:id="@+id/txt_error_password_createstudentaccount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="@string/email_password_invalid"
-                android:textColor="@color/mandelaYellow"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.502"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createstudentaccount"
-                app:layout_constraintVertical_bias="0.25" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout_password_reenter_createstudentaccount"
                 android:layout_width="match_parent"
@@ -98,6 +70,7 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="25dp"
+                android:layout_marginBottom="48dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -142,7 +115,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
+                app:layout_constraintTop_toBottomOf="@+id/txt_lastname_error_createstudentaccount"
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
@@ -168,6 +141,7 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
                     tools:ignore="TextFields" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -182,7 +156,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+                app:layout_constraintTop_toBottomOf="@+id/txt_firstname_error_createstudentaccount"
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
@@ -222,7 +196,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+                app:layout_constraintTop_toBottomOf="@+id/txt_email_error_createstudentaccount"
                 app:layout_constraintVertical_bias="0.0">
 
                 <ImageView
@@ -258,12 +232,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginRight="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout5"
-                app:layout_constraintVertical_bias="0.3">
+                app:layout_constraintTop_toBottomOf="@+id/txt_studentnumber_error_createstudentaccount"
+                app:layout_constraintVertical_bias="0.0">
 
                 <EditText
                     android:id="@+id/tbx_password_createstudentaccount"
@@ -337,15 +312,59 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/txt_error_login"
+                android:id="@+id/txt_email_error_createstudentaccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/email_password_invalid"
+                android:text="@string/invalid_email"
                 android:textColor="@color/mandelaYellow"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+
+            <TextView
+                android:id="@+id/txt_firstname_error_createstudentaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_a_first_name"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+
+            <TextView
+                android:id="@+id/txt_lastname_error_createstudentaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_a_last_name"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayout4"
+                app:layout_constraintStart_toStartOf="@+id/constraintLayout4"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout4" />
+
+            <TextView
+                android:id="@+id/txt_studentnumber_error_createstudentaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/invalid_student_number"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayout5"
+                app:layout_constraintStart_toStartOf="@+id/constraintLayout5"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout5" />
+
+            <TextView
+                android:id="@+id/txt_password_error_createstudentaccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/password_mismatch"
+                android:textColor="@color/mandelaYellow"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayout_password_reenter_createstudentaccount"
+                app:layout_constraintStart_toStartOf="@+id/constraintLayout_password_reenter_createstudentaccount"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout_password_reenter_createstudentaccount" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
