@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LoginActivity extends AppCompatActivity implements ILoginView {
     private LoginController loginController;
-    private TextView txtError, txtEmailError;
+    private TextView txtError, txtEmailError, txtPasswordError;
 
     private Button btnLogin;
     private EditText tbxUserEmail;
@@ -78,6 +78,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         btnSignup = findViewById(R.id.btn_signup_login);
         loadingSpinner = findViewById(R.id.login_loading_spinner);
         txtEmailError = findViewById(R.id.txt_email_error_login);
+        txtPasswordError = findViewById(R.id.txt_password_error_login);
 
         if (btnLogin != null && tbxUserEmail != null && tbxUserPassword != null) {
             configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
@@ -103,6 +104,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         btnSignup = findViewById(R.id.btn_signup_login2);
         loadingSpinner = findViewById(R.id.login_loading_spinner);
         txtEmailError = findViewById(R.id.txt_email_error_login);
+        txtPasswordError = findViewById(R.id.txt_password_error_login);
 
         if (btnLogin != null && tbxUserEmail != null && tbxUserPassword != null) {
             configureLoginButton(btnLogin, tbxUserEmail, tbxUserPassword);
@@ -169,11 +171,28 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     }
 
     @Override
-    public void showEmailErrorMessage() {
+    public void showPasswordError() {
+        txtPasswordError.setVisibility(VISIBLE);
+        if (tbxUserPassword != null) {
+            ErrorBorder.applyMandelaYellowBorder(tbxUserPassword);
+        }
+    }
+
+    @Override
+    public void hidePasswordError() {
+        txtPasswordError.setVisibility(GONE);
+        if (tbxUserPassword != null) {
+            ErrorBorder.removeStroke(tbxUserPassword);
+        }
+    }
+
+    @Override
+    public void showEmailErrorMessage(String error) {
         if (tbxUserEmail != null) {
             ErrorBorder.applyMandelaYellowBorder(tbxUserEmail);
         }
         if (txtEmailError != null) {
+            txtEmailError.setText(error);
             txtEmailError.setVisibility(VISIBLE);
         }
     }
