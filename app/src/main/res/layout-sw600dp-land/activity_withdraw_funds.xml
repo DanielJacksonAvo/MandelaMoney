@@ -31,6 +31,7 @@
                 style="@style/HyperLinkButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:text="@string/cancel"
                 android:textAllCaps="true"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -53,7 +54,7 @@
                 android:id="@+id/blurView_withdraw_funds"
                 style="@style/BlurPanel"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:padding="10dp"
                 app:layout_constraintBottom_toTopOf="@+id/guideline7"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"
@@ -69,14 +70,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginRight="25dp"
-                        android:layout_marginBottom="40dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.75">
+                        app:layout_constraintTop_toBottomOf="@+id/txt_error_branch_code_withdraw_funds"
+                        app:layout_constraintVertical_bias="0.0">
 
                         <ImageView
                             android:id="@+id/img_card_number_card_icon"
@@ -104,32 +104,30 @@
                             tools:ignore="TextFields" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <TextView
                         android:id="@+id/txt_error_account_number_withdraw_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
-                        app:layout_constraintBottom_toTopOf="@id/constraintLayout_account_holder_withdraw_funds"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_account_number_withdraw_funds"
-                        app:layout_constraintVertical_bias="0.0" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_account_number_withdraw_funds" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout_branch_code_withdraw_funds"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginRight="25dp"
-                        android:layout_marginBottom="40dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintTop_toBottomOf="@+id/txt_error_bank_name_withdraw_funds"
+                        app:layout_constraintVertical_bias="0.0">
 
                         <ImageView
                             android:id="@+id/img_branch_code_icon_withdraw_funds"
@@ -157,33 +155,30 @@
                             tools:ignore="TextFields" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <TextView
                         android:id="@+id/txt_error_branch_code_withdraw_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
-                        app:layout_constraintBottom_toTopOf="@id/constraintLayout_account_number_withdraw_funds"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_branch_code_withdraw_funds"
-                        app:layout_constraintVertical_bias="0.19999999" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_branch_code_withdraw_funds" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout_bank_name_withdraw_funds"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginRight="25dp"
-                        android:layout_marginBottom="40dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.25">
+                        app:layout_constraintTop_toBottomOf="@+id/txt_error_amount_withdraw_funds"
+                        app:layout_constraintVertical_bias="0.0">
 
                         <ImageView
                             android:id="@+id/img_bank_name_icon_withdraw_funds"
@@ -211,32 +206,31 @@
                             tools:ignore="TextFields" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <TextView
                         android:id="@+id/txt_error_bank_name_withdraw_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
-                        app:layout_constraintBottom_toTopOf="@id/constraintLayout_branch_code_withdraw_funds"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_bank_name_withdraw_funds"
-                        app:layout_constraintVertical_bias="0.0" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_bank_name_withdraw_funds" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout_account_holder_withdraw_funds"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginRight="25dp"
-                        android:layout_marginBottom="40dp"
+                        android:layout_marginBottom="48dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="1.0">
+                        app:layout_constraintTop_toBottomOf="@+id/txt_error_account_number_withdraw_funds"
+                        app:layout_constraintVertical_bias="0.0">
 
                         <EditText
                             android:id="@+id/tbx_account_holder_withdraw_funds"
@@ -264,26 +258,24 @@
                             app:layout_constraintTop_toTopOf="@+id/tbx_account_holder_withdraw_funds" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <TextView
                         android:id="@+id/txt_error_account_holder_withdraw_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_account_holder_withdraw_funds"
-                        app:layout_constraintVertical_bias="0.0" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_account_holder_withdraw_funds" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout_amount_withdraw_funds"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="25dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="32dp"
                         android:layout_marginRight="25dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -318,20 +310,17 @@
                             tools:ignore="TextFields" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <TextView
                         android:id="@+id/txt_error_amount_withdraw_funds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
-                        android:layout_marginBottom="3dp"
                         android:text="@string/invalid_deposit_funds"
                         android:textColor="@color/mandelaYellow"
                         android:visibility="gone"
-                        app:layout_constraintBottom_toTopOf="@+id/constraintLayout_bank_name_withdraw_funds"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_amount_withdraw_funds"
-                        app:layout_constraintVertical_bias="0.0" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout_amount_withdraw_funds" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
