@@ -425,7 +425,6 @@
                 android:id="@+id/txt_error_expiry_date_holder_deposit_funds"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
                 android:text="@string/invalid_deposit_funds"
                 android:textColor="@color/mandelaYellow"
                 android:textSize="12sp"
