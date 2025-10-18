@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.mandelamoney.R;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.model.User;
@@ -37,11 +38,28 @@ public class LoginController {
         view.showLoadingSpinner();
         view.hideErrorMessage();
         view.hideEmailErrorMessage();
-        if (!UserValueChecker.isValidEmail(userEmail)) {
+        view.hidePasswordError();
+        boolean error = false;
+        if (UserValueChecker.checkEmpty(userEmail)) {
             view.hideLoadingSpinner();
-            view.showEmailErrorMessage();
+            view.showEmailErrorMessage(context.getString(R.string.enter_an_email));
+            error = true;
+        } else {
+            if (!UserValueChecker.isValidEmail(userEmail)) {
+                view.hideLoadingSpinner();
+                view.showEmailErrorMessage(context.getString(R.string.invalid_email));
+                error = true;
+            }
+        }
+        if (UserValueChecker.checkEmpty(userPassword)) {
+            view.hideLoadingSpinner();
+            view.showPasswordError();
+            error = true;
+        }
+        if (error) {
             return;
         }
+
         LoginManager.login(context, userEmail, userPassword,
                 this::onSuccess
                 ,this::onFailure

@@ -28,7 +28,6 @@ import com.example.mandelamoney.view.Iface.IHomeDashboardView;
 import com.example.mandelamoney.view.Iface.IProfileView;
 import com.example.mandelamoney.view.Iface.ISettingsView;
 import com.example.mandelamoney.view.Iface.ITransactionHistoryView;
-import com.example.mandelamoney.view.activity.DepositFundsActivity;
 import com.example.mandelamoney.view.activity.EditBusinessProfileActivity;
 import com.example.mandelamoney.view.activity.EditStudentProfileActivity;
 import com.example.mandelamoney.view.activity.LoginActivity;
@@ -188,7 +187,7 @@ public class DashboardController {
                 Executors.newSingleThreadExecutor().execute(() -> {
                     float previousBalance = UserSession.getUser().getUserBalance();
                     float updatedBalance = UserSession.updateBalance(context);
-                    if (updatedBalance != previousBalance) {
+                    if (updatedBalance != previousBalance && updatedBalance != -1) {
                         UserSession.getUser().setUserBalance(updatedBalance);
                         mainThreadHandler.post(() -> {
                             view.displayBalance(updatedBalance);
