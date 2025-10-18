@@ -101,6 +101,7 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
         ConstraintSet initial = new ConstraintSet();
         initial.clone(filterBarContainer);
         initial.setHorizontalWeight(R.id.search_container, 0.13f);
+        initial.constrainWidth(R.id.search_container, ConstraintSet.WRAP_CONTENT);
         initial.setHorizontalWeight(R.id.btn_period, 0.43f);
         initial.setHorizontalWeight(R.id.btn_type, 0.44f);
         initial.applyTo(filterBarContainer);
@@ -138,6 +139,7 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
 
         if (!isSearchExpanded) {
             constraintSet.setHorizontalWeight(R.id.search_container, 0.55f);
+            constraintSet.constrainWidth(R.id.search_container, ConstraintSet.MATCH_CONSTRAINT);
             constraintSet.setHorizontalWeight(R.id.btn_period, 0.225f);
             constraintSet.setHorizontalWeight(R.id.btn_type, 0.225f);
             etSearch.setVisibility(View.VISIBLE);
@@ -146,6 +148,7 @@ public class TransactionHistoryFragment extends Fragment implements ITransaction
             convertButtonToIcon(btnType, R.drawable.img_type_filter_icon);
         } else {
             constraintSet.setHorizontalWeight(R.id.search_container, 0.13f);
+            constraintSet.constrainWidth(R.id.search_container, ConstraintSet.WRAP_CONTENT);
             constraintSet.setHorizontalWeight(R.id.btn_period, 0.43f);
             constraintSet.setHorizontalWeight(R.id.btn_type, 0.44f);
             etSearch.setText("");
