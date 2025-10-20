@@ -3,6 +3,8 @@ package com.example.mandelamoney.view.activity;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -195,5 +197,14 @@ public class ResetPasswordActivity extends AppCompatActivity implements IResetPa
     @Override
     public void finishActivity() {
         finish();
+    }
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);  // Bring ActivityB to the front
+        startActivity(intent);
+        finishActivity();
+        super.onBackPressed();
     }
 }
