@@ -102,7 +102,7 @@ public class ShowFailedActivity extends AppCompatActivity implements ITransactio
             if(withdrawFundsController != null){
                 try{ withdrawFundsController.handleCancelWithdrawFunds();}catch(Exception ignore){}
             }
-            finish();
+            finishActivity();
         });
     }
 

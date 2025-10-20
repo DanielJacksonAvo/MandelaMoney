@@ -149,7 +149,7 @@ public class ShowSuccessActivity extends AppCompatActivity implements ITransacti
             if(withdrawFundsController != null){
                 try{ withdrawFundsController.handleCancelWithdrawFunds();}catch(Exception ignore){}
             }
-            finish();
+            finishActivity();
         });
     }
 }

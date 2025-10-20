@@ -189,7 +189,6 @@ public class MakePaymentController {
 
     public void handleCancel() {
         DataShare.send(this);
-        context.startActivity(new Intent(context, DashboardActivity.class));
         try {
             if (scanQrView != null) {
                 scanQrView.finishActivity();
