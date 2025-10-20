@@ -84,6 +84,12 @@ public class RequestPaymentController {
             enterAmountRequestPaymentView.hideError();
             enterAmountRequestPaymentView.hideLoadingSpinner();
         }
+        if (enterAmountRequestPaymentView != null) {
+            enterAmountRequestPaymentView.finishActivity();
+        }
+        if (requestPaymentShowQrActivity != null) {
+            requestPaymentShowQrActivity.finishActivity();
+        }
     }
 
     private void onCreateTransactionFailure(String error) {
@@ -110,6 +116,12 @@ public class RequestPaymentController {
                     transaction = PaymentManager.getTransaction(Integer.parseInt(transaction.getId()), context);
                     DataShare.send(this);
                     mainThreadHandler.post(() -> {
+                        if (enterAmountRequestPaymentView != null) {
+                            enterAmountRequestPaymentView.finishActivity();
+                        }
+                        if (requestPaymentShowQrActivity != null) {
+                            requestPaymentShowQrActivity.finishActivity();
+                        }
                         Intent intent = new Intent(context, ShowSuccessActivity.class);
                         context.startActivity(intent);
                     });
@@ -120,6 +132,12 @@ public class RequestPaymentController {
                     transaction = PaymentManager.getTransaction(Integer.parseInt(transaction.getId()), context);
                     DataShare.send(this);
                     mainThreadHandler.post(() -> {
+                        if (enterAmountRequestPaymentView != null) {
+                            enterAmountRequestPaymentView.finishActivity();
+                        }
+                        if (requestPaymentShowQrActivity != null) {
+                            requestPaymentShowQrActivity.finishActivity();
+                        }
                         Intent intent = new Intent(context, ShowFailedActivity.class);
                         context.startActivity(intent);
                     });
@@ -152,8 +170,14 @@ public class RequestPaymentController {
 
     public void handleCancelButton() {
         stopPolling();
-        Intent intent = new Intent(context, DashboardActivity.class);
-        context.startActivity(intent);
+        if (enterAmountRequestPaymentView != null) {
+            enterAmountRequestPaymentView.finishActivity();
+        }
+        if (requestPaymentShowQrActivity != null) {
+            requestPaymentShowQrActivity.finishActivity();
+        }
+//        Intent intent = new Intent(context, DashboardActivity.class);
+//        context.startActivity(intent);
     }
 
     public void cleanup() {

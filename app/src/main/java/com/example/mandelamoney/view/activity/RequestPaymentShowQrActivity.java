@@ -73,5 +73,5 @@ public class RequestPaymentShowQrActivity extends AppCompatActivity implements I
         Toast.makeText(this, message, LENGTH_LONG).show();
     }
 
-    @Override public void finishActivity() {}
+    @Override public void finishActivity() {finish();}
 }
