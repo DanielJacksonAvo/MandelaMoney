@@ -56,7 +56,7 @@ public class RequestPaymentShowQrActivity extends AppCompatActivity implements I
         configureCancelButton(btnCancel);
     }
 
-    public void displayQR(Bitmap bitmap){
+    public void displayQR(Bitmap bitmap) {
         try {
             qrImageView.setImageBitmap(bitmap);
         } catch (Exception e) {
@@ -73,5 +73,17 @@ public class RequestPaymentShowQrActivity extends AppCompatActivity implements I
         Toast.makeText(this, message, LENGTH_LONG).show();
     }
 
-    @Override public void finishActivity() {finish();}
+    @Override
+    public void finishActivity() {
+        if (requestPaymentController != null) {
+            requestPaymentController.stopPolling();
+        }
+        finish();
+    }
+
+    @Override
+    public void onDestroy() {
+        requestPaymentController.stopPolling();
+        super.onDestroy();
+    }
 }
