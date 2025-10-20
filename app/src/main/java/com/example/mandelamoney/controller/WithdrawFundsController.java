@@ -343,6 +343,7 @@ public class WithdrawFundsController {
                     }
 
                     if (confirmWithdrawView != null) confirmWithdrawView.finishActivity();
+                    if (viewWithdrawFunds != null) viewWithdrawFunds.finishActivity();
                 });
 
             } catch (Exception e) {
@@ -370,6 +371,7 @@ public class WithdrawFundsController {
                         Toast.makeText(context, "Could not open failure screen.", Toast.LENGTH_SHORT).show();
                     }
                     if (confirmWithdrawView != null) confirmWithdrawView.finishActivity();
+                    if (viewWithdrawFunds != null) viewWithdrawFunds.finishActivity();
                 });
             }
         });
@@ -385,18 +387,20 @@ public class WithdrawFundsController {
                Log.w(TAG, "BG: updateTransactionStatus failed silently in cancel");
            }
            ContextCompat.getMainExecutor(context).execute(() -> {
-               Intent intent = new Intent(context, WithdrawFundsActivity.class);
-               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-               maybeAddNewTaskFlag(intent);
-               try {
-                   context.startActivity(intent);
-                   Log.i(TAG, "UI: startActivity(WithdrawFundsActivity) called");
-               } catch (Exception startEx) {
-                   Log.e(TAG, "UI: Failed to start WithdrawFundsActivity", startEx);
-                   Toast.makeText(context, "Could not return to withdraw screen.", Toast.LENGTH_SHORT).show();
-               }
+//               Intent intent = new Intent(context, WithdrawFundsActivity.class);
+//               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//               maybeAddNewTaskFlag(intent);
+//               try {
+//                   context.startActivity(intent);
+//                   Log.i(TAG, "UI: startActivity(WithdrawFundsActivity) called");
+//               } catch (Exception startEx) {
+//                   Log.e(TAG, "UI: Failed to start WithdrawFundsActivity", startEx);
+//                   Toast.makeText(context, "Could not return to withdraw screen.", Toast.LENGTH_SHORT).show();
+//               }
                Log.d(TAG, "UI: finishing confirm screen on cancel");
                if (confirmWithdrawView != null) confirmWithdrawView.finishActivity();
+               if (viewWithdrawFunds != null) viewWithdrawFunds.finishActivity();
+               if (transactionStatusDisplayView != null) transactionStatusDisplayView.finishActivity();
            });
        });
    }
