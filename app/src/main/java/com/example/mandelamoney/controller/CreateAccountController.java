@@ -272,32 +272,44 @@ public class CreateAccountController {
         DataShare.send(this); // Ensure DataShare is still needed after navigation
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
-        if (viewCreateStudentAccount != null) {
-            viewCreateStudentAccount.finishActivity();
+        try {
+            if (viewCreateStudentAccount != null) {
+                viewCreateStudentAccount.finishActivity();
+            }
+            if (viewSelectUserType != null) {
+                viewSelectUserType.finishActivity();
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     public void handleCreateBusinessAccountCancel() {
         DataShare.send(this); // Ensure DataShare is still needed after navigation
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
-        if (viewCreateBusinessAccount != null) {
-            viewCreateBusinessAccount.finishActivity();
+        try {
+            if (viewCreateBusinessAccount != null) {
+                viewCreateBusinessAccount.finishActivity();
+            }
+            if (viewSelectUserType != null) {
+                viewSelectUserType.finishActivity();
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     public void setContextViewStudent(Context context, ICreateStudentAccountView viewCreateStudentAccount) {
         this.context = context;
         this.viewCreateStudentAccount = viewCreateStudentAccount;
-        this.viewCreateBusinessAccount = null; // Ensure only one view type is active
-        this.viewSelectUserType = null;
     }
 
     public void setContextViewBusiness(Context context, ICreateBusinessAccountView viewCreateBusinessAccount) {
         this.context = context;
         this.viewCreateBusinessAccount = viewCreateBusinessAccount;
-        this.viewCreateStudentAccount = null; // Ensure only one view type is active
-        this.viewSelectUserType = null;
     }
 
     private boolean checkPasswordMatch(String userPassword, String userPasswordReenter) {
