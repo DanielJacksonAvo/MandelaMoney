@@ -5,6 +5,8 @@ import static android.icu.lang.UCharacter.toLowerCase;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -118,4 +120,15 @@ public class RecoverAccountActivity extends AppCompatActivity implements IRecove
     public void finishActivity() {
         finish();
     }
+
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);  // Bring ActivityB to the front
+        startActivity(intent);
+        finishActivity();
+        super.onBackPressed();
+    }
+
 }
