@@ -24,11 +24,13 @@ public class ChangePasswordController {
     private final Context context;
     private final IChangePasswordView changePasswordView;
     private final ExecutorService changePasswordExecutor = Executors.newSingleThreadExecutor();
+    private DashboardController.DashboardProfileController dashboardProfileController;
 
 
     public ChangePasswordController(Context context, IChangePasswordView changePasswordView) {
         this.context = context;
         this.changePasswordView = changePasswordView;
+        this.dashboardProfileController = (DashboardController.DashboardProfileController) DataShare.receive();
     }
     public void handleChangePassword(String userEmail, String oldPassword, String newPassword, String confirmNewPassword){
         Log.d(TAG, "handleChangePassword() invoked");
@@ -118,8 +120,9 @@ public class ChangePasswordController {
                             UserSession.saveSession(context);
                         }
                         Toast.makeText(context, "Password changed successfully! Please log in.", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(context, LoginActivity.class);
-                        context.startActivity(intent);
+//                        Intent intent = new Intent(context, LoginActivity.class);
+//                        context.startActivity(intent);
+                        dashboardProfileController.handleLogoutButton();
                         if (changePasswordView != null) changePasswordView.finishActivity();
                     } else {
                         Toast.makeText(context, context.getString(R.string.invalid_recovery_code), Toast.LENGTH_LONG).show();

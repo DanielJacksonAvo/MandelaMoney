@@ -137,7 +137,7 @@ public class DashboardController {
     }
 
     public void createDashboardProfileController(IProfileView view) {
-        DashboardProfileController = new DashboardProfileController(view);
+        DashboardProfileController = new DashboardProfileController(view, this);
     }
 
     public void createDashboardSettingsController(ISettingsView view) {
@@ -413,8 +413,10 @@ public class DashboardController {
 
     public class DashboardProfileController {
         IProfileView view;
-        public DashboardProfileController(IProfileView view) {
+        DashboardController dashboardController;
+        public DashboardProfileController(IProfileView view, DashboardController dashboardController) {
             this.view = view;
+            this.dashboardController = dashboardController;
         }
 
         public void loadUserToUi() {
@@ -494,7 +496,7 @@ public class DashboardController {
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 return;
             }
-            com.example.mandelamoney.util.DataShare.send(u);
+            DataShare.send(this);
             Intent intent = new Intent(context, com.example.mandelamoney.view.activity.ChangePasswordActivity.class);
             context.startActivity(intent);
         }
@@ -503,7 +505,7 @@ public class DashboardController {
             UserSession.deleteSession(context);
             Intent intent = new Intent(context, LoginActivity.class);
             context.startActivity(intent);
-            //DashboardController.this.view.finishActivity();
+            dashboardController.view.finishActivity();
         }
 
     }
