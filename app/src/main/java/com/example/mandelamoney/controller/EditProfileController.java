@@ -33,7 +33,10 @@ public class EditProfileController {
         runOnUiThread(view::hideError2);
         runOnUiThread(view::hideError3);
         runOnUiThread(view::showLoadingScreen);
-
+        if (UserSession.getUser() instanceof Student) {
+            param3 = ensureStartsWithS(param3);
+        }
+        String finalParam = param3;
         Thread thread = new Thread(() -> {
             User user;
             boolean[] errors = new boolean[4];
@@ -45,9 +48,10 @@ public class EditProfileController {
                 if (param2.length() < 2) {
                     errors[1] = true;
                 }
-                if (!UserValueChecker.isValidStudentNumber(param3)) {
+                if (!UserValueChecker.isValidStudentNumber(finalParam)) {
                     errors[2] = true;
                 }
+
 
                 for (boolean error : errors) {
                     if (error) {
@@ -55,11 +59,10 @@ public class EditProfileController {
                         return;
                     }
                 }
-
                 user = MySQLConnector.updateStudentDetails(
                         UserSession.getUser().getUserEmail(),
                         Hasher.getHash(UserSession.getUser().getUserPassword()),
-                        param1, param2, param3, context
+                        param1, param2, finalParam, context
                 );
 
             } else {
@@ -69,7 +72,7 @@ public class EditProfileController {
                 if (!UserValueChecker.isValidPhoneNumber(param2)) {
                     errors[1] = true;
                 }
-                if (!UserValueChecker.isValidVatNumber(param3)) {
+                if (!UserValueChecker.isValidVatNumber(finalParam)) {
                     errors[2] = true;
                 }
 
@@ -83,7 +86,7 @@ public class EditProfileController {
                 user = MySQLConnector.updateBusinessDetails(
                         UserSession.getUser().getUserEmail(),
                         Hasher.getHash(UserSession.getUser().getUserPassword()),
-                        param1, param2, param3, context
+                        param1, param2, finalParam, context
                 );
             }
 
@@ -140,5 +143,10 @@ public class EditProfileController {
 
     public void handleCancelButton() {
         runOnUiThread(view::finishActivity);
+    }
+
+    private String ensureStartsWithS(String input) {
+        String lowerInput = input.toLowerCase();
+        return lowerInput.startsWith("s") ? lowerInput : "s" + lowerInput;
     }
 }

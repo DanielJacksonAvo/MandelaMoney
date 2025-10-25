@@ -102,6 +102,7 @@ public class CreateAccountController {
             error = true;
 
         }
+        userStudentNumber = ensureStartsWithS(userStudentNumber);
 
         if (checkEmpty(userPassword)) {
             if (viewCreateStudentAccount != null) viewCreateStudentAccount.showPasswordError(context.getString(R.string.enter_a_password), true);
@@ -128,6 +129,7 @@ public class CreateAccountController {
         }
 
         // --- Background Thread for Database Operations ---
+        String finalUserStudentNumber = userStudentNumber;
         accountCreationExecutor.execute(() -> {
             boolean accountCreated;
 
@@ -140,7 +142,7 @@ public class CreateAccountController {
                 return;
             } else {
                 // Database call: Create student account
-                accountCreated = MySQLConnector.createStudentAccount(userEmail, Hasher.getHash(userPassword), userFirstName, userLastName, userStudentNumber, context);
+                accountCreated = MySQLConnector.createStudentAccount(userEmail, Hasher.getHash(userPassword), userFirstName, userLastName, finalUserStudentNumber, context);
             }
 
             // --- Post Results to Main Thread ---
@@ -310,6 +312,11 @@ public class CreateAccountController {
     public void setContextViewBusiness(Context context, ICreateBusinessAccountView viewCreateBusinessAccount) {
         this.context = context;
         this.viewCreateBusinessAccount = viewCreateBusinessAccount;
+    }
+
+    public String ensureStartsWithS(String input) {
+        String lowerInput = input.toLowerCase();
+        return lowerInput.startsWith("s") ? lowerInput : "s" + lowerInput;
     }
 
     private boolean checkPasswordMatch(String userPassword, String userPasswordReenter) {
