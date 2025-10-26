@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.mandelamoney.R;
+import com.example.mandelamoney.controller.DashboardController;
 import com.example.mandelamoney.controller.DepositFundsController;
 import com.example.mandelamoney.util.DataShare;
 import com.example.mandelamoney.util.ErrorBorder;
@@ -37,12 +38,6 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Object payload = DataShare.receive();
-        if (UserSession.getUser() == null && payload instanceof com.example.mandelamoney.model.User) {
-            UserSession.setUser((com.example.mandelamoney.model.User) payload);
-            Log.d("DepositFundsActivity", "Restored user from DataShare.");
-        }
-
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_deposit_funds);
@@ -56,7 +51,8 @@ public class DepositFundsActivity extends AppCompatActivity implements IDepositF
     }
 
     private void setController() {
-        controller = new com.example.mandelamoney.controller.DepositFundsController(this, this);
+        DashboardController.DashboardProfileController dashboardProfileController = (DashboardController.DashboardProfileController)DataShare.receive();
+        controller = new com.example.mandelamoney.controller.DepositFundsController(this, this, dashboardProfileController);
     }
 
     private void connectToUI() {

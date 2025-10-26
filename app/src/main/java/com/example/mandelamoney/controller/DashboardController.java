@@ -438,7 +438,8 @@ public class DashboardController {
                     view.setStudentNumber(((Business) UserSession.getUser()).getBusinessPhoneNumber());
                 }
                 view.setEmail(UserSession.getUser().getUserEmail());
-                view.setBalance((float) UserSession.getUser().getUserBalance());
+                float balance = (float) UserSession.getUser().getUserBalance();
+                view.setBalance(balance);
 
             } else {
                 if (UserSession.getUser() instanceof Student) {
@@ -459,7 +460,8 @@ public class DashboardController {
                     view.setStudentNumber(((Business) UserSession.getUser()).getBusinessPhoneNumber());
                 }
                 view.setEmail(UserSession.getUser().getUserEmail());
-                view.setBalance((float) UserSession.getUser().getUserBalance());
+                float balance = (float) UserSession.getUser().getUserBalance();
+                view.setBalance(balance);
             }
 
 
@@ -483,7 +485,7 @@ public class DashboardController {
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 return;
             }
-            com.example.mandelamoney.util.DataShare.send(u);
+            DataShare.send(this);
             Intent intent = new Intent(context, com.example.mandelamoney.view.activity.DepositFundsActivity.class);
             context.startActivity(intent);
         }

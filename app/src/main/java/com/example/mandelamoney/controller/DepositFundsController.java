@@ -16,6 +16,7 @@ import com.example.mandelamoney.util.UserSession;
 import com.example.mandelamoney.model.Business;
 import com.example.mandelamoney.model.Student;
 import com.example.mandelamoney.view.Iface.IConfirmDepositView;
+import com.example.mandelamoney.view.Iface.IProfileView;
 import com.example.mandelamoney.view.activity.ConfirmDepositActivity;
 import com.example.mandelamoney.view.activity.DepositFundsActivity;
 import com.example.mandelamoney.view.activity.ShowSuccessActivity;
@@ -34,6 +35,7 @@ public class DepositFundsController {
     private final ExecutorService depositFundsExecutor = Executors.newSingleThreadExecutor();
     private String fromAccountName;
     private ITransactionStatusDisplayView transactionStatusDisplayView;
+    private DashboardController.DashboardProfileController dashboardProfileController;
 
 
     private int transactionId;
@@ -47,9 +49,10 @@ public class DepositFundsController {
             "Nedbank","Standard Bank","TymeBank","African Bank"
     };
 
-    public DepositFundsController(Context context, IDepositFundsView viewDepositFunds){
+    public DepositFundsController(Context context, IDepositFundsView viewDepositFunds, DashboardController.DashboardProfileController dashboardProfileController){
         this.context = context;
         this.viewDepositFunds = viewDepositFunds;
+        this.dashboardProfileController = dashboardProfileController;
     }
 
     public void handleDepositFunds(String amount, String bankName, String branchCode, String cardNumber, String name,String cvv, String expiryDate) {
@@ -350,14 +353,9 @@ public class DepositFundsController {
                 MySQLConnector.updateTransactionStatus(transactionId, "success", context);
                 Log.i(TAG, "BG: updateTransactionStatus -> success");
 
+                UserSession.updateBalance(context);
                 Executors.newSingleThreadExecutor().execute(() -> {
-                    float updated = UserSession.updateBalance(context);
-                    User u = UserSession.getUser();
-                    if (u != null && updated != -1) {
-                        u.setUserBalance(updated);
-                        UserSession.updateTransactions(context);
-                    }
-                    Log.d(TAG, "Session balance refreshed to: " + updated);
+                    UserSession.updateTransactions(context);
                 });
 
                 ContextCompat.getMainExecutor(context).execute(() -> {
@@ -377,6 +375,9 @@ public class DepositFundsController {
                     }
 
                     if (confirmDepositView != null) confirmDepositView.finishActivity();
+                    if (dashboardProfileController != null) {
+                        dashboardProfileController.loadUserToUi();
+                    }
                 });
 
             } catch (Exception e) {
@@ -397,6 +398,9 @@ public class DepositFundsController {
                         Toast.makeText(context, "Could not open failure screen.", Toast.LENGTH_SHORT).show();
                     }
                     if (confirmDepositView != null) confirmDepositView.finishActivity();
+                    if (dashboardProfileController != null) {
+                        dashboardProfileController.loadUserToUi();
+                    }
                 });
             }
         });
@@ -426,6 +430,9 @@ public class DepositFundsController {
                 Log.d(TAG, "UI: finishing confirm screen on cancel");
                 if (confirmDepositView != null) confirmDepositView.finishActivity();
                 if (viewDepositFunds != null) viewDepositFunds.finishActivity();
+                if (dashboardProfileController != null) {
+                    dashboardProfileController.loadUserToUi();
+                }
             });
         });
     }
