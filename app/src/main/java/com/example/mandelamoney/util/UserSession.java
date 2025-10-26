@@ -53,9 +53,14 @@ public class UserSession {
     }
 
     public static float updateBalance(Context context) {
-        float balance = MySQLConnector.getUserBalance(currentUser.getUserEmail(), context);
-        if (balance != -1) currentUser.setUserBalance(balance);
-        return balance;
+        try {
+            float balance = MySQLConnector.getUserBalance(currentUser.getUserEmail(), context);
+            if (balance != -1) currentUser.setUserBalance(balance);
+            return balance;
+        } catch (Exception exception) {
+            return -1;
+        }
+
     }
 
 

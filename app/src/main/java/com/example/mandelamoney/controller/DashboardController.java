@@ -107,7 +107,7 @@ public class DashboardController {
 
     private void manageControllers() {
         if (DashboardHomeController != null) {
-            if ((currentFragment == 0) || (currentFragment == 3)) {
+            if ((currentFragment == 0)) {
                 DashboardHomeController.startPolling();
             } else {
                 DashboardHomeController.stopPolling();
@@ -128,6 +128,9 @@ public class DashboardController {
     }
 
     public void createDashboardHomeController(IHomeDashboardView view) {
+        if (this.DashboardHomeController != null) {
+            this.DashboardHomeController.stopPolling();
+        }
         DashboardHomeController = new DashboardHomeController(view);
     }
 
@@ -185,19 +188,23 @@ public class DashboardController {
         public void handleBalanceRefresh() {
             if (UserSession.getUser() != null) {
                 Executors.newSingleThreadExecutor().execute(() -> {
-                    float previousBalance = UserSession.getUser().getUserBalance();
-                    float updatedBalance = UserSession.updateBalance(context);
-                    if (updatedBalance != previousBalance && updatedBalance != -1) {
-                        UserSession.getUser().setUserBalance(updatedBalance);
-                        mainThreadHandler.post(() -> {
-                            view.displayBalance(updatedBalance);
-                            refreshAndDisplayTransactions();
-                            if (TransactionHistoryController != null) {
-                                ITransactionHistoryView view = TransactionHistoryController.getTransactionHistoryView();
-                                String[] filters = view.getFilters();
-                                TransactionHistoryController.loadTransactions(filters[0], filters[1], filters[2]);
-                            }
-                        });
+                    try {
+                        float previousBalance = UserSession.getUser().getUserBalance();
+                        float updatedBalance = UserSession.updateBalance(context);
+                        if (updatedBalance != previousBalance && updatedBalance != -1) {
+                            UserSession.getUser().setUserBalance(updatedBalance);
+                            mainThreadHandler.post(() -> {
+                                view.displayBalance(updatedBalance);
+                                refreshAndDisplayTransactions();
+                                if (TransactionHistoryController != null) {
+                                    ITransactionHistoryView view = TransactionHistoryController.getTransactionHistoryView();
+                                    String[] filters = view.getFilters();
+                                    TransactionHistoryController.loadTransactions(filters[0], filters[1], filters[2]);
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+                        Log.e("DashboardHomeController", "Error during balance refresh", e);
                     }
                 });
             }
@@ -249,17 +256,27 @@ public class DashboardController {
 
         public void refreshAndDisplayTransactions() {
             new Thread(() -> {
-                UserSession.updateTransactions(context);
-                List<Transaction> txList = UserSession.getLastWeekTransactions();
-                displayTransactions(txList);
+                try {
+                    UserSession.updateTransactions(context);
+                    List<Transaction> txList = UserSession.getLastWeekTransactions();
+                    displayTransactions(txList);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+
             }).start();
         }
 
         private void displayTransactions(List<Transaction> transactions) {
                 mainThreadHandler.post(() -> {
-                    if (view != null) {
-                        view.displayTransactions(transactions);
+                    try {
+                        if (view != null) {
+                            view.displayTransactions(transactions);
+                        }
+                    } catch (RuntimeException e) {
+                        throw new RuntimeException(e);
                     }
+
                 });
         }
 
@@ -438,9 +455,7 @@ public class DashboardController {
                     view.setStudentNumber(((Business) UserSession.getUser()).getBusinessPhoneNumber());
                 }
                 view.setEmail(UserSession.getUser().getUserEmail());
-                float balance = (float) UserSession.getUser().getUserBalance();
-                view.setBalance(balance);
-
+                view.setBalance((float) (Math.round(UserSession.getUser().getUserBalance() * 100.0) / 100.0));
             } else {
                 if (UserSession.getUser() instanceof Student) {
                     view.setWelcomeName(((Student) UserSession.getUser()).getStudentFullName());
@@ -460,9 +475,7 @@ public class DashboardController {
                     view.setStudentNumber(((Business) UserSession.getUser()).getBusinessPhoneNumber());
                 }
                 view.setEmail(UserSession.getUser().getUserEmail());
-                float balance = (float) UserSession.getUser().getUserBalance();
-                view.setBalance(balance);
-            }
+                view.setBalance((float) (Math.round(UserSession.getUser().getUserBalance() * 100.0) / 100.0));            }
 
 
         }
