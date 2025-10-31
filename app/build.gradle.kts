@@ -34,10 +34,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "DB_USERNAME", "\"user\"")
-        buildConfigField("String", "DB_PASSWORD", "\"***REMOVED_DB_PASSWORD***\"")
+        buildConfigField("String", "DB_PASSWORD", "\"Enter A Password Here\"")
         buildConfigField("String", "DB_URL", "\"jdbc:mysql://jacksonserver.ddns.net:3306/MandelaMoneyDB?useSSL=true&requireSSL=true&verifyServerCertificate=false&noAccessToProcedureBodies=true\"")
         buildConfigField("String", "EMAIL_USERNAME", "\"mandelamoney.info@gmail.com\"")
-        buildConfigField("String","EMAIL_PASSWORD","\"***REMOVED_EMAIL_APP_PASSWORD***\"")
+        buildConfigField("String","EMAIL_PASSWORD","\"Enter A Password Here\"")
     }
 
     packaging{
