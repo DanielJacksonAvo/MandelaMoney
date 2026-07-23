@@ -18,10 +18,6 @@
 
 </div>
 
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="100%" height="4">
-</div>
-
 ## What is MandelaMoney
 
 MandelaMoney is a native Android wallet built for a university campus, where students and local businesses can hold a balance, pay each other by scanning a QR code, request payments, deposit or withdraw funds, and keep track of every transaction, all secured behind biometrics and an encrypted local session.
@@ -34,11 +30,7 @@ Two account types share one wallet experience:
 | Pays for campus goods and services | Receives payments and requests funds via QR |
 | Tracks spending in one place | Manages incoming transactions in one place |
 
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="100%" height="4">
-</div>
-
-## 🏆 Awards & Recognition
+## Awards & Recognition
 
 <div align="center">
 
@@ -58,10 +50,6 @@ The project achieved a final mark of 97% and brought home three industry awards 
 - 🥈 **Avochoc**, 2nd Place Best Project
 
 > Thank you to our supervisor, Janine Nel, and the Computer Science Department, for the support, the opportunity, and everything put in to make this happen. And to Charlize, thank you for being an absolute rockstar of a team member. None of this would have happened without our teamwork.
-
-<div align="center">
-  <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="100%" height="4">
-</div>
 
 ## Table of Contents
 
@@ -263,7 +251,7 @@ MandelaMoney is not just a stretched phone screen on a bigger display, it ships 
 ./gradlew connectedPhoneDebugAndroidTest # Espresso instrumented tests
 ```
 
-## 📊 Mandela Money in Motion
+## Mandela Money in Motion
 
 Some fun numbers from Team ByteMe (Charlize Fourie & Daniel Jackson) building MandelaMoney.
 
@@ -310,7 +298,7 @@ Some fun numbers from Team ByteMe (Charlize Fourie & Daniel Jackson) building Ma
 
 <div align="center">
 
-| [<img src="https://wsrv.nl/?url=github.com/DanielJacksonAvo.png&w=160&h=160&mask=circle" width="80"><br>Daniel Jackson](https://github.com/DanielJacksonAvo) | [<img src="https://wsrv.nl/?url=github.com/Charlie-Fourie.png&w=160&h=160&mask=circle" width="80"><br>Charlize Fourie](https://github.com/Charlie-Fourie) |
+| [<img src="https://wsrv.nl/?url=github.com/Charlie-Fourie.png&w=160&h=160&mask=circle" width="80"><br>Charlize Fourie](https://github.com/Charlie-Fourie) | [<img src="https://wsrv.nl/?url=github.com/DanielJacksonAvo.png&w=160&h=160&mask=circle" width="80"><br>Daniel Jackson](https://github.com/DanielJacksonAvo) |
 |:---:|:---:|
 
 </div>
