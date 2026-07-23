@@ -278,7 +278,7 @@ Some fun numbers from Team ByteMe (Charlize Fourie & Daniel Jackson) building Ma
 | 📈 Commits over 64 Branches | 629 |
 | ☕ Minimum Cups of Coffee | 316 |
 | 🕺 Hidden Rick Rolls | 24 |
-| 🖥 Hours Spent Coding | 269 |
+| 🖥 Hours Spent Coding | 269h |
 | 😴 Hours of Sleep Lost | 374h 51m |
 
 </td>
