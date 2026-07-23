@@ -74,6 +74,7 @@ The project achieved a final mark of 97% and brought home three industry awards 
 - [Phone & Tablet UI](#phone--tablet-ui)
 - [Security](#security)
 - [Testing](#testing)
+- [Mandela Money in Motion](#-mandela-money-in-motion)
 
 ## Features
 
@@ -261,6 +262,49 @@ MandelaMoney is not just a stretched phone screen on a bigger display, it ships 
 ./gradlew testPhoneDebugUnitTest        # JUnit unit tests
 ./gradlew connectedPhoneDebugAndroidTest # Espresso instrumented tests
 ```
+
+## 📊 Mandela Money in Motion
+
+Some fun numbers from Team ByteMe (Charlize Fourie & Daniel Jackson) building MandelaMoney.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**By The Numbers**
+| | |
+|---|---|
+| 👩‍💻👨‍💻 Lines of Code | +32,499 |
+| 📈 Commits over 64 Branches | 629 |
+| ☕ Minimum Cups of Coffee | 316 |
+| 🕺 Hidden Rick Rolls | 24 |
+| 🖥 Hours Spent Coding | 269 |
+| 😴 Hours of Sleep Lost | 374h 51m |
+
+</td>
+<td width="50%" valign="top">
+
+**Total Effort**
+| | |
+|---|---|
+| 📽 Animated Video Iterations | 16 |
+| 📝 Poster Iterations | 29 |
+| 📑 Pages of Project Docs | 249 |
+| 📐 CAD Design Iterations | 79 |
+| 🖨 Test 3D Prints | 9 |
+
+</td>
+</tr>
+</table>
+
+**Final Result**
+- 📽 1x marketing artefact, with pretty cool animations (and a little trauma)
+- 📝 6x posters
+- 📑 95% average for project docs (proposal and FSD, as of writing)
+- ☕ 25x 3D printed MandelaMoney coasters
+- 📱 1x awesome app
+
+<sub>Thank you to StreamGroup for sponsoring the coffee that day.</sub>
 
 ## Authors
 
