@@ -266,7 +266,7 @@ MandelaMoney is not just a stretched phone screen on a bigger display, it ships 
 
 <div align="center">
 
-| [<img src="https://github.com/DanielJacksonAvo.png" width="80" style="border-radius:50%"><br>Daniel Jackson](https://github.com/DanielJacksonAvo) | [<img src="https://github.com/Charlie-Fourie.png" width="80" style="border-radius:50%"><br>Charlize Fourie](https://github.com/Charlie-Fourie) |
+| [<img src="https://wsrv.nl/?url=github.com/DanielJacksonAvo.png&w=160&h=160&mask=circle" width="80"><br>Daniel Jackson](https://github.com/DanielJacksonAvo) | [<img src="https://wsrv.nl/?url=github.com/Charlie-Fourie.png&w=160&h=160&mask=circle" width="80"><br>Charlize Fourie](https://github.com/Charlie-Fourie) |
 |:---:|:---:|
 
 </div>
